@@ -52,6 +52,8 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+
+@RuntimePermissions
 public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapClickListener {
 
     private SupportMapFragment mapFragment;
@@ -62,6 +64,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
     private final static String KEY_LOCATION = "location";
+    private final static double CURRENT_LATITUDE = 47.629157;
+    private final static double CURRENT_LONGITUDE = -122.341167;
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -99,13 +103,55 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
 
         if (map != null) {
             // Map is ready
-            Toast.makeText(this, "Map Fragmenet was laoded properly.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
 
+            MapActivityPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
+            MapActivityPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
             map.setOnMapClickListener(this);
+
+            if (mCurrentLocation != null) {
+                BitmapDescriptor defaultMarker =
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                Marker marker = map.addMarker(new MarkerOptions()
+                        .position(currentCoordinates)
+                        .title("Current Location")
+                        .icon(defaultMarker));
+
+                dropPinEffect(marker);
+            }
         } else {
             Toast.makeText(this, "Error - Map was null!", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void dropPinEffect(final Marker marker) {
+        final android.os.Handler handler = new Handler();
+        final long start = SystemClock.uptimeMillis();
+        final long duration = 2000;
+
+        final Interpolator interpolator = new BounceInterpolator();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - start;
+                // Calculate t for bounce based on elapsed time
+                float t = Math.max(
+                        1 - interpolator.getInterpolation((float) elapsed
+                                / duration), 0);
+                // Set the anchor
+                marker.setAnchor(0.5f, 1.0f + 14 * t);
+
+                if (t > 0.0) {
+                    // Post this event again 15ms from now.
+                    handler.postDelayed(this, 15);
+                } else { // done elapsing, show window
+                    marker.showInfoWindow();
+                }
+            }
+        });
     }
 
     @Override
@@ -113,10 +159,11 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
 
     }
 
+    @SuppressLint("NeedOnRequestPermissionsResult")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+        MapActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -197,14 +244,17 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
     protected void onResume() {
         super.onResume();
 
+        LatLng latLng;
+
         if (mCurrentLocation != null) {
             Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
             map.animateCamera(cameraUpdate);
         } else {
             Toast.makeText(this, "Current location was null, enable GPS on emulator!",
                     Toast.LENGTH_SHORT).show();
+            //latLng = new LatLng(CURRENT_LATITUDE, CURRENT_LONGITUDE);
         }
 
 
