@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PicOfInterest</string>
+    <string name="google_maps_api_key">AIzaSyBimJwS0lWd2JNUXvSqngovek2VOIDmi8o</string>
 </resources>
