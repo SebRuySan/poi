@@ -5,9 +5,13 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -24,6 +28,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,9 +52,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
+import me.sebastianrevel.picofinterest.Models.Pics;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
@@ -60,17 +73,23 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
+    GPSTracker gps; // to get location of pics taken with camera
     private LocationRequest mLocationRequest;
     Location mCurrentLocation;
     PlaceAutocompleteFragment placeAutoComplete;
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
     private Button cameraBtn;
+    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
 
     private final static String KEY_LOCATION = "location";
     private final static double CURRENT_LATITUDE = 47.629157;
     private final static double CURRENT_LONGITUDE = -122.341167;
+    // activity request code to store image
+    public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
+
+    public final String APP_TAG = "MyCustomApp";
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -91,13 +110,15 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
             requestPermissions(new String[]{Manifest.permission.CAMERA},
                     MY_CAMERA_REQUEST_CODE);
         }
-
+        //TODO - TRACK LOCATION AND STORE IMAGE
         cameraBtn = findViewById(R.id.camera_btn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(i,0);
+                //Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                //i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                startActivityForResult(i,CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
 
@@ -149,6 +170,108 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
             });
         } else {
             Toast.makeText(this,"Error - Map Fragment was null.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    /*
+    // gets the Uri from the output media file
+    public Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }*/
+
+    // gets the output media file
+    private File getOutputMediaFile(int type) {
+
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFileName;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFileName = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+
+        } else {
+            return null;
+        }
+
+        return mediaFileName;
+    }
+
+    // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if the result is capturing Image
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+            gps = new GPSTracker(MainActivity.this);
+
+            if (resultCode == RESULT_OK) {
+                if (gps.canGetLocation()) {
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    // by this point we have the user's location so add a marker there
+                    BitmapDescriptor defaultMarker =
+                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+                    LatLng picCoordinates = new LatLng(latitude, longitude);
+                    Marker marker = map.addMarker(new MarkerOptions()
+                            .position(picCoordinates)
+                            .title("Picture Location")
+                            .icon(defaultMarker));
+
+                    dropPinEffect(marker);
+
+
+                    // we also want to add the image to Parse
+                    final Pics newPic = new Pics();
+                    /*
+                    //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
+                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    parseFile.saveInBackground(new SaveCallback() {
+                        public void done(ParseException e) {
+                            // If successful save image as profile picture
+                            if(null == e) {
+                                newPic.setPic(parseFile);
+                                Log.d("mainactivity", "Pic save requested");
+                            }
+                        }
+                    });*/
+                    //newPic.setUser(); TO DO : implement when we have log in/sign up
+                    newPic.setLat(latitude);
+                    newPic.setLong(longitude);
+                    newPic.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) { // no errors
+                                Log.d("MainActivity", "Added Image success!");
+                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    // \n is for new line
+                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                } else {
+                    // Can't get location.
+                    // GPS or network is not enabled.
+                    // Ask user to enable GPS/network in settings.
+
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // user cancelled Image capture
+                Toast.makeText(getApplicationContext(),
+                        "Cancelled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                // failed to capture image
+                Toast.makeText(getApplicationContext(),
+                        "Error!", Toast.LENGTH_SHORT)
+                        .show();
+            }
         }
     }
 
