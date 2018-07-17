@@ -36,6 +36,10 @@ ext {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation 'com.parse.bolts:bolts-android:1.4.0'
+    implementation 'com.parse:parse-android:1.17.3'
+    implementation 'jp.wasabeef:glide-transformations:3.3.0'
+    implementation 'com.parse:parseui-widget-android:0.0.2'
 
     //noinspection GradleCompatible
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
