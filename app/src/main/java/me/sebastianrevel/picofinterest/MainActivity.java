@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
-    
+
     private final static String KEY_LOCATION = "location";
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private final static double CURRENT_LATITUDE = 47.629157;
