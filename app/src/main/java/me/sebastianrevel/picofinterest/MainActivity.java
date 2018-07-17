@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
                     points.add(t);
                     LatLng u = new LatLng(47.611, -122.33); // washington state convention center coordinate
                     points.add(u);
+                    LatLng v = new LatLng(67.8, -42.4); // washington state convention center coordinate
+                    points.add(v);
                     addPins(points);
                 }
             });
