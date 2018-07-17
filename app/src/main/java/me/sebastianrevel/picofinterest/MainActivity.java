@@ -3,17 +3,24 @@ package me.sebastianrevel.picofinterest;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -58,14 +65,17 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
     PlaceAutocompleteFragment placeAutoComplete;
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
+    private Button cameraBtn;
 
     private final static String KEY_LOCATION = "location";
     private final static double CURRENT_LATITUDE = 47.629157;
     private final static double CURRENT_LONGITUDE = -122.341167;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +84,22 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
         }
+
+
+        if (checkSelfPermission(Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    MY_CAMERA_REQUEST_CODE);
+        }
+
+        cameraBtn = findViewById(R.id.camera_btn);
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(i,0);
+            }
+        });
 
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -95,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
                 Log.d("Maps", "An error occurred: " + status);
             }
         });
+
 
         mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
 
