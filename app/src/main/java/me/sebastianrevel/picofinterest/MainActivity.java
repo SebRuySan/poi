@@ -2,29 +2,21 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -37,7 +29,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -56,7 +47,7 @@ import permissions.dispatcher.RuntimePermissions;
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 @RuntimePermissions
-public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapClickListener {
+public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapClickListener {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
@@ -76,7 +67,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map);
+        setContentView(R.layout.activity_main);
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -125,8 +116,8 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
             // Map is ready
             Toast.makeText(this, "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
 
-            MapActivityPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
-            MapActivityPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
+            MainActivityPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
+            MainActivityPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
             map.setOnMapClickListener(this);
 
             if (mCurrentLocation != null) {
@@ -197,7 +188,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        MapActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @SuppressWarnings({"MissingPermission"})
@@ -218,7 +209,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d("MapActivity", "Error trying to get last GPS location");
+                        Log.d("MainActivity", "Error trying to get last GPS location");
                         e.printStackTrace();
                     }
                 });
