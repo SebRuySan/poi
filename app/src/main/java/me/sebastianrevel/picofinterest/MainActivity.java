@@ -41,6 +41,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
@@ -102,11 +104,28 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
                 public void onMapReady(GoogleMap googleMap) {
                     loadMap(googleMap);
                     map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                    //this part is harcoded for testing purposes
+                    ArrayList<LatLng> points = new ArrayList<>();
+                    LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
+                    points.add(p);
+                    LatLng s = new LatLng(47.595, -122.3); // century link field coordinate
+                    points.add(s);
+                    LatLng t = new LatLng(46.85, -121.76); // mt. rainier coordinate
+                    points.add(t);
+                    LatLng u = new LatLng(47.611, -122.33); // washington state convention center coordinate
+                    points.add(u);
+                    addPins(points);
                 }
             });
         } else {
             Toast.makeText(this,"Error - Map Fragment was null.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void addPins(ArrayList<LatLng> points) {
+        for(LatLng p: points)
+            addMarker(p);
     }
 
     protected void loadMap(GoogleMap googleMap) {
@@ -147,6 +166,19 @@ public class MainActivity extends AppCompatActivity implements GoogleMap.OnMapCl
 
         map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+    }
+
+    public void addMarker(LatLng p){
+
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        markerOptions.position(p);
+        markerOptions.title("Point of Interest");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+
+        map.addMarker(markerOptions);
+        map.moveCamera(CameraUpdateFactory.newLatLng(p));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
 
     }
