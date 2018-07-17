@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -33,6 +34,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,8 +47,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -60,6 +62,7 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
     private GoogleMap map;
     private LocationRequest mLocationRequest;
     Location mCurrentLocation;
+    PlaceAutocompleteFragment placeAutoComplete;
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
@@ -82,6 +85,23 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
+
+        // initialize autocomplete search bar fragment and set a listener
+        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
+        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // add a marker at place selected (from search bar)
+                addMarker(place);
+
+                Log.d("Maps", "Place selected: " + place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.d("Maps", "An error occurred: " + status);
+            }
+        });
 
         mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
 
@@ -123,6 +143,20 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
         } else {
             Toast.makeText(this, "Error - Map was null!", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    public void addMarker(Place p){
+
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        markerOptions.position(p.getLatLng());
+        markerOptions.title(p.getName()+"");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+
+        map.addMarker(markerOptions);
+        map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+        map.animateCamera(CameraUpdateFactory.zoomTo(13));
 
     }
 
@@ -240,25 +274,23 @@ public class MapActivity extends AppCompatActivity implements GoogleMap.OnMapCli
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        LatLng latLng;
-
-        if (mCurrentLocation != null) {
-            Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-            map.animateCamera(cameraUpdate);
-        } else {
-            Toast.makeText(this, "Current location was null, enable GPS on emulator!",
-                    Toast.LENGTH_SHORT).show();
-            //latLng = new LatLng(CURRENT_LATITUDE, CURRENT_LONGITUDE);
-        }
-
-
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        LatLng latLng;
+//
+//        if (mCurrentLocation != null) {
+//            //Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
+//            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
+//            map.animateCamera(cameraUpdate);
+//        } else {
+//            Toast.makeText(this, "Current location was null, enable GPS on emulator!",
+//                    Toast.LENGTH_SHORT).show();
+//            //latLng = new LatLng(CURRENT_LATITUDE, CURRENT_LONGITUDE);
+//        }
+//    }
 
     @SuppressLint("MissingPermission")
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
