@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.io.File;
@@ -46,6 +48,8 @@ import java.util.List;
 import java.util.Locale;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
+
+import static android.app.Activity.RESULT_CANCELED;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity {
@@ -93,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
         dl = findViewById(R.id.drawerLayout);
         rv.setHasFixedSize(true);
 
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         String[] items = getResources().getStringArray(R.array.topics);
 
         for (String Item : items) {
@@ -124,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                //Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-                //i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 startActivityForResult(i,CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
@@ -159,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
 
     }
-    /*
+
     // gets the Uri from the output media file
     public Uri getOutputMediaFileUri(int type) {
         return Uri.fromFile(getOutputMediaFile(type));
-    }*/
+    }
 
     // gets the output media file
     private File getOutputMediaFile(int type) {
@@ -176,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
                 Locale.getDefault()).format(new Date());
         File mediaFileName;
         if (type == MEDIA_TYPE_IMAGE) {
-            mediaFileName = new File(mediaStorageDir.getPath() + File.separator
-                    + "IMG_" + timeStamp + ".jpg");
-
+            //mediaFileName = new File(mediaStorageDir.getPath() + File.separator
+            //        + "IMG_" + timeStamp + ".jpg");
+            mediaFileName = new File(mediaStorageDir.getPath() +".jpg");
         } else {
             return null;
         }
@@ -200,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 if (gps.canGetLocation()) {
+
                     final double latitude = gps.getLatitude();
                     final double longitude = gps.getLongitude();
                     // by this point we have the user's location so add a marker there
@@ -296,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // we also want to add the image to Parse
                     final Pics newPic = new Pics();
-                    /*
+
                     //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
                     parseFile.saveInBackground(new SaveCallback() {
@@ -304,25 +312,47 @@ public class MainActivity extends AppCompatActivity {
                             // If successful save image as profile picture
                             if(null == e) {
                                 newPic.setPic(parseFile);
+                                if(newPic.getPic() != null) {
+                                    Log.d("mainactivity", "there is a file returned");
+                                    newPic.setLat(latitude);
+                                    newPic.setLong(longitude);
+                                    newPic.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) { // no errors
+                                                Log.d("MainActivity", "Added Image success!");
+                                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+                                else
+                                    Log.d("mainactivity", "there is no file returned");
                                 Log.d("mainactivity", "Pic save requested");
                             }
-                        }
-                    });*/
-                    //newPic.setUser(); TO DO : implement when we have log in/sign up
-                    newPic.setLat(latitude);
-                    newPic.setLong(longitude);
-                    newPic.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) { // no errors
-                                Log.d("MainActivity", "Added Image success!");
-                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+                           else{
+                               e.printStackTrace();
+                               Log.d("Main Activity", "Pic save failed");
                             }
-                            else {
-                                e.printStackTrace();
-                            }
-                        }
+                     }
                     });
+                    //newPic.setUser(); TO DO : implement when we have log in/sign up
+//                    newPic.setLat(latitude);
+//                    newPic.setLong(longitude);
+//                    newPic.saveInBackground(new SaveCallback() {
+//                        @Override
+//                        public void done(ParseException e) {
+//                            if (e == null) { // no errors
+//                                Log.d("MainActivity", "Added Image success!");
+//                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+//                            }
+//                            else {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
 
                     // \n is for new line
                     Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
