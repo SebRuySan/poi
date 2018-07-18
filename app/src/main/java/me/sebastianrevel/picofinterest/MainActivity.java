@@ -1,20 +1,13 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,43 +15,27 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.io.File;
@@ -67,16 +44,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
-
-import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity {
+    Toolbar toolbar;
+    ActionBarDrawerToggle drawerToggle;
+    RecyclerView rv;
+    DrawerLayout dl;
+    RecyclerView.Adapter adapter;
+    RecyclerView.LayoutManager lm;
+    ArrayList<String> arrayList = new ArrayList<>();
 
     Fragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
@@ -105,6 +84,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
+        rv = findViewById(R.id.recyclerView);
+
+        lm = new LinearLayoutManager(this);
+        rv.setLayoutManager(lm);
+        dl = findViewById(R.id.drawerLayout);
+        rv.setHasFixedSize(true);
+
+        String[] items = getResources().getStringArray(R.array.topics);
+
+        for (String Item : items) {
+            arrayList.add(Item);
+        }
+
+        adapter = new PicAdapter(arrayList);
+
+        rv.setAdapter(adapter);
+
+        drawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.drawer_open, R.string.drawer_close);
+
+        dl.addDrawerListener(drawerToggle);
+
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -127,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(i,CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
+
+
 
 //        if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
 //            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -180,6 +184,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return mediaFileName;
+    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
     }
 
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
