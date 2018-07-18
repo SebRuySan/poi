@@ -158,7 +158,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
 
-    public void addMarker(LatLng p){
+    public static void addMarker(LatLng p){
 
         MarkerOptions markerOptions = new MarkerOptions();
 

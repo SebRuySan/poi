@@ -14,7 +14,7 @@ public class Pics extends ParseObject {
     private static final String KEY_LAT = "lat";
     private static final String KEY_LONG = "long";
 
-
+//RuyG
     public String getLocation() {
         return getString(KEY_LOCATION);
     }

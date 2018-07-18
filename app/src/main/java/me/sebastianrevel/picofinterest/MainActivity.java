@@ -5,14 +5,19 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +32,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -46,13 +52,24 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import me.sebastianrevel.picofinterest.Models.Pics;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
@@ -64,21 +81,21 @@ public class MainActivity extends AppCompatActivity {
     Fragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
 
-//    private SupportMapFragment supportMapFragment;
-//    private GoogleMap map;
-//    private LocationRequest mLocationRequest;
-//    Location mCurrentLocation;
-
-//    private long UPDATE_INTERVAL = 60000; // 60 seconds
-//    private long FASTEST_INTERVAL = 5000; // 5 seconds
+    GPSTracker gps; // to get location of pics taken with camera
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
+    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
 
     private final static String KEY_LOCATION = "location";
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
     private final static double CURRENT_LATITUDE = 47.629157;
     private final static double CURRENT_LONGITUDE = -122.341167;
+
+    // activity request code to store image
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
+
+    public final String APP_TAG = "MyCustomApp";
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -99,13 +116,15 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.CAMERA},
                     MY_CAMERA_REQUEST_CODE);
         }
-
+        //TODO - TRACK LOCATION AND STORE IMAGE
         cameraBtn = findViewById(R.id.camera_btn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(i,0);
+                //Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                //i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                startActivityForResult(i,CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
 
@@ -135,153 +154,189 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
         fragmentTransaction.commit();
 
-        //supportMapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
+    }
+    /*
+    // gets the Uri from the output media file
+    public Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }*/
 
-//        if (supportMapFragment != null) {
-//            supportMapFragment.getMapAsync(new OnMapReadyCallback() {
-//                @Override
-//                public void onMapReady(GoogleMap googleMap) {
-//                    loadMap(googleMap);
-//                    map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//
-//                    //this part is harcoded for testing purposes
-//                    ArrayList<LatLng> points = new ArrayList<>();
-//                    LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
-//                    points.add(p);
-//                    LatLng s = new LatLng(47.595, -122.3); // century link field coordinate
-//                    points.add(s);
-//                    LatLng t = new LatLng(46.85, -121.76); // mt. rainier coordinate
-//                    points.add(t);
-//                    LatLng u = new LatLng(47.611, -122.33); // washington state convention center coordinate
-//                    points.add(u);
-//                    LatLng v = new LatLng(67.8, -42.4); // washington state convention center coordinate
-//                    points.add(v);
-//                    addPins(points);
-//                }
-//            });
-//        } else {
-//            Toast.makeText(this,"Error - Map Fragment was null.", Toast.LENGTH_SHORT).show();
-//        }
+    // gets the output media file
+    private File getOutputMediaFile(int type) {
+
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFileName;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFileName = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+
+        } else {
+            return null;
+        }
+
+        return mediaFileName;
     }
 
-//    private void addPins(ArrayList<LatLng> points) {
-//        for(LatLng p: points)
-//            addMarker(p);
-//    }
-//
-//    protected void loadMap(GoogleMap googleMap) {
-//        map = googleMap;
-//
-//        if (map != null) {
-//            // Map is ready
-//            Toast.makeText(this, "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
-//
-//            MainActivityPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
-//            MainActivityPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
-//            map.setOnMapClickListener(this);
-//
-//            if (mCurrentLocation != null) {
-//                BitmapDescriptor defaultMarker =
-//                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-//                LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-//                Marker marker = map.addMarker(new MarkerOptions()
-//                        .position(currentCoordinates)
-//                        .title("Current Location")
-//                        .icon(defaultMarker));
-//
-//                dropPinEffect(marker);
-//            }
-//        } else {
-//            Toast.makeText(this, "Error - Map was null!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//    }
-//
-//    public void addMarker(Place p){
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//
-//        markerOptions.position(p.getLatLng());
-//        markerOptions.title(p.getName()+"");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//
-//        map.addMarker(markerOptions);
-//        map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
-//        map.animateCamera(CameraUpdateFactory.zoomTo(13));
-//    }
-//
-//    public void addMarker(LatLng p){
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//
-//        markerOptions.position(p);
-//        markerOptions.title("Point of Interest");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//
-//        map.addMarker(markerOptions);
-//        map.moveCamera(CameraUpdateFactory.newLatLng(p));
-//        map.animateCamera(CameraUpdateFactory.zoomTo(13));
-//
-//    }
-//
-//    private void dropPinEffect(final Marker marker) {
-//        final android.os.Handler handler = new Handler();
-//        final long start = SystemClock.uptimeMillis();
-//        final long duration = 2000;
-//
-//        final Interpolator interpolator = new BounceInterpolator();
-//
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                long elapsed = SystemClock.uptimeMillis() - start;
-//                // Calculate t for bounce based on elapsed time
-//                float t = Math.max(
-//                        1 - interpolator.getInterpolation((float) elapsed
-//                                / duration), 0);
-//                // Set the anchor
-//                marker.setAnchor(0.5f, 1.0f + 14 * t);
-//
-//                if (t > 0.0) {
-//                    // Post this event again 15ms from now.
-//                    handler.postDelayed(this, 15);
-//                } else { // done elapsing, show window
-//                    marker.showInfoWindow();
-//                }
-//            }
-//        });
-//    }
+    // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // if the result is capturing Image
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+            gps = new GPSTracker(MainActivity.this);
 
-//    @SuppressLint("NeedOnRequestPermissionsResult")
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        MainActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
-//    }
+            if (resultCode == RESULT_OK) {
+                if (gps.canGetLocation()) {
+                    final double latitude = gps.getLatitude();
+                    final double longitude = gps.getLongitude();
+                    // by this point we have the user's location so add a marker there
+//                    BitmapDescriptor defaultMarker =
+//                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
+//                    LatLng picCoordinates = new LatLng(latitude, longitude);
 
-//    @SuppressWarnings({"MissingPermission"})
-//    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-//    void getMyLocation() {
-//        map.setMyLocationEnabled(true);
-//
-//        FusedLocationProviderClient locationClient = getFusedLocationProviderClient(this);
-//        locationClient.getLastLocation()
-//                .addOnSuccessListener(new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        if (location != null) {
-//                            onLocationChanged(location);
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.d("MainActivity", "Error trying to get last GPS location");
-//                        e.printStackTrace();
-//                    }
-//                });
-//    }
+                    Place place = new Place() {
+                        @Override
+                        public String getId() {
+                            return "Picture Location";
+                        }
+
+                        @Override
+                        public List<Integer> getPlaceTypes() {
+                            return null;
+                        }
+
+                        @Nullable
+                        @Override
+                        public CharSequence getAddress() {
+                            return null;
+                        }
+
+                        @Override
+                        public Locale getLocale() {
+                            return null;
+                        }
+
+                        @Override
+                        public CharSequence getName() {
+                            return "New Pin thing";
+                        }
+
+                        @Override
+                        public LatLng getLatLng() {
+                            return new LatLng(latitude, longitude);
+                        }
+
+                        @Nullable
+                        @Override
+                        public LatLngBounds getViewport() {
+                            return null;
+                        }
+
+                        @Nullable
+                        @Override
+                        public Uri getWebsiteUri() {
+                            return null;
+                        }
+
+                        @Nullable
+                        @Override
+                        public CharSequence getPhoneNumber() {
+                            return null;
+                        }
+
+                        @Override
+                        public float getRating() {
+                            return 0;
+                        }
+
+                        @Override
+                        public int getPriceLevel() {
+                            return 0;
+                        }
+
+                        @Nullable
+                        @Override
+                        public CharSequence getAttributions() {
+                            return null;
+                        }
+
+                        @Override
+                        public Place freeze() {
+                            return null;
+                        }
+
+                        @Override
+                        public boolean isDataValid() {
+                            return false;
+                        }
+                    };
+
+//                    Marker marker = MapFragment.addMarker(new MarkerOptions()
+//                            .position(picCoordinates)
+//                            .title("Picture Location")
+//                            .icon(defaultMarker));
+
+                    MapFragment.addMarker(place);
+
+                    //MapFragment.dropPinEffect(marker);
+
+
+                    // we also want to add the image to Parse
+                    final Pics newPic = new Pics();
+                    /*
+                    //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
+                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    parseFile.saveInBackground(new SaveCallback() {
+                        public void done(ParseException e) {
+                            // If successful save image as profile picture
+                            if(null == e) {
+                                newPic.setPic(parseFile);
+                                Log.d("mainactivity", "Pic save requested");
+                            }
+                        }
+                    });*/
+                    //newPic.setUser(); TO DO : implement when we have log in/sign up
+                    newPic.setLat(latitude);
+                    newPic.setLong(longitude);
+                    newPic.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) { // no errors
+                                Log.d("MainActivity", "Added Image success!");
+                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    // \n is for new line
+                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                } else {
+                    // Can't get location.
+                    // GPS or network is not enabled.
+                    // Ask user to enable GPS/network in settings.
+
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // user cancelled Image capture
+                Toast.makeText(getApplicationContext(),
+                        "Cancelled", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                // failed to capture image
+                Toast.makeText(getApplicationContext(),
+                        "Error!", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -332,58 +387,4 @@ public class MainActivity extends AppCompatActivity {
             return mDialog;
         }
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        LatLng latLng;
-//
-//        if (mCurrentLocation != null) {
-//            //Toast.makeText(this, "GPS location was found!", Toast.LENGTH_SHORT).show();
-//            latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-//            map.animateCamera(cameraUpdate);
-//        } else {
-//            Toast.makeText(this, "Current location was null, enable GPS on emulator!",
-//                    Toast.LENGTH_SHORT).show();
-//            //latLng = new LatLng(CURRENT_LATITUDE, CURRENT_LONGITUDE);
-//        }
-//    }
-
-//    @SuppressLint("MissingPermission")
-//    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
-//    protected void startLocationUpdates() {
-//        mLocationRequest = new LocationRequest();
-//        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//        mLocationRequest.setInterval(UPDATE_INTERVAL);
-//        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-//
-//        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-//        builder.addLocationRequest(mLocationRequest);
-//        LocationSettingsRequest locationSettingsRequest = builder.build();
-//
-//        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
-//        settingsClient.checkLocationSettings(locationSettingsRequest);
-//
-//        getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
-//            @Override
-//            public void onLocationResult(LocationResult locationResult) {
-//                onLocationChanged(locationResult.getLastLocation());
-//            }
-//        }, Looper.myLooper());
-//    }
-//
-//    private void onLocationChanged(Location location) {
-//        if (location == null) {
-//            return;
-//        }
-//
-//        // report to the UI that the location was updated
-//        mCurrentLocation = location;
-//        String msg = "Updated Location: "
-//                + Double.toString(location.getLatitude()) + ","
-//                + Double.toString(location.getLongitude());
-//        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-//    }
 }
