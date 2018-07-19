@@ -50,6 +50,7 @@ import java.util.Locale;
 import me.sebastianrevel.picofinterest.Models.Pics;
 
 import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity {
@@ -201,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final Pics newPic = new Pics();
         // if the result is capturing Image
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
             gps = new GPSTracker(MainActivity.this);
@@ -210,6 +212,64 @@ public class MainActivity extends AppCompatActivity {
 
                     final double latitude = gps.getLatitude();
                     final double longitude = gps.getLongitude();
+
+                    // we want to add the image to Parse
+
+                    //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
+                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    parseFile.saveInBackground(new SaveCallback() {
+                        public void done(ParseException e) {
+                            // If successful save image as profile picture
+                            if(null == e) {
+                                newPic.setPic(parseFile);
+                                if(newPic.getPic() != null) {
+                                    Log.d("mainactivity", "there is a file returned");
+                                    newPic.setLat(latitude);
+                                    newPic.setLong(longitude);
+                                    newPic.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) { // no errors
+                                                Log.d("MainActivity", "Added Image success!");
+                                                //Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+                                else
+                                    Log.d("mainactivity", "there is no file returned");
+                                Log.d("mainactivity", "Pic save requested");
+                            }
+                           else{
+                               e.printStackTrace();
+                               Log.d("Main Activity", "Pic save failed");
+                            }
+                     }
+                    });
+
+                    if (newPic.getPic() != null) {
+                        Toast.makeText(this, "Can access image file", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "CanNOT access image file", Toast.LENGTH_SHORT).show();
+                    }
+                    //newPic.setUser(); TO DO : implement when we have log in/sign up
+//                    newPic.setLat(latitude);
+//                    newPic.setLong(longitude);
+//                    newPic.saveInBackground(new SaveCallback() {
+//                        @Override
+//                        public void done(ParseException e) {
+//                            if (e == null) { // no errors
+//                                Log.d("MainActivity", "Added Image success!");
+//                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+//                            }
+//                            else {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+
                     // by this point we have the user's location so add a marker there
 //                    BitmapDescriptor defaultMarker =
 //                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
@@ -297,65 +357,12 @@ public class MainActivity extends AppCompatActivity {
 //                            .title("Picture Location")
 //                            .icon(defaultMarker));
 
-                    MapFragment.addMarker(place);
+                    MapFragment.addMarker(place, parseFile);
 
                     //MapFragment.dropPinEffect(marker);
 
-
-                    // we also want to add the image to Parse
-                    final Pics newPic = new Pics();
-
-                    //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
-                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
-                    parseFile.saveInBackground(new SaveCallback() {
-                        public void done(ParseException e) {
-                            // If successful save image as profile picture
-                            if(null == e) {
-                                newPic.setPic(parseFile);
-                                if(newPic.getPic() != null) {
-                                    Log.d("mainactivity", "there is a file returned");
-                                    newPic.setLat(latitude);
-                                    newPic.setLong(longitude);
-                                    newPic.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e == null) { // no errors
-                                                Log.d("MainActivity", "Added Image success!");
-                                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                }
-                                else
-                                    Log.d("mainactivity", "there is no file returned");
-                                Log.d("mainactivity", "Pic save requested");
-                            }
-                           else{
-                               e.printStackTrace();
-                               Log.d("Main Activity", "Pic save failed");
-                            }
-                     }
-                    });
-                    //newPic.setUser(); TO DO : implement when we have log in/sign up
-//                    newPic.setLat(latitude);
-//                    newPic.setLong(longitude);
-//                    newPic.saveInBackground(new SaveCallback() {
-//                        @Override
-//                        public void done(ParseException e) {
-//                            if (e == null) { // no errors
-//                                Log.d("MainActivity", "Added Image success!");
-//                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
-//                            }
-//                            else {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
-
                     // \n is for new line
-                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
                 } else {
                     // Can't get location.
                     // GPS or network is not enabled.
