@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,6 +43,7 @@ import com.parse.ParseFile;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -215,91 +218,85 @@ public class MainActivity extends AppCompatActivity {
 //                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
 //                    LatLng picCoordinates = new LatLng(latitude, longitude);
 
-                    Place place = new Place() {
-                        @Override
-                        public String getId() {
-                            return "Picture Location";
-                        }
+//                    Place place = new Place() {
+//                        @Override
+//                        public String getId() {
+//                            return "Picture Location";
+//                        }
+//
+//                        @Override
+//                        public List<Integer> getPlaceTypes() {
+//                            return null;
+//                        }
+//
+//                        @Nullable
+//                        @Override
+//                        public CharSequence getAddress() {
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public Locale getLocale() {
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public CharSequence getName() {
+//                            return "New Pin thing";
+//                        }
+//
+//                        @Override
+//                        public LatLng getLatLng() {
+//                            return new LatLng(latitude, longitude);
+//                        }
+//
+//                        @Nullable
+//                        @Override
+//                        public LatLngBounds getViewport() {
+//                            return null;
+//                        }
+//
+//                        @Nullable
+//                        @Override
+//                        public Uri getWebsiteUri() {
+//                            return null;
+//                        }
+//
+//                        @Nullable
+//                        @Override
+//                        public CharSequence getPhoneNumber() {
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public float getRating() {
+//                            return 0;
+//                        }
+//
+//                        @Override
+//                        public int getPriceLevel() {
+//                            return 0;
+//                        }
+//
+//                        @Nullable
+//                        @Override
+//                        public CharSequence getAttributions() {
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public Place freeze() {
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public boolean isDataValid() {
+//                            return false;
+//                        }
+//                    };
 
-                        @Override
-                        public List<Integer> getPlaceTypes() {
-                            return null;
-                        }
 
-                        @Nullable
-                        @Override
-                        public CharSequence getAddress() {
-                            return null;
-                        }
-
-                        @Override
-                        public Locale getLocale() {
-                            return null;
-                        }
-
-                        @Override
-                        public CharSequence getName() {
-                            return "New Pin thing";
-                        }
-
-                        @Override
-                        public LatLng getLatLng() {
-                            return new LatLng(latitude, longitude);
-                        }
-
-                        @Nullable
-                        @Override
-                        public LatLngBounds getViewport() {
-                            return null;
-                        }
-
-                        @Nullable
-                        @Override
-                        public Uri getWebsiteUri() {
-                            return null;
-                        }
-
-                        @Nullable
-                        @Override
-                        public CharSequence getPhoneNumber() {
-                            return null;
-                        }
-
-                        @Override
-                        public float getRating() {
-                            return 0;
-                        }
-
-                        @Override
-                        public int getPriceLevel() {
-                            return 0;
-                        }
-
-                        @Nullable
-                        @Override
-                        public CharSequence getAttributions() {
-                            return null;
-                        }
-
-                        @Override
-                        public Place freeze() {
-                            return null;
-                        }
-
-                        @Override
-                        public boolean isDataValid() {
-                            return false;
-                        }
-                    };
-
-//                    Marker marker = MapFragment.addMarker(new MarkerOptions()
-//                            .position(picCoordinates)
-//                            .title("Picture Location")
-//                            .icon(defaultMarker));
-
-                    MapFragment.addMarker(place);
-
-                    //MapFragment.dropPinEffect(marker);
+                   // MapFragment.addMarker(place);
 
 
                     // we also want to add the image to Parse
@@ -307,15 +304,263 @@ public class MainActivity extends AppCompatActivity {
 
                     //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    // save Parse file in background (image)
                     parseFile.saveInBackground(new SaveCallback() {
                         public void done(ParseException e) {
-                            // If successful save image as profile picture
+                            // If successful add image to Pics object
                             if(null == e) {
                                 newPic.setPic(parseFile);
                                 if(newPic.getPic() != null) {
+                                    // if added include the coordinates of picture
                                     Log.d("mainactivity", "there is a file returned");
                                     newPic.setLat(latitude);
                                     newPic.setLong(longitude);
+                                    // now using coordinates, use geocoder get from location to get address of where picture was taken
+                                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                    Place place;
+                                    try {
+                                        List<Address> listAddresses = geocoder.getFromLocation(latitude, longitude, 1);
+                                        if(null!=listAddresses&&listAddresses.size()>0){
+                                            String address = listAddresses.get(0).getAddressLine(0);
+                                            // set this address as the location of the picture
+                                            newPic.setLocation(address);
+                                            place = new Place() {
+                                                @Override
+                                                public String getId() {
+                                                    return "Picture Location";
+                                                }
+
+                                                @Override
+                                                public List<Integer> getPlaceTypes() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getAddress() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public Locale getLocale() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public CharSequence getName() {
+                                                    return newPic.getLocation();
+                                                }
+
+                                                @Override
+                                                public LatLng getLatLng() {
+                                                    return new LatLng(latitude, longitude);
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public LatLngBounds getViewport() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public Uri getWebsiteUri() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getPhoneNumber() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public float getRating() {
+                                                    return 0;
+                                                }
+
+                                                @Override
+                                                public int getPriceLevel() {
+                                                    return 0;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getAttributions() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public Place freeze() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public boolean isDataValid() {
+                                                    return false;
+                                                }
+                                            };
+
+                                        }
+                                        else{
+                                            place = new Place() {
+                                                @Override
+                                                public String getId() {
+                                                    return "Picture Location";
+                                                }
+
+                                                @Override
+                                                public List<Integer> getPlaceTypes() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getAddress() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public Locale getLocale() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public CharSequence getName() {
+                                                    return "Picture Location";
+                                                }
+
+                                                @Override
+                                                public LatLng getLatLng() {
+                                                    return new LatLng(latitude, longitude);
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public LatLngBounds getViewport() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public Uri getWebsiteUri() {
+                                                    return null;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getPhoneNumber() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public float getRating() {
+                                                    return 0;
+                                                }
+
+                                                @Override
+                                                public int getPriceLevel() {
+                                                    return 0;
+                                                }
+
+                                                @Nullable
+                                                @Override
+                                                public CharSequence getAttributions() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public Place freeze() {
+                                                    return null;
+                                                }
+
+                                                @Override
+                                                public boolean isDataValid() {
+                                                    return false;
+                                                }
+                                            };
+                                        }
+                                    } catch (IOException f) {
+                                        f.printStackTrace();
+                                        place = new Place() {
+                                            @Override
+                                            public String getId() {
+                                                return "Picture Location";
+                                            }
+
+                                            @Override
+                                            public List<Integer> getPlaceTypes() {
+                                                return null;
+                                            }
+
+                                            @Nullable
+                                            @Override
+                                            public CharSequence getAddress() {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public Locale getLocale() {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public CharSequence getName() {
+                                                return "Picture Location";
+                                            }
+
+                                            @Override
+                                            public LatLng getLatLng() {
+                                                return new LatLng(latitude, longitude);
+                                            }
+
+                                            @Nullable
+                                            @Override
+                                            public LatLngBounds getViewport() {
+                                                return null;
+                                            }
+
+                                            @Nullable
+                                            @Override
+                                            public Uri getWebsiteUri() {
+                                                return null;
+                                            }
+
+                                            @Nullable
+                                            @Override
+                                            public CharSequence getPhoneNumber() {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public float getRating() {
+                                                return 0;
+                                            }
+
+                                            @Override
+                                            public int getPriceLevel() {
+                                                return 0;
+                                            }
+
+                                            @Nullable
+                                            @Override
+                                            public CharSequence getAttributions() {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public Place freeze() {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public boolean isDataValid() {
+                                                return false;
+                                            }
+                                        };
+                                    }
+                                    MapFragment.addMarker(place);
+                                    // save the picture to parse
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
@@ -339,20 +584,7 @@ public class MainActivity extends AppCompatActivity {
                      }
                     });
                     //newPic.setUser(); TO DO : implement when we have log in/sign up
-//                    newPic.setLat(latitude);
-//                    newPic.setLong(longitude);
-//                    newPic.saveInBackground(new SaveCallback() {
-//                        @Override
-//                        public void done(ParseException e) {
-//                            if (e == null) { // no errors
-//                                Log.d("MainActivity", "Added Image success!");
-//                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
-//                            }
-//                            else {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    });
+
 
                     // \n is for new line
                     Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
