@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import android.support.v4.widget.DrawerLayout;
 import com.parse.ParseFile;
 
 import java.io.File;
@@ -50,9 +52,10 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
+import static java.security.AccessController.getContext;
 
 @RuntimePermissions
-public class MapFragment extends Fragment implements GoogleMap.OnMapClickListener {
+public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 
     MapView mMapView;
     private static GoogleMap map;
@@ -74,7 +77,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
         }
@@ -112,6 +114,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
             }
         });
 
+
+        if (mCurrentLocation != null) {
+            LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
+            map.animateCamera(CameraUpdateFactory.zoomTo(13));
+
+            //dropPinEffect(marker);
+
+        }
+
         return rootView;
     }
 
@@ -129,7 +141,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
 
             MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
             MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
-            map.setOnMapClickListener(this);
+            //map.setOnMapClickListener(this);
 
             if (mCurrentLocation != null) {
                 BitmapDescriptor defaultMarker =
@@ -140,11 +152,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
                         .title("Current Location")
                         .icon(defaultMarker));
 
-                dropPinEffect(marker);
+                //map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
+
+                //dropPinEffect(marker);
+
             }
         } else {
             Toast.makeText(getContext(), "Error - Map was null!", Toast.LENGTH_SHORT).show();
         }
+
+        map.setOnMarkerClickListener(this);
 
     }
 
@@ -234,8 +252,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
     }
 
     @Override
-    public void onMapClick(LatLng latLng) {
+    public boolean onMarkerClick(final Marker marker) {
+        if (marker != null) {
+            //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
+            MainActivity.drawerOpen();
+        }
 
+        return false;
     }
 
     @SuppressLint("NeedOnRequestPermissionsResult")

@@ -26,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
-    DrawerLayout dl;
+    static DrawerLayout dl;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
     ArrayList<String> arrayList = new ArrayList<>();
@@ -139,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
 //        if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
 //            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
 //        }
@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
         fragmentTransaction.commit();
 
+    }
+
+    public static void drawerOpen() {
+        dl.openDrawer(Gravity.LEFT);
     }
 
     // gets the Uri from the output media file
