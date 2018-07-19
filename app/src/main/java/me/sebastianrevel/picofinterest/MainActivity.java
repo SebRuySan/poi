@@ -52,8 +52,6 @@ import java.util.Locale;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
-import static android.app.Activity.RESULT_CANCELED;
-
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -214,91 +212,6 @@ public class MainActivity extends AppCompatActivity {
                     final double latitude = gps.getLatitude();
                     final double longitude = gps.getLongitude();
                     // by this point we have the user's location so add a marker there
-//                    BitmapDescriptor defaultMarker =
-//                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-//                    LatLng picCoordinates = new LatLng(latitude, longitude);
-
-//                    Place place = new Place() {
-//                        @Override
-//                        public String getId() {
-//                            return "Picture Location";
-//                        }
-//
-//                        @Override
-//                        public List<Integer> getPlaceTypes() {
-//                            return null;
-//                        }
-//
-//                        @Nullable
-//                        @Override
-//                        public CharSequence getAddress() {
-//                            return null;
-//                        }
-//
-//                        @Override
-//                        public Locale getLocale() {
-//                            return null;
-//                        }
-//
-//                        @Override
-//                        public CharSequence getName() {
-//                            return "New Pin thing";
-//                        }
-//
-//                        @Override
-//                        public LatLng getLatLng() {
-//                            return new LatLng(latitude, longitude);
-//                        }
-//
-//                        @Nullable
-//                        @Override
-//                        public LatLngBounds getViewport() {
-//                            return null;
-//                        }
-//
-//                        @Nullable
-//                        @Override
-//                        public Uri getWebsiteUri() {
-//                            return null;
-//                        }
-//
-//                        @Nullable
-//                        @Override
-//                        public CharSequence getPhoneNumber() {
-//                            return null;
-//                        }
-//
-//                        @Override
-//                        public float getRating() {
-//                            return 0;
-//                        }
-//
-//                        @Override
-//                        public int getPriceLevel() {
-//                            return 0;
-//                        }
-//
-//                        @Nullable
-//                        @Override
-//                        public CharSequence getAttributions() {
-//                            return null;
-//                        }
-//
-//                        @Override
-//                        public Place freeze() {
-//                            return null;
-//                        }
-//
-//                        @Override
-//                        public boolean isDataValid() {
-//                            return false;
-//                        }
-//                    };
-
-
-                   // MapFragment.addMarker(place);
-
-
                     // we also want to add the image to Parse
                     final Pics newPic = new Pics();
 
@@ -308,9 +221,9 @@ public class MainActivity extends AppCompatActivity {
                     parseFile.saveInBackground(new SaveCallback() {
                         public void done(ParseException e) {
                             // If successful add image to Pics object
-                            if(null == e) {
+                            if (null == e) {
                                 newPic.setPic(parseFile);
-                                if(newPic.getPic() != null) {
+                                if (newPic.getPic() != null) {
                                     // if added include the coordinates of picture
                                     Log.d("mainactivity", "there is a file returned");
                                     newPic.setLat(latitude);
@@ -320,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                                     Place place;
                                     try {
                                         List<Address> listAddresses = geocoder.getFromLocation(latitude, longitude, 1);
-                                        if(null!=listAddresses&&listAddresses.size()>0){
+                                        if (null != listAddresses && listAddresses.size() > 0) {
                                             String address = listAddresses.get(0).getAddressLine(0);
                                             // set this address as the location of the picture
                                             newPic.setLocation(address);
@@ -401,8 +314,7 @@ public class MainActivity extends AppCompatActivity {
                                                 }
                                             };
 
-                                        }
-                                        else{
+                                        } else {
                                             place = new Place() {
                                                 @Override
                                                 public String getId() {
@@ -559,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         };
                                     }
-                                    MapFragment.addMarker(place);
+                                    MapFragment.addMarker(place, parseFile);
                                     // save the picture to parse
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -572,16 +484,14 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                                }
-                                else
+                                } else
                                     Log.d("mainactivity", "there is no file returned");
                                 Log.d("mainactivity", "Pic save requested");
+                            } else {
+                                e.printStackTrace();
+                                Log.d("Main Activity", "Pic save failed");
                             }
-                           else{
-                               e.printStackTrace();
-                               Log.d("Main Activity", "Pic save failed");
-                            }
-                     }
+                        }
                     });
                     //newPic.setUser(); TO DO : implement when we have log in/sign up
 

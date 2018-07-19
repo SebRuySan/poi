@@ -2,7 +2,8 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,7 +41,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.ParseFile;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import permissions.dispatcher.NeedsPermission;
@@ -145,13 +148,43 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
 
     }
 
+    public static void addMarker(Place p, ParseFile parseFile){
+
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        markerOptions.position(p.getLatLng());
+        markerOptions.title(p.getName()+"");
+
+        String imagePath = null;
+        try {
+            File imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+        } else {
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+        }
+
+
+        map.addMarker(markerOptions).showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+    }
+
     public static void addMarker(Place p){
 
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(p.getLatLng());
         markerOptions.title(p.getName()+"");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
 
         map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
