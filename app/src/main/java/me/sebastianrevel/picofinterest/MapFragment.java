@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+//import android.net.ParseException;
+import com.parse.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,10 +44,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
+import com.parse.FindCallback;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import me.sebastianrevel.picofinterest.Models.Pics;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
@@ -97,7 +105,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
                 //this part is harcoded for testing purposes
-                ArrayList<LatLng> points = new ArrayList<>();
+                /*ArrayList<LatLng> points = new ArrayList<>();
                 LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
                 points.add(p);
                 LatLng s = new LatLng(47.595, -122.3); // century link field coordinate
@@ -108,7 +116,40 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
                 points.add(u);
                 LatLng v = new LatLng(67.8, -42.4); // washington state convention center coordinate
                 points.add(v);
-                addPins(points);
+                addPins(points);*/
+
+                // Define the class we would like to Query
+                ParseQuery<Pics> query =ParseQuery.getQuery(Pics.class);
+                // get all posts
+                final Set<String> locs = new HashSet<String>(); // this will contain a no-duplicate set of locations hwere pictures have been taken
+                final ArrayList<Pics> pictures = new ArrayList<>(); // this will contain a list of Pics (filtered so that it only contains the most recent picture taken at each location)
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.findInBackground(new FindCallback<Pics>(){
+                    public void done(List<Pics> itemList, ParseException e){
+                        Log.d("MapFragment", "Query done");
+                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                        // if no errors
+                        if(e == null){
+                            Log.d("MapFragment", "No errors in querying");
+                            for(Pics p: itemList){
+                                boolean added = locs.add(p.getLocation());
+                                Log.d("MapFragment", "Attempt to add to pictures");
+                                if(added) {
+                                    pictures.add(p);
+                                    Log.d("MapFragment", "Item added to pictures");
+                                }
+                            }
+                            Log.d("MapFragment", "Pictures array size1 : " + pictures.size());
+                            // after all pictures have been added, add markers there
+                            for(Pics p : pictures)
+                                addMarker(p);
+                        }
+                        else {
+                            Log.d("item", "Error: " + e.getMessage());
+                        }
+                    }
+
+                });
             }
         });
 
@@ -203,6 +244,34 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapClickListene
         map.moveCamera(CameraUpdateFactory.newLatLng(p));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
 
+    }
+
+    public static void addMarker(Pics p){
+        MarkerOptions markerOptions = new MarkerOptions();
+        LatLng l = new LatLng(p.getLat(), p.getLong());
+        markerOptions.position(l);
+        markerOptions.title(p.getLocation());
+        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        String imagePath = null;
+        try {
+            File imageFile = p.getPic().getFile();
+            imagePath = imageFile.getAbsolutePath();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+        } else {
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+        }
+
+        map.addMarker(markerOptions).showInfoWindow();
+        map.moveCamera(CameraUpdateFactory.newLatLng(l));
+        map.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
 
     private void dropPinEffect(final Marker marker) {
