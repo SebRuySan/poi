@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.graphics.Matrix;
@@ -49,6 +50,8 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.IOException;
@@ -212,8 +215,54 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     }
 
-    public static void addMarker(Place p, ParseFile parseFile){
+    public static void addMarker(final Place p, ParseFile parseFile){
+        Target mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.d("MapFragment", "Marker is being created");
+                Marker driver_marker = map.addMarker(new MarkerOptions()
+                        .position(p.getLatLng())
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        .title(p.getName() + "")
+                        //.snippet("test address")
+                );
+                Log.d("MapFragment", "Marker created");
+                map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                Log.d("MapFragment", "Camera zoomed in hopefully");
+            }
 
+            @Override
+            public void onBitmapFailed(Exception ex, Drawable errorDrawable) {
+                ex.printStackTrace();
+                Log.d("picasso", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        String imagePath = null;
+        File imageFile = null;
+        try {
+            imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+            Log.d("MapFragment", "Imagepath is not null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MapFragment", "Picasso about to be called");
+        Picasso.get()
+                .load(imageFile)
+                .resize(200,200)
+                .centerCrop()
+                .transform(new CircleBubbleTransformation())
+                .into(mTarget);
+        Log.d("MapFragment", "Picasso hopefully done");
+
+        /*
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(p.getLatLng());
@@ -240,6 +289,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         map.addMarker(markerOptions).showInfoWindow();
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
+        */
     }
 
     public static void addMarker(Place p){
