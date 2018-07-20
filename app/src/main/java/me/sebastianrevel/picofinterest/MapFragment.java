@@ -4,9 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 //import android.net.ParseException;
 import com.parse.ParseException;
+
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,6 +53,7 @@ import com.parse.ParseQuery;
 import com.parse.FindCallback;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -223,10 +227,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
 
         if (imagePath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap bitmap = rotateBitmapOrientation(imagePath);
             Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-        } else {
+        } else {git a
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
         }
 
@@ -280,7 +285,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
 
         if (imagePath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap bitmap = rotateBitmapOrientation(imagePath);
             Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
         } else {
@@ -290,6 +296,33 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         map.addMarker(markerOptions).showInfoWindow();
         map.moveCamera(CameraUpdateFactory.newLatLng(l));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
+    }
+    public static Bitmap rotateBitmapOrientation(String photoFilePath) {
+        // Create and configure BitmapFactory
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFilePath, bounds);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+        // Read EXIF Data
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(photoFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        // Return result
+        return rotatedBitmap;
     }
 
     private void dropPinEffect(final Marker marker) {
