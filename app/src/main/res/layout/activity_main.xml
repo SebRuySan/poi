@@ -28,7 +28,7 @@
         <fragment
             android:id="@+id/place_autocomplete"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_width="match_parent"
+            android:layout_width="348dp"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
