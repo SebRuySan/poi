@@ -27,6 +27,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -60,7 +62,7 @@ import me.sebastianrevel.picofinterest.Models.Pics;
 import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener{
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
@@ -609,6 +611,35 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // inflate the menu; this adds items to the action bar if it is present
+        getMenuInflater().inflate(R.menu.menu_filter, menu);
+        menu.getItem(0).setVisible(true);
+        return true;
+    }
+
+    public void onFilterAction(MenuItem menuItem) {
+//        Intent intent = new Intent(this, FilterFragment.class);
+//        intent.putExtra("isReply", false);
+//        startActivityForResult(intent, 17);
+
+        FilterFragment filterDialog = new FilterFragment();
+        filterDialog.show(getFragmentManager(), "FilterFragment");
+    }
+
+    public void onFilterAction(View view) {
+        FilterFragment filterDialog = new FilterFragment();
+        filterDialog.show(getFragmentManager(), "FilterFragment");
+    }
+
+    @Override
+    public void sendFilterInput(String input) {
+        Log.d("MainActivity", "sendFilterInput: got the input");
+        Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+
     }
 
     public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
