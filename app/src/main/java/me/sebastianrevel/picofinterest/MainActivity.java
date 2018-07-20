@@ -39,8 +39,11 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.io.File;
@@ -59,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
     static DrawerLayout dl;
-    RecyclerView.Adapter adapter;
+    static RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
-    ArrayList<String> arrayList = new ArrayList<>();
+    static ArrayList<Pics> arrayList = new ArrayList<>();
 
     Fragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("TEST", "On create called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolBar);
@@ -104,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
         String[] items = getResources().getStringArray(R.array.topics);
 
-        for (String Item : items) {
-            arrayList.add(Item);
-        }
+//        for ( Item : items) {
+//            arrayList.add(Item);
+//        }
 
         adapter = new PicAdapter(arrayList);
 
@@ -116,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
         dl.addDrawerListener(drawerToggle);
 
+        clear();
+        loadAll();
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -168,8 +174,54 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static void drawerOpen() {
+    public static void drawerOpen(Marker m, Geocoder g) throws IOException, ParseException {
+        LatLng pos = m.getPosition();
+        final Double lat = pos.latitude;
+        final Double lon = pos.longitude;
+        List<Address> listAddresses = g.getFromLocation(lat, lon, 1);
+        String address = listAddresses.get(0).getAddressLine(0);
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    if (objects == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+                    }
+
+                    clear();
+                    arrayList.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Log.e("ADDRESS", address);
         dl.openDrawer(Gravity.LEFT);
+    }
+    public void loadGeoPics(String address) {
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    if (objects == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+                    }
+
+                    clear();
+                    arrayList.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     // gets the Uri from the output media file
@@ -571,5 +623,51 @@ public class MainActivity extends AppCompatActivity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
         }
+    }
+//    public void loadGeoPics(String address) {
+//        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
+//        query.findInBackground(new FindCallback<Pics>() {
+//            @Override
+//            public void done(List<Pics> objects, ParseException e) {
+//                if (e == null) {
+//                    if (objects == null) {
+//                        Log.d("CreateFragment", "Objects is null!");
+//                    } else {
+//                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+//                    }
+//
+//                    clear();
+//                    arrayList.addAll(objects);
+//                    adapter.notifyDataSetChanged();
+//                } else {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//    }
+    public void loadAll() {
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    if (objects == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+                    }
+
+                    clear();
+                    arrayList.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    public static void clear() {
+        arrayList.clear();
+        adapter.notifyDataSetChanged();
     }
 }

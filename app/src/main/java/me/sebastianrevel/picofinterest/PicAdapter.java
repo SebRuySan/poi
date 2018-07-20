@@ -9,15 +9,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.parse.ParseFile;
 
 import java.util.ArrayList;
 
+import me.sebastianrevel.picofinterest.Models.Pics;
+
 public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHolder> {
 
-    ArrayList<String> arrayList = new ArrayList<>();
+    ArrayList<Pics> arrayList = new ArrayList<>();
     private Context context;
 
-    public PicAdapter(ArrayList<String> arrayList) {
+    public PicAdapter(ArrayList<Pics> arrayList) {
         this.arrayList = arrayList;
     }
     @Override
@@ -31,8 +34,10 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder recyclerViewHolder, int i) {
-        String url = "https://scontent.xx.fbcdn.net/v/t31.0-8/23592190_1716598371726484_7973335275111326555_o.jpg?_nc_cat=0&_nc_log=1&oh=6ecc70fc3d6108180de16a84a4b36df7&oe=5BE6AF3F";
         // image load
+        Pics pic = arrayList.get(i);
+        ParseFile geoPic = pic.getPic();
+        String url = geoPic.getUrl();
         ImageView imageView = recyclerViewHolder.imageView;
         Glide.with(context)
                 .load(url)

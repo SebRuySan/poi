@@ -4,9 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Geocoder;
 import android.location.Location;
-//import android.net.ParseException;
-import com.parse.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +42,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import android.support.v4.widget.DrawerLayout;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
-import com.parse.FindCallback;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
@@ -60,7 +60,9 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
-import static java.security.AccessController.getContext;
+import static com.parse.Parse.getApplicationContext;
+
+//import android.net.ParseException;
 
 @RuntimePermissions
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
@@ -322,9 +324,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         if (marker != null) {
             //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
-            MainActivity.drawerOpen();
+            try {
+                MainActivity.drawerOpen(marker, geocoder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         return false;
