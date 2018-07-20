@@ -628,6 +628,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         filterDialog.show(getFragmentManager(), "FilterFragment");
     }
 
+    public void onFilterAction(View view) {
+        FilterFragment filterDialog = new FilterFragment();
+        filterDialog.show(getFragmentManager(), "FilterFragment");
+    }
+
     @Override
     public void sendFilterInput(String input) {
         Log.d("MainActivity", "sendFilterInput: got the input");
