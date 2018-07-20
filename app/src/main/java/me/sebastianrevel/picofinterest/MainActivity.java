@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
     static ArrayList<Pics> arrayList = new ArrayList<>();
+    static TextView location;
 
     Fragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setLayoutManager(lm);
         dl = findViewById(R.id.drawerLayout);
         rv.setHasFixedSize(true);
+        location = findViewById(R.id.location_tv);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -182,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         final Double lon = pos.longitude;
         List<Address> listAddresses = g.getFromLocation(lat, lon, 1);
         String address = listAddresses.get(0).getAddressLine(0);
+        location.setText(address);
         final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
         query.findInBackground(new FindCallback<Pics>() {
             @Override
