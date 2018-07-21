@@ -59,6 +59,8 @@ import java.util.Locale;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
+import static android.app.Activity.RESULT_OK;
+
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener{
     Toolbar toolbar;
@@ -624,6 +626,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //        intent.putExtra("isReply", false);
 //        startActivityForResult(intent, 17);
 
+        FilterFragment filterDialog = new FilterFragment();
+        filterDialog.show(getFragmentManager(), "FilterFragment");
+    }
+
+    public void onFilterAction(View view) {
         FilterFragment filterDialog = new FilterFragment();
         filterDialog.show(getFragmentManager(), "FilterFragment");
     }
