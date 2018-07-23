@@ -49,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
@@ -360,6 +361,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setLocation(address);
                                     pic.setLong(longitude);
                                     pic.setLat(latitude);
+                                    final ParseUser user = ParseUser.getCurrentUser();
+                                    pic.setUser(user);
                                     pic.setPic(pFile);
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -394,6 +397,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     Log.d("mainactivity", "there is a file returned");
                                     newPic.setLat(latitude);
                                     newPic.setLong(longitude);
+                                    final ParseUser user = ParseUser.getCurrentUser();
+                                    newPic.setUser(user);
                                     // now using coordinates, use geocoder get from location to get address of where picture was taken
                                     Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
                                     Place place;
