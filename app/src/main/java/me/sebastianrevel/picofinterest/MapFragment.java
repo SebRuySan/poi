@@ -153,6 +153,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             // after all pictures have been added, add markers there
                             for(Pics p : pictures)
                                 addMarker(p);
+
+                            if (mCurrentLocation != null) {
+                                LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                                map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
+                                map.animateCamera(CameraUpdateFactory.zoomTo(13));
+
+                                //dropPinEffect(marker);
+
+                            }
+
                         }
                         else {
                             Log.d("item", "Error: " + e.getMessage());
@@ -162,16 +172,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
-
-
-        if (mCurrentLocation != null) {
-            LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
-            map.animateCamera(CameraUpdateFactory.zoomTo(13));
-
-            //dropPinEffect(marker);
-
-        }
 
         return rootView;
     }
@@ -186,7 +186,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         if (map != null) {
             // Map is ready
-            Toast.makeText(getContext(), "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
 
             MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
             MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
@@ -485,7 +485,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         String msg = "Updated Location: "
                 + Double.toString(location.getLatitude()) + ","
                 + Double.toString(location.getLongitude());
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
