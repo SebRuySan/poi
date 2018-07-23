@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
+import com.parse.ParseException;
 import java.util.ArrayList;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
@@ -36,6 +39,15 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
     public void onBindViewHolder(@NonNull RecyclerViewHolder recyclerViewHolder, int i) {
         // image load
         Pics pic = arrayList.get(i);
+        ParseUser user = pic.getUser();
+
+        try {
+           recyclerViewHolder.tvUsername.setText(pic.getUser().fetchIfNeeded().getString("username"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // add image of this pics object to recycler view and display with glide
         ParseFile geoPic = pic.getPic();
         String url = geoPic.getUrl();
         ImageView imageView = recyclerViewHolder.imageView;
@@ -51,9 +63,11 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
 
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        TextView tvUsername;
         public RecyclerViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.imageView);
+            tvUsername = view.findViewById(R.id.tvUsername);
         }
     }
 
