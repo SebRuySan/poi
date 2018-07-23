@@ -59,6 +59,8 @@ import java.util.Locale;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
+import static android.app.Activity.RESULT_OK;
+
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener{
     Toolbar toolbar;

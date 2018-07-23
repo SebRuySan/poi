@@ -26,6 +26,7 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -42,6 +43,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -150,19 +152,94 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                 }
                             }
                             Log.d("MapFragment", "Pictures array size1 : " + pictures.size());
+                            Place place;
                             // after all pictures have been added, add markers there
-                            for(Pics p : pictures)
-                                addMarker(p);
+                            for(final Pics p : pictures) {
+                                //addMarker(p);
+                                place = new Place() {
+                                    @Override
+                                    public String getId() {
+                                        return "Picture Location";
+                                    }
+
+                                    @Override
+                                    public List<Integer> getPlaceTypes() {
+                                        return null;
+                                    }
+
+                                    @Nullable
+                                    @Override
+                                    public CharSequence getAddress() {
+                                        return p.getLocation();
+                                    }
+
+                                    @Override
+                                    public Locale getLocale() {
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public CharSequence getName() {
+                                        return p.getLocation();
+                                    }
+
+                                    @Override
+                                    public LatLng getLatLng() {
+                                        return new LatLng(p.getLat(), p.getLong());
+                                    }
+
+                                    @Nullable
+                                    @Override
+                                    public LatLngBounds getViewport() {
+                                        return null;
+                                    }
+
+                                    @Nullable
+                                    @Override
+                                    public Uri getWebsiteUri() {
+                                        return null;
+                                    }
+
+                                    @Nullable
+                                    @Override
+                                    public CharSequence getPhoneNumber() {
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public float getRating() {
+                                        return 0;
+                                    }
+
+                                    @Override
+                                    public int getPriceLevel() {
+                                        return 0;
+                                    }
+
+                                    @Nullable
+                                    @Override
+                                    public CharSequence getAttributions() {
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public Place freeze() {
+                                        return null;
+                                    }
+
+                                    @Override
+                                    public boolean isDataValid() {
+                                        return false;
+                                    }
+                                };
+                                addMarker(place, p.getPic());
+                            }
 
                             if (mCurrentLocation != null) {
                                 LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                                 map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
                                 map.animateCamera(CameraUpdateFactory.zoomTo(13));
-
-                                //dropPinEffect(marker);
-
                             }
-
                         }
                         else {
                             Log.d("item", "Error: " + e.getMessage());
@@ -172,6 +249,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
+
+
+            //dropPinEffect(marker);
+
+
 
         return rootView;
     }
