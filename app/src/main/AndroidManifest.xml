@@ -29,7 +29,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-
+        <activity
+            android:name=".SignupActivity" />
         <uses-library
             android:name="com.google.android.maps"
             android:required="true" />
