@@ -54,6 +54,17 @@
             android:drawableTop="@drawable/ic_camera"
             android:paddingBottom="0dp"
             android:text="Pic" />
+        <Button
+            android:id="@+id/upload_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/roundbutton"
+            android:drawableTop="@drawable/ic_upload"
+            android:paddingBottom="0dp"
+            android:text="Upload" />
 
     </FrameLayout>
 
