@@ -44,6 +44,7 @@ public class SignupActivity extends AppCompatActivity {
         // Set core properties
         user.setUsername(username);
         user.setPassword(password);
+        user.put("UserScore", 0);
         //final File file = new File("/desktop/profilepicturedef.png"); // create a default profile pic
         //final ParseFile parseFile = new ParseFile(file);
         /*parseFile.saveInBackground(new SaveCallback() {

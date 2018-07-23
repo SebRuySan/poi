@@ -41,8 +41,10 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
         Pics pic = arrayList.get(i);
         ParseUser user = pic.getUser();
 
+        // set text of the imageviews for each "pics" object with it's poster's username and userscore
         try {
-           recyclerViewHolder.tvUsername.setText(pic.getUser().fetchIfNeeded().getString("username"));
+           recyclerViewHolder.tvUsername.setText("@" + pic.getUser().fetchIfNeeded().getString("username"));
+            recyclerViewHolder.tvUserScore.setText("User Score: " + pic.getUser().fetchIfNeeded().getNumber("UserScore"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -64,10 +66,13 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView tvUsername;
+        TextView tvUserScore;
+
         public RecyclerViewHolder(View view) {
             super(view);
             imageView = view.findViewById(R.id.imageView);
             tvUsername = view.findViewById(R.id.tvUsername);
+            tvUserScore = view.findViewById(R.id.tvUserScore);
         }
     }
 
