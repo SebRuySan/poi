@@ -24,7 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -88,7 +89,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
-    Button btnStyle; // this is the button to change the mapstyle
+    Switch swStyle; // this is the button to change the mapstyle
     boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -298,10 +299,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @Override
     public void onViewCreated(View view, Bundle SavedInstanceState) {
-        btnStyle = (Button) view.findViewById(R.id.btnStyle);
-        btnStyle.setOnClickListener(new View.OnClickListener() {
+        swStyle = (Switch) view.findViewById(R.id.swStyle);
+        swStyle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 changeStyle();
             }
         });

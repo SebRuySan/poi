@@ -12,13 +12,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/btnStyle"
-        android:layout_width="wrap_content"
+    <Switch
+        android:id="@+id/swStyle"
+        android:layout_width="143dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:background="@android:color/background_light"
-        android:text="Change Style" />
+        android:layout_marginBottom="27dp"
+        android:layout_marginStart="12dp"
+        android:checked="true"
+        android:showText="true"
+        android:splitTrack="true"
+        android:text="Mode:"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textOff="Night"
+        android:textOn="Day"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:checked="true" />
 
 </RelativeLayout>

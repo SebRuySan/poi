@@ -21,6 +21,7 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -77,41 +78,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MapFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MapFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="144" column="0" lean-forward="false" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
+            <state relative-caret-position="702">
+              <caret line="312" column="25" lean-forward="false" selection-start-line="312" selection-start-column="25" selection-end-line="313" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4410#12447#0" expanded="true" />
-                <element signature="e#7251#7259#0" expanded="true" />
-                <element signature="e#7688#12421#0" expanded="true" />
-                <element signature="e#12420#12421#0" expanded="true" />
-                <element signature="e#12446#12447#0" expanded="true" />
-                <element signature="e#13015#13165#0" expanded="true" />
-                <element signature="e#13164#13165#0" expanded="true" />
-                <element signature="e#22687#23421#0" expanded="true" />
-                <element signature="e#23420#23421#0" expanded="true" />
-                <element signature="e#24800#25099#0" expanded="true" />
-                <element signature="e#25098#25099#0" expanded="true" />
-                <element signature="e#25139#25433#0" expanded="true" />
-                <element signature="e#25432#25433#0" expanded="true" />
-                <element signature="e#26367#26580#0" expanded="true" />
-                <element signature="e#26579#26580#0" expanded="true" />
+                <element signature="e#4447#12484#0" expanded="true" />
+                <element signature="e#7288#7296#0" expanded="true" />
+                <element signature="e#7725#12458#0" expanded="true" />
+                <element signature="e#12457#12458#0" expanded="true" />
+                <element signature="e#12483#12484#0" expanded="true" />
+                <element signature="e#13057#13265#0" expanded="true" />
+                <element signature="e#13264#13265#0" expanded="true" />
+                <element signature="e#22787#23521#0" expanded="true" />
+                <element signature="e#23520#23521#0" expanded="true" />
+                <element signature="e#24900#25199#0" expanded="true" />
+                <element signature="e#25198#25199#0" expanded="true" />
+                <element signature="e#25239#25533#0" expanded="true" />
+                <element signature="e#25532#25533#0" expanded="true" />
+                <element signature="e#26467#26680#0" expanded="true" />
+                <element signature="e#26679#26680#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fragment_map.xml" pinned="false" current-in-tab="false">
+      <file leaf-file-name="fragment_map.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml">
-          <provider editor-type-id="android-designer2">
+          <provider selected="true" editor-type-id="android-designer2">
             <state />
           </provider>
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="60" lean-forward="false" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
+          <provider editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="33" column="7" lean-forward="false" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -2193,8 +2194,8 @@
         <option value="$PROJECT_DIR$/app/src/main/res/raw/style_json.json" />
         <option value="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/CircleBubbleTransformation.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/raw/retrostyle_json.json" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" />
       </list>
     </option>
   </component>
@@ -2446,6 +2447,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="2455" y="23" width="1545" height="1497" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -2457,8 +2459,8 @@
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952926" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952926" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -2569,39 +2571,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="60" lean-forward="false" selection-start-line="20" selection-start-column="60" selection-end-line="20" selection-end-column="60" />
-          <folding />
+        <state relative-caret-position="702">
+          <caret line="312" column="25" lean-forward="false" selection-start-line="312" selection-start-column="25" selection-end-line="313" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4447#12484#0" expanded="true" />
+            <element signature="e#7288#7296#0" expanded="true" />
+            <element signature="e#7725#12458#0" expanded="true" />
+            <element signature="e#12457#12458#0" expanded="true" />
+            <element signature="e#12483#12484#0" expanded="true" />
+            <element signature="e#13057#13265#0" expanded="true" />
+            <element signature="e#13264#13265#0" expanded="true" />
+            <element signature="e#22787#23521#0" expanded="true" />
+            <element signature="e#23520#23521#0" expanded="true" />
+            <element signature="e#24900#25199#0" expanded="true" />
+            <element signature="e#25198#25199#0" expanded="true" />
+            <element signature="e#25239#25533#0" expanded="true" />
+            <element signature="e#25532#25533#0" expanded="true" />
+            <element signature="e#26467#26680#0" expanded="true" />
+            <element signature="e#26679#26680#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MapFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="144" column="0" lean-forward="false" selection-start-line="144" selection-start-column="0" selection-end-line="144" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4410#12447#0" expanded="true" />
-            <element signature="e#7251#7259#0" expanded="true" />
-            <element signature="e#7688#12421#0" expanded="true" />
-            <element signature="e#12420#12421#0" expanded="true" />
-            <element signature="e#12446#12447#0" expanded="true" />
-            <element signature="e#13015#13165#0" expanded="true" />
-            <element signature="e#13164#13165#0" expanded="true" />
-            <element signature="e#22687#23421#0" expanded="true" />
-            <element signature="e#23420#23421#0" expanded="true" />
-            <element signature="e#24800#25099#0" expanded="true" />
-            <element signature="e#25098#25099#0" expanded="true" />
-            <element signature="e#25139#25433#0" expanded="true" />
-            <element signature="e#25432#25433#0" expanded="true" />
-            <element signature="e#26367#26580#0" expanded="true" />
-            <element signature="e#26579#26580#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="33" column="7" lean-forward="false" selection-start-line="33" selection-start-column="7" selection-end-line="33" selection-end-column="7" />
+          <folding />
         </state>
       </provider>
     </entry>
