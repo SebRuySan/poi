@@ -88,7 +88,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
-    Button btnStyle;
+    Button btnStyle; // this is the button to change the mapstyle
+    boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
         // Required empty public constructor
@@ -126,7 +127,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //                if (!success) {
 //                    Log.e("Map Fragment", "Style parsing failed.");
 //                }
-                try {
+                /*try {
                     // Customise the styling of the base map using a JSON object defined
                     // in a raw resource file.
                     boolean success = googleMap.setMapStyle(
@@ -138,11 +139,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     }
                 } catch (Resources.NotFoundException e) {
                     Log.e("MapsActivity", "Can't find style.", e);
-                }
+                }*/
 
+                // initialize the map style as daymode
 
                 loadMap(googleMap);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                daymode = false;
+                changeStyle();
 
                 // Customise the styling of the base map using a JSON object defined
                 // in a string resource file. First create a MapStyleOptions object
@@ -309,19 +314,37 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     private void changeStyle(){
-        try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            boolean success = map.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getActivity(), R.raw.retrostyle_json));
+       if(daymode){
+           try {
+               // Customise the styling of the base map using a JSON object defined
+               // in a raw resource file.
+               boolean success = map.setMapStyle(
+                       MapStyleOptions.loadRawResourceStyle(
+                               getActivity(), R.raw.style_json));
 
-            if (!success) {
-                Log.e("MapsActivity", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("MapsActivity", "Can't find style.", e);
-        }
+               if (!success) {
+                   Log.e("MapsActivity", "Style parsing failed.");
+               }
+           } catch (Resources.NotFoundException e) {
+               Log.e("MapsActivity", "Can't find style.", e);
+           }
+       }
+       else{
+           try {
+               // Customise the styling of the base map using a JSON object defined
+               // in a raw resource file.
+               boolean success = map.setMapStyle(
+                       MapStyleOptions.loadRawResourceStyle(
+                               getActivity(), R.raw.retrostyle_json));
+
+               if (!success) {
+                   Log.e("MapsActivity", "Style parsing failed.");
+               }
+           } catch (Resources.NotFoundException e) {
+               Log.e("MapsActivity", "Can't find style.", e);
+           }
+       }
+       daymode = !daymode;
     }
     protected void loadMap(GoogleMap googleMap) {
         map = googleMap;
