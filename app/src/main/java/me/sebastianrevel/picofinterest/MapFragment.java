@@ -2,6 +2,7 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -90,6 +93,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
     Switch swStyle; // this is the button to change the mapstyle
+    Button btnLogout; // this is the button to log out
     boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -299,6 +303,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @Override
     public void onViewCreated(View view, Bundle SavedInstanceState) {
+        // initialize the switch and set listener so that when it's "checked" (clicked), map style changes from night to day or vice versa
         swStyle = (Switch) view.findViewById(R.id.swStyle);
         swStyle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -307,6 +312,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         });
 
+        // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
+        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
+
+    }
+
+    private void logout(){
+        ParseUser.logOutInBackground();
+        // want to go to Log In (main) Activity with intent after successful log out
+        final Intent intent = new Intent(this.getActivity(), LoginActivity.class);
+        startActivity(intent);
     }
 
     private void addPins(ArrayList<LatLng> points) {
