@@ -48,6 +48,9 @@ dependencies {
     // to remove lint error, found in .idea/libraries
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
     // use Picasso for marker frame
     implementation 'com.squareup.picasso:picasso:2.71828'
 

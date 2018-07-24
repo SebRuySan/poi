@@ -43,6 +43,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.SphericalUtil;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -56,6 +57,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
@@ -71,8 +73,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     RecyclerView.LayoutManager lm;
     static ArrayList<Pics> arrayList = new ArrayList<>();
     static TextView location;
+    static String address;
 
-    Fragment mapFragment = new MapFragment();
+    private static int mRadius = 15;
+    private static int mTimeframe = 5;
+
+    static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
 
     GPSTracker gps; // to get location of pics taken with camera
@@ -185,9 +191,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         LatLng pos = m.getPosition();
         final Double lat = pos.latitude;
         final Double lon = pos.longitude;
+
         List<Address> listAddresses = g.getFromLocation(lat, lon, 1);
-        String address = listAddresses.get(0).getAddressLine(0);
-        location.setText(address);
+        address = listAddresses.get(0).getAddressLine(0);
+
+        if (mRadius > 1) {
+            location.setText(address + "\nShowing results for "
+                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                    + "\n\t and up to " + mRadius + " miles away.");
+        } else {
+            location.setText(address + "\nShowing results for "
+                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                    + "\n\t and within walking distance.");
+        }
+
         final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
         query.findInBackground(new FindCallback<Pics>() {
             @Override
@@ -199,17 +216,28 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Log.d("CreateFragment", "Adding pics: " + objects.size());
                     }
 
+                    ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, mapFragment.mSearchLocation);
+
                     clear();
-                    arrayList.addAll(objects);
+
+                    if (picsInRadius.size() == 0) {
+                        //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
+                        arrayList.addAll(picsInRadius);
+                    } else {
+                        arrayList.addAll(objects);
+                    }
+
                     adapter.notifyDataSetChanged();
                 } else {
                     e.printStackTrace();
                 }
             }
         });
+
         Log.e("ADDRESS", address);
         dl.openDrawer(Gravity.LEFT);
     }
+
     public void loadGeoPics(String address) {
         final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
         query.findInBackground(new FindCallback<Pics>() {
@@ -636,10 +664,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(String input) {
+    public void sendFilterInput(int radius, int timeframe) {
         Log.d("MainActivity", "sendFilterInput: got the input");
-        Toast.makeText(this, input, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
+        mRadius = radius;
+        mTimeframe = timeframe;
+        mapFragment.setRadius(radius);
+        mapFragment.setTimeframe(timeframe);
+
+        if (mRadius > 1) {
+            location.setText(address + "\nShowing results for "
+                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                    + "\n\t and up to " + mRadius + " miles away.");
+        } else {
+            location.setText(address + "\nShowing results for "
+                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                    + "\n\t and within walking distance.");
+        }
     }
 
     public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {

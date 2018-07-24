@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.graphics.Matrix;
+
+import com.google.maps.android.SphericalUtil;
 import com.parse.ParseException;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -57,6 +59,7 @@ import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -78,8 +81,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     MapView mMapView;
     private static GoogleMap map;
     private OnFragmentInteractionListener mListener;
+    private static int mRadius = 15;
+    private int mTimeframe = 5;
 
-    Location mCurrentLocation;
+    static Location mCurrentLocation;
+    static Location mSearchLocation;
     private LocationRequest mLocationRequest;
 
     private final static String KEY_LOCATION = "location";
@@ -97,6 +103,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
             mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            mSearchLocation = mCurrentLocation;
         }
 
         mMapView = rootView.findViewById(R.id.mapView);
@@ -131,7 +138,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 addPins(points);*/
 
                 // Define the class we would like to Query
-                ParseQuery<Pics> query =ParseQuery.getQuery(Pics.class);
+                ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
                 // get all posts
                 final Set<String> locs = new HashSet<String>(); // this will contain a no-duplicate set of locations hwere pictures have been taken
                 final ArrayList<Pics> pictures = new ArrayList<>(); // this will contain a list of Pics (filtered so that it only contains the most recent picture taken at each location)
@@ -143,14 +150,30 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         // if no errors
                         if(e == null){
                             Log.d("MapFragment", "No errors in querying");
-                            for(Pics p: itemList){
-                                boolean added = locs.add(p.getLocation());
-                                Log.d("MapFragment", "Attempt to add to pictures");
-                                if(added) {
-                                    pictures.add(p);
-                                    Log.d("MapFragment", "Item added to pictures");
+
+                            if (mCurrentLocation != null) {
+                                ArrayList<Pics> filteredList = filterList(itemList, mCurrentLocation);
+
+                                for (Pics p : filteredList) {
+                                    boolean added = locs.add(p.getLocation());
+                                    Log.d("MapFragment", "Attempt to add to pictures");
+
+                                    if (added) {
+                                        pictures.add(p);
+                                        Log.d("MapFragment", "Item added to pictures");
+                                    }
+                                }
+                            } else {
+                                for (Pics p : itemList) {
+                                    boolean added = locs.add(p.getLocation());
+                                    Log.d("MapFragment", "Attempt to add to pictures");
+                                    if (added) {
+                                        pictures.add(p);
+                                        Log.d("MapFragment", "Item added to pictures");
+                                    }
                                 }
                             }
+
                             Log.d("MapFragment", "Pictures array size1 : " + pictures.size());
                             Place place;
                             // after all pictures have been added, add markers there
@@ -258,6 +281,41 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return rootView;
     }
 
+    public static void loadAll() {
+
+    }
+
+    public static ArrayList<Pics> filterList (List<Pics> toFiler, Location fromLoc) {
+        ArrayList<Pics> filtered = new ArrayList<>();
+
+        if (fromLoc != null) {
+            LatLng from = new LatLng(fromLoc.getLatitude(), fromLoc.getLongitude());
+            for (Pics p : toFiler) {
+                LatLng to = new LatLng(p.getLat(), p.getLong());
+                double distanceMeters = SphericalUtil.computeDistanceBetween(from, to);
+                double distanceMiles = distanceMeters * 0.00062137;
+
+                if (distanceMiles <= mRadius) {
+                    filtered.add(p);
+                }
+            }
+        }
+
+        if (filtered != null) {
+            return filtered;
+        } else {
+            return (ArrayList<Pics>) toFiler;
+        }
+    }
+
+    public void setRadius(int radius) {
+        this.mRadius = radius;
+    }
+
+    public void setTimeframe(int timeframe) {
+        this.mTimeframe = timeframe;
+    }
+
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
@@ -309,8 +367,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         //.snippet("test address")
                 );
                 Log.d("MapFragment", "Marker created");
-                map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
-                map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
                 Log.d("MapFragment", "Camera zoomed in hopefully");
             }
 
@@ -383,7 +441,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
 
-        map.addMarker(markerOptions);
+        //map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
@@ -564,6 +622,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         // report to the UI that the location was updated
         mCurrentLocation = location;
+        mSearchLocation = mCurrentLocation;
         String msg = "Updated Location: "
                 + Double.toString(location.getLatitude()) + ","
                 + Double.toString(location.getLongitude());

@@ -9,38 +9,97 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="225dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:padding="10dp">
 
         <TextView
             android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Adjust Filters"
+            android:text="Set Filters"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
-        <TextView
+        <Switch
+            android:id="@+id/switchDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OK"
+            android:layout_below="@+id/heading"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="-79dp"
+            android:layout_marginTop="15dp"
+            android:text="Show results for selected location only"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <Switch
+            android:id="@+id/switchDistance2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/switchDistance"
+            android:layout_marginTop="88dp"
+            android:text="Within Walking Distance"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <TextView
+            android:id="@+id/tvRadius"
+            android:layout_width="134dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/switchDistance2"
+            android:text="Radius: 15 mi"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <SeekBar
+            android:id="@+id/sbRadius"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/heading"
+            android:layout_below="@+id/switchDistance2"
+            android:max="50"
+            android:min="1"
+            android:progress="15" />
+
+        <TextView
+            android:id="@+id/tvTimeframe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/heading"
+            android:layout_below="@+id/switchDistance"
+            android:text="Timeframe:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <Spinner
+            android:id="@+id/spinnerTime"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/heading"
+            android:layout_below="@+id/tvRadius"
+            android:spinnerMode="dropdown" />
+
+        <TextView
+            android:id="@+id/action_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:textSize="18sp"
+            android:text="OK"
             android:textColor="#33bbff"
-            android:id="@+id/action_ok" />
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/action_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CANCEL"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginRight="20dp"
-            android:textSize="18sp"
+            android:text="CANCEL"
             android:textColor="#33bbff"
-            android:id="@+id/action_cancel" />
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
