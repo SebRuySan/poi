@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -86,6 +87,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
+
+    Button btnStyle;
 
     public MapFragment() {
         // Required empty public constructor
@@ -288,11 +291,38 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle SavedInstanceState) {
+        btnStyle = (Button) view.findViewById(R.id.btnStyle);
+        btnStyle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeStyle();
+            }
+        });
+
+    }
+
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
     }
 
+    private void changeStyle(){
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getActivity(), R.raw.retrostyle_json));
+
+            if (!success) {
+                Log.e("MapsActivity", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapsActivity", "Can't find style.", e);
+        }
+    }
     protected void loadMap(GoogleMap googleMap) {
         map = googleMap;
 
