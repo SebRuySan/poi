@@ -1,7 +1,6 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -36,9 +34,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -47,19 +42,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.CollationElementIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -108,15 +100,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Log.e("TEST", "On create called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar(toolbar);
-
-        lm = new LinearLayoutManager(this);
-
-        rv.setLayoutManager(lm);
-
-        rv.setHasFixedSize(true);
-
         toolbar = findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
 
         rv = findViewById(R.id.recyclerView);
 
@@ -125,6 +110,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         dl = findViewById(R.id.drawerLayout);
 
         location = findViewById(R.id.location_tv);
+
+        lm = new LinearLayoutManager(MainActivity.this);
+
+        rv.setLayoutManager(lm);
+
+        rv.setHasFixedSize(true);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 

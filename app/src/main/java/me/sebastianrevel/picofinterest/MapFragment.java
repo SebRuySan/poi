@@ -2,13 +2,13 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
-import android.graphics.Matrix;
-import com.parse.ParseException;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +26,6 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -44,6 +43,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -113,8 +113,39 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                // Customise the styling of the base map using a JSON object defined
+                // in a string resource file. First create a MapStyleOptions object
+                // from the JSON styles string, then pass this to the setMapStyle
+                // method of the GoogleMap object.
+//                boolean success = googleMap.setMapStyle(new MapStyleOptions(getResources()
+//                        .getString(R.string.nightstyle_json)));
+//
+//                if (!success) {
+//                    Log.e("Map Fragment", "Style parsing failed.");
+//                }
+                try {
+                    // Customise the styling of the base map using a JSON object defined
+                    // in a raw resource file.
+                    boolean success = googleMap.setMapStyle(
+                            MapStyleOptions.loadRawResourceStyle(
+                                    getActivity(), R.raw.style_json));
+
+                    if (!success) {
+                        Log.e("MapsActivity", "Style parsing failed.");
+                    }
+                } catch (Resources.NotFoundException e) {
+                    Log.e("MapsActivity", "Can't find style.", e);
+                }
+
+
                 loadMap(googleMap);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                // Customise the styling of the base map using a JSON object defined
+                // in a string resource file. First create a MapStyleOptions object
+                // from the JSON styles string, then pass this to the setMapStyle
+                // method of the GoogleMap object.
+
 
                 //this part is harcoded for testing purposes
                 /*ArrayList<LatLng> points = new ArrayList<>();
@@ -492,9 +523,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 MainActivity.drawerOpen(marker, geocoder);
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
         }
 
         return false;
