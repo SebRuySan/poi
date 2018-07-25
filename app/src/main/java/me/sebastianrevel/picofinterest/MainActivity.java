@@ -2,6 +2,7 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -88,12 +89,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
     private Button uploadBtn;
-    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
+    private Button likeBtn;
+    public static Boolean isLiked = false;
+
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_GALLERY = 2;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
+    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
 
@@ -108,23 +112,30 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Log.e("TEST", "On create called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.toolBar);
+
         setSupportActionBar(toolbar);
 
+        dl = findViewById(R.id.drawerLayout);
+
+        uploadBtn = findViewById(R.id.upload_btn);
+
+        // likeBtn = findViewById(R.id.like_btn);
+
+        location = findViewById(R.id.location_tv);
+
         lm = new LinearLayoutManager(this);
+
+        rv = findViewById(R.id.recyclerView);
 
         rv.setLayoutManager(lm);
 
         rv.setHasFixedSize(true);
 
-        toolbar = findViewById(R.id.toolBar);
+        // likeSwitch();
 
-        rv = findViewById(R.id.recyclerView);
 
-        uploadBtn = findViewById(R.id.upload_btn);
-
-        dl = findViewById(R.id.drawerLayout);
-
-        location = findViewById(R.id.location_tv);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 
@@ -178,6 +189,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
             }
         });
+
+//        likeBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                likeSwitch();
+//            }
+//        });
 
 
         // initialize autocomplete search bar fragment and set a listener
@@ -415,6 +433,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                     pic.setPic(pFile);
 
+                                    pic.setLikes(0);
+
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
@@ -465,6 +485,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     newPic.setLat(latitude);
 
                                     newPic.setLong(longitude);
+
+                                    newPic.setLikes(0);
 
                                     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -852,4 +874,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         adapter.notifyDataSetChanged();
 
     }
+//    public void likeSwitch() {
+//        if (isLiked) {
+//            likeBtn.setBackgroundResource(R.drawable.ic_star_off);
+//        } else {
+//            likeBtn.setBackgroundResource(R.drawable.ic_star_on);
+//        }
+//    }
 }

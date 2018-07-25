@@ -492,8 +492,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 MainActivity.drawerOpen(marker, geocoder);
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
 
@@ -564,7 +562,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         String msg = "Updated Location: "
                 + Double.toString(location.getLatitude()) + ","
                 + Double.toString(location.getLongitude());
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     /**

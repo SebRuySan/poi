@@ -1,10 +1,18 @@
 package me.sebastianrevel.picofinterest.Models;
 
+import android.util.Log;
+
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 @ParseClassName("Pics")
 public class Pics extends ParseObject {
@@ -13,6 +21,7 @@ public class Pics extends ParseObject {
     private static final String KEY_USER = "user";
     private static final String KEY_LAT = "lat";
     private static final String KEY_LONG = "long";
+    private static final String KEY_LIKE = "liked";
 
 //RuyG
     public String getLocation() {
@@ -38,6 +47,60 @@ public class Pics extends ParseObject {
     public void setLong(double longCoord) {
         put(KEY_LONG, longCoord);
     }
+
+    public void setLikes(int like) {put(KEY_LIKE, like);}
+
+    public List<String> getLike() {
+//        if (getList(KEY_LIKE) == null) {
+//            List<String> emptyList = Collections.emptyList();
+//            return emptyList;
+//        } else {
+            Log.d("PICS", "In getLike");
+            List<String> likedList = getList(KEY_LIKE);
+            Log.e("SIZE", String.valueOf(likedList.size()));
+           // Log.e("VALUE", String.valueOf(likedList.get(0)));
+            return likedList;
+        // }
+    }
+
+    public void setLike() {
+        put(KEY_LIKE, Collections.emptyList());
+    }
+
+    public void addLike(String username) {
+        List<String> likeList = getLike();
+        List<String> concatList = new ArrayList<>();
+        List<String> singleList = new ArrayList<>();
+        singleList.add(username);
+        concatList.addAll(singleList);
+        concatList.addAll(likeList);
+        Log.d("Pics", "Added Like");
+      //  List<String> newList = likeList.add(username);
+        put(KEY_LIKE, concatList);
+    }
+
+    //            for (String userList : likeList) {
+//                if (userList == username) {
+//
+//                }
+//            }
+
+
+
+    public void deleteLike(String username) {
+        Log.e("Pics", "Deleted Like");
+        List<String> likeList = getList(KEY_LIKE);
+        if (likeList != null) {
+            likeList.remove(username);
+            Log.e("USERDELETE", username);
+            put(KEY_LIKE, likeList);
+            Log.e("DELETESIZE", String.valueOf(likeList.size()));
+        } else {
+            likeList = Collections.emptyList();
+            put(KEY_LIKE, likeList);
+        }
+    }
+
 
 
     public ParseFile getPic() {
