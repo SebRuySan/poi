@@ -26,13 +26,13 @@ public class CircleBubbleTransformation implements com.squareup.picasso.Transfor
 
         Paint paintBorder = new Paint();
         paintBorder.setAntiAlias(true);
-        paintBorder.setColor(Color.parseColor("#4267B2"));
+        paintBorder.setColor(Color.parseColor("#ffffff"));
         paintBorder.setStrokeWidth(margin);
         canvas.drawCircle(r, r, r-margin, paintBorder);
 
         Paint trianglePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         trianglePaint.setStrokeWidth(2);
-        trianglePaint.setColor(Color.parseColor("#4267B2"));
+        trianglePaint.setColor(Color.parseColor("#ffffff"));
         trianglePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         trianglePaint.setAntiAlias(true);
         Path triangle = new Path();
