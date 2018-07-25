@@ -43,7 +43,6 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.maps.android.SphericalUtil;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -57,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static TextView location;
     static String address;
 
+    private static boolean mThisAddyOnly = true;
     private static int mRadius = 15;
     private static int mTimeframe = 5;
 
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private final static String TAG = "MainActivity";
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -188,51 +188,90 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public static void drawerOpen(Marker m, Geocoder g) throws IOException, ParseException {
-        LatLng pos = m.getPosition();
+        final LatLng pos = m.getPosition();
         final Double lat = pos.latitude;
         final Double lon = pos.longitude;
+
+        final LatLng latLng = new LatLng(lat, lon);
 
         List<Address> listAddresses = g.getFromLocation(lat, lon, 1);
         address = listAddresses.get(0).getAddressLine(0);
 
-        if (mRadius > 1) {
+        if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                    + "\n\t and up to " + mRadius + " miles away.");
-        } else {
-            location.setText(address + "\nShowing results for "
-                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                    + "\n\t and within walking distance.");
-        }
+                    + "\n\t at this address only.");
 
-        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
-        query.findInBackground(new FindCallback<Pics>() {
-            @Override
-            public void done(List<Pics> objects, ParseException e) {
-                if (e == null) {
-                    if (objects == null) {
-                        Log.d("CreateFragment", "Objects is null!");
+            final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
+            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            query.findInBackground(new FindCallback<Pics>() {
+                @Override
+                public void done(List<Pics> objects, ParseException e) {
+                    if (e == null) {
+                        if (objects == null) {
+                            Log.d("CreateFragment", "Objects is null!");
+                        } else {
+                            Log.d("CreateFragment", "Adding pics: " + objects.size());
+                        }
+
+                        ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, latLng);
+
+                        clear();
+
+                        if (picsInRadius.size() == 0) {
+                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
+                            arrayList.addAll(picsInRadius);
+                        } else {
+                            arrayList.addAll(objects);
+                        }
+
+                        adapter.notifyDataSetChanged();
                     } else {
-                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+                        e.printStackTrace();
                     }
-
-                    ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, mapFragment.mSearchLocation);
-
-                    clear();
-
-                    if (picsInRadius.size() == 0) {
-                        //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                        arrayList.addAll(picsInRadius);
-                    } else {
-                        arrayList.addAll(objects);
-                    }
-
-                    adapter.notifyDataSetChanged();
-                } else {
-                    e.printStackTrace();
                 }
+            });
+        } else {
+            if (mRadius > 1) {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and up to " + mRadius + " miles away.");
+            } else {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and within walking distance.");
             }
-        });
+
+            ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            query.findInBackground(new FindCallback<Pics>(){
+                public void done(List<Pics> itemList, ParseException e){
+                    Log.d(TAG, "Query done");
+                    Log.d(TAG, "ItemList array size : " + itemList.size());
+                    // if no errors
+                    if(e == null){
+                        Log.d(TAG, "No errors in querying");
+
+                        ArrayList<Pics> picsInRadius = MapFragment.filterList(itemList, latLng);
+
+                        clear();
+
+                        if (picsInRadius.size() == 0) {
+                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
+                            arrayList.addAll(picsInRadius);
+                        } else {
+                            arrayList.addAll(itemList);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    }
+                    else {
+                        Log.d("item", "Error: " + e.getMessage());
+                    }
+                }
+
+            });
+        }
 
         Log.e("ADDRESS", address);
         dl.openDrawer(Gravity.LEFT);
@@ -317,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                 newPic.setPic(parseFile);
                                 if (newPic.getPic() != null) {
                                     // if added include the coordinates of picture
-                                    Log.d("mainactivity", "there is a file returned");
+                                    Log.d(TAG, "there is a file returned");
                                     newPic.setLat(latitude);
                                     newPic.setLong(longitude);
                                     // now using coordinates, use geocoder get from location to get address of where picture was taken
@@ -569,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         @Override
                                         public void done(ParseException e) {
                                             if (e == null) { // no errors
-                                                Log.d("MainActivity", "Added Image success!");
+                                                Log.d(TAG, "Added Image success!");
                                                 Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 e.printStackTrace();
@@ -577,8 +616,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         }
                                     });
                                 } else
-                                    Log.d("mainactivity", "there is no file returned");
-                                Log.d("mainactivity", "Pic save requested");
+                                    Log.d(TAG, "there is no file returned");
+                                Log.d(TAG, "Pic save requested");
                             } else {
                                 e.printStackTrace();
                                 Log.d("Main Activity", "Pic save failed");
@@ -664,23 +703,30 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(int radius, int timeframe) {
-        Log.d("MainActivity", "sendFilterInput: got the input");
+    public void sendFilterInput(boolean thisAddyOnly, int radius, int timeframe) {
+        Log.d(TAG, "sendFilterInput: got the input");
         //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
+        mThisAddyOnly = thisAddyOnly;
         mRadius = radius;
         mTimeframe = timeframe;
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
-        if (mRadius > 1) {
+        if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                    + "\n\t and up to " + mRadius + " miles away.");
+                    + "\n\t at this address only.");
         } else {
-            location.setText(address + "\nShowing results for "
-                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                    + "\n\t and within walking distance.");
+            if (mRadius > 1) {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and up to " + mRadius + " miles away.");
+            } else {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and within walking distance.");
+            }
         }
     }
 

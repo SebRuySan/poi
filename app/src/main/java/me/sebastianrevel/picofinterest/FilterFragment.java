@@ -24,6 +24,7 @@ public class FilterFragment extends DialogFragment {
     private Switch mSwitchDistance2; // show results within walking distance
     private TextView mRadiusProgress;
     private SeekBar mRadiusBar;
+    private boolean mThisAddyOnly;
     private int mRadius;
     private Spinner mSpinnerTime;
     private int mTimeframe;
@@ -66,12 +67,15 @@ public class FilterFragment extends DialogFragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (!mSwitchDistance.isChecked()) {
+                    mThisAddyOnly = false;
+
                     mSwitchDistance2.setVisibility(View.VISIBLE);
                     mRadiusProgress.setVisibility(View.VISIBLE);
                     mRadiusBar.setVisibility(View.VISIBLE);
 
                     mSwitchDistance2.setChecked(false);
                 } else {
+                    mThisAddyOnly = true;
                     mRadius = 0;
 
                     mSwitchDistance2.setVisibility(View.GONE);
@@ -145,7 +149,7 @@ public class FilterFragment extends DialogFragment {
                 Log.d("FilterFragment", "onClick: capturing input");
 
                 // TODO: get and update filters
-                mOnFilterInputListener.sendFilterInput(mRadius, mTimeframe);
+                mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mRadius, mTimeframe);
 
                 getDialog().dismiss();
             }
@@ -166,7 +170,7 @@ public class FilterFragment extends DialogFragment {
     }
 
     public interface OnFilterInputListener {
-        void sendFilterInput(int radius, int timeframe);
+        void sendFilterInput(boolean thisAddyOnly, int radius, int timeframe);
     }
 
 }

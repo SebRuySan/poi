@@ -66,8 +66,9 @@
             android:id="@+id/tvTimeframe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/heading"
-            android:layout_below="@+id/switchDistance"
+            android:layout_alignParentStart="true"
+            android:layout_alignStart="@+id/switchDistance2"
+            android:layout_alignTop="@+id/spinnerTime"
             android:text="Timeframe:"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 

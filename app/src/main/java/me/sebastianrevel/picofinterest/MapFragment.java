@@ -152,7 +152,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             Log.d("MapFragment", "No errors in querying");
 
                             if (mCurrentLocation != null) {
-                                ArrayList<Pics> filteredList = filterList(itemList, mCurrentLocation);
+                                LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                                ArrayList<Pics> filteredList = filterList(itemList, current);
 
                                 for (Pics p : filteredList) {
                                     boolean added = locs.add(p.getLocation());
@@ -281,18 +282,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return rootView;
     }
 
-    public static void loadAll() {
-
-    }
-
-    public static ArrayList<Pics> filterList (List<Pics> toFiler, Location fromLoc) {
+    public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
         ArrayList<Pics> filtered = new ArrayList<>();
 
         if (fromLoc != null) {
-            LatLng from = new LatLng(fromLoc.getLatitude(), fromLoc.getLongitude());
             for (Pics p : toFiler) {
                 LatLng to = new LatLng(p.getLat(), p.getLong());
-                double distanceMeters = SphericalUtil.computeDistanceBetween(from, to);
+                double distanceMeters = SphericalUtil.computeDistanceBetween(fromLoc, to);
                 double distanceMiles = distanceMeters * 0.00062137;
 
                 if (distanceMiles <= mRadius) {
