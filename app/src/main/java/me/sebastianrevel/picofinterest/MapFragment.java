@@ -117,6 +117,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             e.printStackTrace();
         }
 
+
+
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -545,13 +547,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         if (marker != null) {
             //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
-            try {
-                MainActivity.drawerOpen(marker, geocoder);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+
+            MainActivity.drawerOpen(marker, geocoder);
+
         }
 
         return false;

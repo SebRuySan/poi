@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -73,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static TextView location;
     static String address;
 
+    static Marker mMarker;
+    static Geocoder mGeocoder;
+
     private static boolean mThisAddyOnly = true;
     private static int mRadius = 15;
     private static int mTimeframe = 5;
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
-    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
+    private SwipeRefreshLayout swipeContainer;
 
     private final static String KEY_LOCATION = "location";
     private final static double CURRENT_LATITUDE = 47.629157;
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
-
+    private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
     public final String APP_TAG = "MyCustomApp";
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
@@ -126,15 +131,38 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //        }
 
         adapter = new PicAdapter(arrayList);
-
         rv.setAdapter(adapter);
 
         drawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.drawer_open, R.string.drawer_close);
-
         dl.addDrawerListener(drawerToggle);
 
         clear();
-        loadAll();
+//        try {
+//            loadAll();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+        swipeContainer = findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                clear();
+                try {
+                    loadAll();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright);
 
         if (TextUtils.isEmpty(getResources().getString(R.string.google_maps_api_key))) {
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
@@ -187,90 +215,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     }
 
-    public static void drawerOpen(Marker m, Geocoder g) throws IOException, ParseException {
-        final LatLng pos = m.getPosition();
-        final Double lat = pos.latitude;
-        final Double lon = pos.longitude;
+    public static void drawerOpen(Marker m, Geocoder g) {
+        mMarker = m;
+        mGeocoder = g;
 
-        final LatLng latLng = new LatLng(lat, lon);
-
-        List<Address> listAddresses = g.getFromLocation(lat, lon, 1);
-        address = listAddresses.get(0).getAddressLine(0);
-
-        if (mThisAddyOnly) {
-            location.setText(address + "\nShowing results for "
-                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                    + "\n\t at this address only.");
-
-            final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
-            query.findInBackground(new FindCallback<Pics>() {
-                @Override
-                public void done(List<Pics> objects, ParseException e) {
-                    if (e == null) {
-                        if (objects == null) {
-                            Log.d("CreateFragment", "Objects is null!");
-                        } else {
-                            Log.d("CreateFragment", "Adding pics: " + objects.size());
-                        }
-
-                        ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, latLng);
-
-                        clear();
-
-                        if (picsInRadius.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(picsInRadius);
-                        } else {
-                            arrayList.addAll(objects);
-                        }
-
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        } else {
-            if (mRadius > 1) {
-                location.setText(address + "\nShowing results for "
-                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                        + "\n\t and up to " + mRadius + " miles away.");
-            } else {
-                location.setText(address + "\nShowing results for "
-                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
-                        + "\n\t and within walking distance.");
-            }
-
-            ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
-            query.findInBackground(new FindCallback<Pics>(){
-                public void done(List<Pics> itemList, ParseException e){
-                    Log.d(TAG, "Query done");
-                    Log.d(TAG, "ItemList array size : " + itemList.size());
-                    // if no errors
-                    if(e == null){
-                        Log.d(TAG, "No errors in querying");
-
-                        ArrayList<Pics> picsInRadius = MapFragment.filterList(itemList, latLng);
-
-                        clear();
-
-                        if (picsInRadius.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(picsInRadius);
-                        } else {
-                            arrayList.addAll(itemList);
-                        }
-
-                        adapter.notifyDataSetChanged();
-                    }
-                    else {
-                        Log.d("item", "Error: " + e.getMessage());
-                    }
-                }
-
-            });
+        try {
+            loadAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         Log.e("ADDRESS", address);
@@ -770,26 +724,118 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //            }
 //        });
 //    }
-    public void loadAll() {
-        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
-        query.findInBackground(new FindCallback<Pics>() {
-            @Override
-            public void done(List<Pics> objects, ParseException e) {
-                if (e == null) {
-                    if (objects == null) {
-                        Log.d("CreateFragment", "Objects is null!");
-                    } else {
-                        Log.d("CreateFragment", "Adding pics: " + objects.size());
-                    }
+    public static void loadAll() throws IOException, ParseException {
+//        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+//        query.findInBackground(new FindCallback<Pics>() {
+//            @Override
+//            public void done(List<Pics> objects, ParseException e) {
+//                if (e == null) {
+//                    if (objects == null) {
+//                        Log.d("CreateFragment", "Objects is null!");
+//                    } else {
+//                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+//                    }
+//
+//                    clear();
+//                    arrayList.addAll(objects);
+//                    adapter.notifyDataSetChanged();
+//                } else {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+        LatLng pos;
+        pos = mMarker.getPosition();
+//        if (mMarker != null && mGeocoder != null) {
+//            pos = mMarker.getPosition();
+//        } else {
+//            Location loc = mapFragment.mCurrentLocation;
+//            pos = new LatLng(loc.latitude, loc.getLongitude());
+//        }
 
-                    clear();
-                    arrayList.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    e.printStackTrace();
+        final Double lat = pos.latitude;
+        final Double lon = pos.longitude;
+
+        final LatLng latLng = new LatLng(lat, lon);
+
+        List<Address> listAddresses = mGeocoder.getFromLocation(lat, lon, 1);
+        address = listAddresses.get(0).getAddressLine(0);
+
+        if (mThisAddyOnly) {
+            location.setText(address + "\nShowing results for "
+                    + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                    + "\n\t at this address only.");
+
+            final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
+            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            query.findInBackground(new FindCallback<Pics>() {
+                @Override
+                public void done(List<Pics> objects, ParseException e) {
+                    if (e == null) {
+                        if (objects == null) {
+                            Log.d("CreateFragment", "Objects is null!");
+                        } else {
+                            Log.d("CreateFragment", "Adding pics: " + objects.size());
+                        }
+
+                        ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, latLng);
+
+                        clear();
+
+                        if (picsInRadius.size() == 0) {
+                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
+                            arrayList.addAll(picsInRadius);
+                        } else {
+                            arrayList.addAll(objects);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        e.printStackTrace();
+                    }
                 }
+            });
+        } else {
+            if (mRadius > 1) {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and up to " + mRadius + " miles away.");
+            } else {
+                location.setText(address + "\nShowing results for "
+                        + FilterFragment.timeframes[mTimeframe].toLowerCase()
+                        + "\n\t and within walking distance.");
             }
-        });
+
+            ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            query.findInBackground(new FindCallback<Pics>(){
+                public void done(List<Pics> itemList, ParseException e){
+                    Log.d(TAG, "Query done");
+                    Log.d(TAG, "ItemList array size : " + itemList.size());
+                    // if no errors
+                    if(e == null){
+                        Log.d(TAG, "No errors in querying");
+
+                        ArrayList<Pics> picsInRadius = MapFragment.filterList(itemList, latLng);
+
+                        clear();
+
+                        if (picsInRadius.size() == 0) {
+                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
+                            arrayList.addAll(picsInRadius);
+                        } else {
+                            arrayList.addAll(itemList);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                    }
+                    else {
+                        Log.d("item", "Error: " + e.getMessage());
+                    }
+                }
+
+            });
+        }
     }
     public static void clear() {
         arrayList.clear();

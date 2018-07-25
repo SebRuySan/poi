@@ -17,6 +17,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+
+import java.io.IOException;
+
 
 public class FilterFragment extends DialogFragment {
 
@@ -150,6 +154,14 @@ public class FilterFragment extends DialogFragment {
 
                 // TODO: get and update filters
                 mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mRadius, mTimeframe);
+                MainActivity.clear();
+                try {
+                    MainActivity.loadAll();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
                 getDialog().dismiss();
             }
