@@ -183,7 +183,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 query.findInBackground(new FindCallback<Pics>(){
                     public void done(List<Pics> itemList, ParseException e){
                         Log.d("MapFragment", "Query done");
-                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                       // Log.d("MapFragment", "ItemList array size : " + itemList.size());
                         // if no errors
                         if(e == null){
                             Log.d("MapFragment", "No errors in querying");

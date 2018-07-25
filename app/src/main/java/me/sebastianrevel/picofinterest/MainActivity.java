@@ -1,8 +1,6 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
     private Button uploadBtn;
-    private Button likeBtn;
-    public static Boolean isLiked = false;
 
 
     // activity request code to store image
@@ -127,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
 
         // likeSwitch();
-
 
 
         lm = new LinearLayoutManager(MainActivity.this);
@@ -432,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                     pic.setPic(pFile);
 
-                                    pic.setLikes(0);
+                                    pic.setLike();
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -475,8 +470,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (null == e) {
 
                                 newPic.setPic(parseFile);
+                                Log.e("PARSE", "INSIDE FIRST IF");
 
                                 if (newPic.getPic() != null) {
+                                    Log.e("PARSE", "INSIDE SECOND IF");
 
                                     // if added include the coordinates of picture
                                     Log.d("mainactivity", "there is a file returned");
@@ -485,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                     newPic.setLong(longitude);
 
-                                    newPic.setLikes(0);
+                                    newPic.setLike();
 
                                     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -762,8 +759,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                             }
                                         }
                                     });
-                                }
-                                else
+                                } else
                                     Log.d("mainactivity", "there is no file returned");
 
                                 Log.d("mainactivity", "Pic save requested");

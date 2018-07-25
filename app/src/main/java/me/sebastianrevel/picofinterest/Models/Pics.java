@@ -8,10 +8,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @ParseClassName("Pics")
@@ -48,7 +46,6 @@ public class Pics extends ParseObject {
         put(KEY_LONG, longCoord);
     }
 
-    public void setLikes(int like) {put(KEY_LIKE, like);}
 
     public List<String> getLike() {
 //        if (getList(KEY_LIKE) == null) {

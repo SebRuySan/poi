@@ -13,16 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.parse.FindCallback;
-import com.parse.ParseFile;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
@@ -54,9 +50,11 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
 
         // set text of the imageviews for each "pics" object with it's poster's username and userscore
         try {
-           recyclerViewHolder.tvUsername.setText("@" + pic.getUser().fetchIfNeeded().getString("username"));
-        //   recyclerViewHolder.tvUserScore.setText("User Score: " + pic.getUser().fetchIfNeeded().getNumber("UserScore"));
-           recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
+            recyclerViewHolder.tvUsername.setText("@" + pic.getUser().fetchIfNeeded().getString("username"));
+            //   recyclerViewHolder.tvUserScore.setText("User Score: " + pic.getUser().fetchIfNeeded().getNumber("UserScore"));
+            recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
+        } catch (NullPointerException e){
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
