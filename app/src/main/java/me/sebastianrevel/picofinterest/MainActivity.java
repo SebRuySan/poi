@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static Geocoder mGeocoder;
 
     private static boolean mThisAddyOnly = true;
-    private static int mRadius = 15;
-    private static int mTimeframe = 5;
+    public static int mRadius = 15;
+    public static int mTimeframe = 5;
 
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;

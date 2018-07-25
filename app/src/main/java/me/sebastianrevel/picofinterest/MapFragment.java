@@ -2,6 +2,7 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -78,7 +79,7 @@ import static com.parse.Parse.getApplicationContext;
 @RuntimePermissions
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 
-    MapView mMapView;
+    static MapView mMapView;
     private static GoogleMap map;
     private OnFragmentInteractionListener mListener;
     private static int mRadius = 15;
@@ -87,6 +88,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     static Location mCurrentLocation;
     static Location mSearchLocation;
     private LocationRequest mLocationRequest;
+
+    private static Context context;
+    private static MapFragment thisMapFrag;
 
     private final static String KEY_LOCATION = "location";
     private static final int MY_CAMERA_REQUEST_CODE = 100;
@@ -117,8 +121,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             e.printStackTrace();
         }
 
+        context = getContext();
+        thisMapFrag = MapFragment.this;
+        showMap();
+            //dropPinEffect(marker);
 
 
+
+        return rootView;
+    }
+
+    public static void showMap() {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -275,13 +288,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
-
-
-            //dropPinEffect(marker);
-
-
-
-        return rootView;
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
@@ -319,15 +325,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             addMarker(p);
     }
 
-    protected void loadMap(GoogleMap googleMap) {
+    protected static void loadMap(GoogleMap googleMap) {
         map = googleMap;
 
         if (map != null) {
             // Map is ready
             //Toast.makeText(getContext(), "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
 
-            MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(this);
-            MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(this);
+            MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(thisMapFrag);
+            MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(thisMapFrag);
             //map.setOnMapClickListener(this);
 
             if (mCurrentLocation != null) {
@@ -346,10 +352,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
             }
         } else {
-            Toast.makeText(getContext(), "Error - Map was null!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error - Map was null!", Toast.LENGTH_SHORT).show();
         }
 
-        map.setOnMarkerClickListener(this);
+        map.setOnMarkerClickListener(thisMapFrag);
 
     }
 

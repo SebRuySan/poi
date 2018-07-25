@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.parse.ParseException;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 public class FilterFragment extends DialogFragment {
@@ -66,6 +67,9 @@ public class FilterFragment extends DialogFragment {
         mSpinnerTime = view.findViewById(R.id.spinnerTime);
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOk = view.findViewById(R.id.action_ok);
+
+        mRadiusBar.setProgress(MainActivity.mRadius);
+        mRadiusProgress.setText("Radius: " + MainActivity.mRadius + " mi");
 
         mSwitchDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -155,6 +159,7 @@ public class FilterFragment extends DialogFragment {
                 // TODO: get and update filters
                 mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mRadius, mTimeframe);
                 MainActivity.clear();
+
                 try {
                     MainActivity.loadAll();
                 } catch (IOException e) {
@@ -163,6 +168,7 @@ public class FilterFragment extends DialogFragment {
                     e.printStackTrace();
                 }
 
+                MapFragment.showMap();
                 getDialog().dismiss();
             }
         });
