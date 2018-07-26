@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             @Override
             public void onPlaceSelected(Place place) {
                 // add a marker at place selected (from search bar)
-                MapFragment.goToSearchedPlace(place);
+                mapFragment.goToSearchedPlace(place);
 
                 Log.d("Maps", "Place selected: " + place.getName());
             }
@@ -556,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                             }
                                         };
                                     }
-                                    MapFragment.addMarker(place, parseFile);
+                                    mapFragment.addMarker(place, parseFile);
                                     // save the picture to parse
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -724,32 +724,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //            }
 //        });
 //    }
-    public static void loadAll() throws IOException, ParseException {
-//        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
-//        query.findInBackground(new FindCallback<Pics>() {
-//            @Override
-//            public void done(List<Pics> objects, ParseException e) {
-//                if (e == null) {
-//                    if (objects == null) {
-//                        Log.d("CreateFragment", "Objects is null!");
-//                    } else {
-//                        Log.d("CreateFragment", "Adding pics: " + objects.size());
-//                    }
-//
-//                    clear();
-//                    arrayList.addAll(objects);
-//                    adapter.notifyDataSetChanged();
-//                } else {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+    public static void loadAll() throws IOException, ParseException { ;
         LatLng pos;
 
         if (mMarker != null) {
+            Log.e("NULL?", "We are null");
             pos = mMarker.getPosition();
+            mapFragment.setmSearchLocation(pos.latitude, pos.longitude);
         } else {
-            Location loc = mapFragment.mCurrentLocation;
+            Location loc = mapFragment.mSearchLocation;
             pos = new LatLng(loc.getLatitude(), loc.getLongitude());
         }
 
@@ -780,7 +763,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             Log.d("CreateFragment", "Adding pics: " + objects.size());
                         }
 
-                        ArrayList<Pics> picsInRadius = MapFragment.filterList(objects, latLng);
+                        ArrayList<Pics> picsInRadius = mapFragment.filterList(objects, latLng);
 
                         clear();
 
@@ -818,7 +801,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     if(e == null){
                         Log.d(TAG, "No errors in querying");
 
-                        ArrayList<Pics> picsInRadius = MapFragment.filterList(itemList, latLng);
+                        ArrayList<Pics> picsInRadius = mapFragment.filterList(itemList, latLng);
 
                         clear();
 

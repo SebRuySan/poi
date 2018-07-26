@@ -90,10 +90,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private static int mRadius = 15;
     private int mTimeframe = 5;
     private static Circle radiusCircle;
-    private static boolean hasZoomed = false;
+    private static float zoomLevel;
 
     static Location mCurrentLocation;
-    public static Location mSearchLocation;
+    static Location mSearchLocation;
     private LocationRequest mLocationRequest;
 
     private static Context context;
@@ -282,8 +282,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             if (mSearchLocation != null) {
                                 LatLng currentCoordinates = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
                                 map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
-                                //float zoomLevel = (float)((double)mRadius / .7);
-                                float zoomLevel = (float)12.5;
+
+                                zoomLevel = (float)13.5;
+                                if (mRadius >= 2 && mRadius <= 8) {
+                                    zoomLevel = (float)12.5;
+                                } else if (mRadius > 8 && mRadius <= 15) {
+                                    zoomLevel = (float)9.5;
+                                } else if (mRadius > 15 && mRadius < 30) {
+                                    zoomLevel = (float)8.5;
+                                } else if (mRadius >= 30) { // max radius is 50
+                                    zoomLevel = (float)7.8;
+                                }
+
                                 map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
                                 hasZoomed = true;
 
@@ -307,6 +317,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
+    }
+
+    public static void setmSearchLocation(double lat, double lon) {
+        mSearchLocation.setLatitude(lat);
+        mSearchLocation.setLongitude(lon);
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
@@ -460,7 +475,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         mSearchLocation.setLongitude(p.getLatLng().longitude);
 
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+        map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
     }
 
     public static void addMarker(LatLng p){
@@ -473,7 +488,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(p));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+        map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
 
     }
 
@@ -503,7 +518,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         map.addMarker(markerOptions).showInfoWindow();
         map.moveCamera(CameraUpdateFactory.newLatLng(l));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+        map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
     }
     public static Bitmap rotateBitmapOrientation(String photoFilePath) {
         // Create and configure BitmapFactory
@@ -637,6 +652,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             // report to the UI that the location was updated
             mCurrentLocation = location;
             mSearchLocation = mCurrentLocation;
+        } else {
+            mCurrentLocation = location;
         }
 
         String msg = "Updated Location: "

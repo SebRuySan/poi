@@ -156,11 +156,10 @@ public class FilterFragment extends DialogFragment {
             public void onClick(View view) {
                 Log.d("FilterFragment", "onClick: capturing input");
 
-                // TODO: get and update filters
                 mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mRadius, mTimeframe);
-                MainActivity.clear();
 
                 try {
+                    MainActivity.clear();
                     MainActivity.loadAll();
                 } catch (IOException e) {
                     e.printStackTrace();
