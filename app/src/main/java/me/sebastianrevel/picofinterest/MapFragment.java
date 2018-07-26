@@ -113,7 +113,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     Switch swStyle; // this is the button to change the mapstyle
     Button btnLogout; // this is the button to log out
-    boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
+    static boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
         // Required empty public constructor
@@ -401,14 +401,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             addMarker(p);
     }
 
-    private void changeStyle(){
+    private static void changeStyle(){
         if(daymode){
             try {
                 // Customise the styling of the base map using a JSON object defined
                 // in a raw resource file.
                 boolean success = map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(
-                                getActivity(), R.raw.style_json));
+                        MapStyleOptions.loadRawResourceStyle(context, R.raw.style_json));
 
                 if (!success) {
                     Log.e("MapsActivity", "Style parsing failed.");
@@ -422,8 +421,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // Customise the styling of the base map using a JSON object defined
                 // in a raw resource file.
                 boolean success = map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(
-                                getActivity(), R.raw.retrostyle_json));
+                        MapStyleOptions.loadRawResourceStyle(context, R.raw.retrostyle_json));
 
                 if (!success) {
                     Log.e("MapsActivity", "Style parsing failed.");

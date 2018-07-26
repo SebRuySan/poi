@@ -1,6 +1,7 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -891,6 +893,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
 
         if (mThisAddyOnly) {
+            location.setTextSize(14);
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
                     + "\n\t at this address only.");
@@ -926,10 +929,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             });
         } else {
             if (mRadius > 1) {
+                location.setTextSize(14);
                 location.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and up to " + mRadius + " miles away.");
             } else {
+                location.setTextSize(14);
                 location.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and within walking distance.");
