@@ -36,7 +36,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
     public RecyclerViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int i) {
 
         context = parent.getContext();
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout, parent, false);
         RecyclerViewHolder viewHolder = new RecyclerViewHolder(view);
         return viewHolder;
     }
@@ -46,12 +46,10 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
         recyclerViewHolder.getAdapterPosition();
         // image load
         final Pics pic = arrayList.get(i);
-//        ParseUser user = pic.getUser();
 
         // set text of the imageviews for each "pics" object with it's poster's username and userscore
         try {
-            recyclerViewHolder.tvUsername.setText("@" + pic.getUser().fetchIfNeeded().getString("username"));
-            //   recyclerViewHolder.tvUserScore.setText("User Score: " + pic.getUser().fetchIfNeeded().getNumber("UserScore"));
+            recyclerViewHolder.tvUsername.setText( /*"@" + */ pic.getUser().fetchIfNeeded().getString("username"));
             recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
         } catch (NullPointerException e){
 
@@ -62,12 +60,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
 
         final Boolean liked = pic.getLike().contains(currentUserId);
 
-        //List<String> currentLikes = pic.getLike();
-//        final String currentLike = currentLikes.get(0);
-//
-//        Log.e("CURRENT LIKES", currentLike);
-//        Log.e("ARE EQUAL", String.valueOf((currentLike.equals(currentUserId))));
-//        Log.e("CURRENT USER", currentUserId);
+
 
         if (liked) {
             Log.e("LIKED", "ALREADY LIKED");
@@ -126,11 +119,6 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
                     });
                     notifyDataSetChanged();
                 }
-
-//                List<String> list = pic.getLike();
-//                for (int it = 0; it < pic.getLike().size(); it++) {
-//                    Log.d("LISTZ", list.get(it));
-//                }
             }
         });
 
@@ -154,7 +142,6 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
     public static class RecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView tvUsername;
-     //   TextView tvUserScore;
         TextView tvLikeCount;
         Button btnLike;
 
@@ -162,27 +149,9 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
             super(view);
             imageView = view.findViewById(R.id.imageView);
             tvUsername = view.findViewById(R.id.tvUsername);
-         //   tvUserScore = view.findViewById(R.id.tvUserScore);
             btnLike = view.findViewById(R.id.like_btn);
             tvLikeCount = view.findViewById(R.id.likeCounter);
 
         }
     }
-
-//    private void updateLike(final int adapterPosition) {
-//        /*Network Request code*/
-//// if success
-//        /*update the no. of likes or this card*/
-//// if fails, check first the status of 'liked', and revert the
-//// drawable to its previous state
-//        if (messagelist.get(adapterPosition).getIs_liked().equals("false"))
-//        {
-//            messagelist.get(getAdapterPosition()).setIs_liked("true");
-//            notifyItemChanged(adapterPosition, "prelike");
-//        } else {
-//            messagelist.get(getAdapterPosition()).setIs_liked("false");
-//            notifyItemChanged(adapterPosition, "preunlike");
-//        }
-
-
 }
