@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "810239460086",
+    "firebase_url": "https://picofinterest.firebaseio.com",
+    "project_id": "picofinterest",
+    "storage_bucket": "picofinterest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810239460086:android:d6f3ac50bc3fb28e",
+        "android_client_info": {
+          "package_name": "me.sebastianrevel.picofinterest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810239460086-816q2nnuof7v2nhvl53qs3fs3c045hsk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzkL_JZ7ZjYRhnfTsM1Dq_YHh-Q_vpPz0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

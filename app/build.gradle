@@ -58,6 +58,13 @@ dependencies {
     // use Picasso for marker frame
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    // some firebase dependency for push notifications
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+
+    // some google play dependency for push notifications
+    implementation "com.google.android.gms:play-services-gcm:15.0.0"
+    // on link it said 8.4.0, otherwise use 15.0.1
+
     implementation "com.google.android.gms:play-services-maps:$googlePlayVersion"
     implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
     implementation "com.google.android.gms:play-services-places:$googlePlayVersion"
@@ -74,3 +81,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+// also for push notifications
+apply plugin: 'com.google.gms.google-services'
