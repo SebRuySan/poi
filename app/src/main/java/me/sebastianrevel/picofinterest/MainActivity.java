@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             @Override
             public void onPlaceSelected(Place place) {
                 // add a marker at place selected (from search bar)
-                MapFragment.addMarker(place);
+                MapFragment.goToSearchedPlace(place);
 
                 Log.d("Maps", "Place selected: " + place.getName());
             }
@@ -745,21 +745,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //            }
 //        });
         LatLng pos;
-        pos = mMarker.getPosition();
-//        if (mMarker != null && mGeocoder != null) {
-//            pos = mMarker.getPosition();
-//        } else {
-//            Location loc = mapFragment.mCurrentLocation;
-//            pos = new LatLng(loc.latitude, loc.getLongitude());
-//        }
+
+        if (mMarker != null) {
+            pos = mMarker.getPosition();
+        } else {
+            Location loc = mapFragment.mCurrentLocation;
+            pos = new LatLng(loc.getLatitude(), loc.getLongitude());
+        }
 
         final Double lat = pos.latitude;
         final Double lon = pos.longitude;
 
         final LatLng latLng = new LatLng(lat, lon);
 
-        List<Address> listAddresses = mGeocoder.getFromLocation(lat, lon, 1);
-        address = listAddresses.get(0).getAddressLine(0);
+        if (mGeocoder != null) {
+            List<Address> listAddresses = mGeocoder.getFromLocation(lat, lon, 1);
+            address = listAddresses.get(0).getAddressLine(0);
+        }
 
         if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "

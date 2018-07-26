@@ -5,7 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.graphics.Matrix;
@@ -58,6 +60,9 @@ import com.parse.ParseQuery;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -84,9 +89,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private OnFragmentInteractionListener mListener;
     private static int mRadius = 15;
     private int mTimeframe = 5;
+    private static Circle radiusCircle;
+    private static boolean hasZoomed = false;
 
     static Location mCurrentLocation;
-    static Location mSearchLocation;
+    public static Location mSearchLocation;
     private LocationRequest mLocationRequest;
 
     private static Context context;
@@ -124,9 +131,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         context = getContext();
         thisMapFrag = MapFragment.this;
         showMap();
-            //dropPinEffect(marker);
-
-
 
         return rootView;
     }
@@ -166,8 +170,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         if(e == null){
                             Log.d("MapFragment", "No errors in querying");
 
-                            if (mCurrentLocation != null) {
-                                LatLng current = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                            if (mSearchLocation != null) {
+                                LatLng current = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
                                 ArrayList<Pics> filteredList = filterList(itemList, current);
 
                                 for (Pics p : filteredList) {
@@ -271,13 +275,28 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                         return false;
                                     }
                                 };
+
                                 addMarker(place, p.getPic());
                             }
 
-                            if (mCurrentLocation != null) {
-                                LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                            if (mSearchLocation != null) {
+                                LatLng currentCoordinates = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
                                 map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
-                                map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                                //float zoomLevel = (float)((double)mRadius / .7);
+                                float zoomLevel = (float)12.5;
+                                map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
+                                hasZoomed = true;
+
+                                if (radiusCircle != null) {
+                                    radiusCircle.remove();
+                                }
+
+                                CircleOptions circleOptions = new CircleOptions()
+                                        .center(currentCoordinates)
+                                        .radius((double)mRadius / 0.00062137)
+                                        .strokeWidth(10)
+                                        .strokeColor(Color.WHITE);
+                                radiusCircle = map.addCircle(circleOptions);
                             }
                         }
                         else {
@@ -336,10 +355,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(thisMapFrag);
             //map.setOnMapClickListener(this);
 
-            if (mCurrentLocation != null) {
+            if (mSearchLocation != null) {
                 BitmapDescriptor defaultMarker =
                         BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-                LatLng currentCoordinates = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+                LatLng currentCoordinates = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
                 Marker marker = map.addMarker(new MarkerOptions()
                         .position(currentCoordinates)
                         .title("Current Location")
@@ -436,16 +455,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         */
     }
 
-    public static void addMarker(Place p){
+    public static void goToSearchedPlace(Place p){
+        mSearchLocation.setLatitude(p.getLatLng().latitude);
+        mSearchLocation.setLongitude(p.getLatLng().longitude);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        markerOptions.position(p.getLatLng());
-        markerOptions.title(p.getName()+"");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-
-
-        //map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
@@ -620,9 +633,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             return;
         }
 
-        // report to the UI that the location was updated
-        mCurrentLocation = location;
-        mSearchLocation = mCurrentLocation;
+        if (mSearchLocation == mCurrentLocation) {
+            // report to the UI that the location was updated
+            mCurrentLocation = location;
+            mSearchLocation = mCurrentLocation;
+        }
+
         String msg = "Updated Location: "
                 + Double.toString(location.getLatitude()) + ","
                 + Double.toString(location.getLongitude());
