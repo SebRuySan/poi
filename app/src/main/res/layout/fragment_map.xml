@@ -12,4 +12,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <Switch
+        android:id="@+id/swStyle"
+        android:layout_width="143dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="27dp"
+        android:layout_marginStart="12dp"
+        android:checked="true"
+        android:showText="true"
+        android:splitTrack="true"
+        android:text="Mode:"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textOff="Night"
+        android:textOn="Day"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:checked="true" />
+
+    <Button
+        android:id="@+id/btnLogOut"
+        android:layout_width="70dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="59dp"
+        android:background="@android:color/transparent"
+        android:text="Sign Out"
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
+
 </RelativeLayout>

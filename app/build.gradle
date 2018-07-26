@@ -31,28 +31,45 @@ ext {
     permissionDispatcherVersion = "3.2.0"
     supportLibVersion = "27.1.1"
     googlePlayVersion = "15.0.0"
+    parseVersion = "1.17.3"
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //for login and sign up
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
+
+    //cardview
+    implementation 'com.android.support:cardview-v7:28.0.0-alpha3'
 
     implementation 'com.parse.bolts:bolts-android:1.4.0'
-    implementation 'com.parse:parse-android:1.17.3'
+    implementation "com.parse:parse-android:$parseVersion"
+    implementation "com.parse:parse-fcm-android:$parseVersion"
     implementation 'jp.wasabeef:glide-transformations:3.3.0'
     implementation 'com.parse:parseui-widget-android:0.0.2'
 
     //noinspection GradleCompatible
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.sgit upport:appcompat-v7:$supportLibVersion"
     //noinspection GradleCompatible
     implementation "com.android.support:support-v13:$supportLibVersion"
     // to remove lint error, found in .idea/libraries
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1' // for logging API calls to LogCat
 
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
     // use Picasso for marker frame
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    // some firebase dependency for push notifications
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+
+    // some google play dependency for push notifications
+    //implementation "com.google.android.gms:play-services-gcm:15.0.0"
+    // on link it said 8.4.0, otherwise use 15.0.1
 
     implementation "com.google.android.gms:play-services-maps:$googlePlayVersion"
     implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
@@ -70,3 +87,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+// also for push notifications
+//apply plugin: 'com.google.gms.google-services'

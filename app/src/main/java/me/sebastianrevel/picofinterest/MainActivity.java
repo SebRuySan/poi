@@ -1,9 +1,10 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -36,8 +36,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -49,9 +47,12 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,13 +65,14 @@ import me.sebastianrevel.picofinterest.Models.Pics;
 import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
-public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener{
+public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener {
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
     static DrawerLayout dl;
     static RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
+
     static ArrayList<Pics> arrayList = new ArrayList<>();
     static TextView location;
     static String address;
@@ -89,16 +91,18 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
+    private Button uploadBtn;
     private SwipeRefreshLayout swipeContainer;
 
-    private final static String KEY_LOCATION = "location";
-    private final static double CURRENT_LATITUDE = 47.629157;
-    private final static double CURRENT_LONGITUDE = -122.341167;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_GALLERY = 2;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
+    // PICK_PHOTO_CODE is a constant integer
+    public final static int PICK_PHOTO_CODE = 1046;
+
     public final String APP_TAG = "MyCustomApp";
 
     // Request code to send to Google Play services to be returned in Activity.onActivityResult
@@ -111,29 +115,39 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         Log.e("TEST", "On create called");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.toolBar);
+
         setSupportActionBar(toolbar);
-        rv = findViewById(R.id.recyclerView);
+
+        dl = findViewById(R.id.drawerLayout);
+
+        uploadBtn = findViewById(R.id.upload_btn);
+
+        location = findViewById(R.id.location_tv);
 
         lm = new LinearLayoutManager(this);
+
+        rv = findViewById(R.id.recyclerView);
+
         rv.setLayoutManager(lm);
-        dl = findViewById(R.id.drawerLayout);
+
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        String[] items = getResources().getStringArray(R.array.topics);
-
-//        for ( Item : items) {
-//            arrayList.add(Item);
-//        }
-
         adapter = new PicAdapter(arrayList);
         rv.setAdapter(adapter);
 
         drawerToggle = new ActionBarDrawerToggle(this, dl, toolbar, R.string.drawer_open, R.string.drawer_close);
+        drawerToggle = new ActionBarDrawerToggle(this,
+                dl,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close);
+
         dl.addDrawerListener(drawerToggle);
 
         clear();
@@ -168,13 +182,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             throw new IllegalStateException("You forgot to supply a Google Maps API key");
         }
 
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
 
-        if (checkSelfPermission(Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    MY_CAMERA_REQUEST_CODE);
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+
         }
-        //TODO - TRACK LOCATION AND STORE IMAGE
+
         cameraBtn = findViewById(R.id.camera_btn);
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,10 +199,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-//        if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
-//            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-//        }
+                onPickPhoto(view);
+
+            }
+        });
+
 
         // initialize autocomplete search bar fragment and set a listener
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
@@ -228,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
 
         Log.e("ADDRESS", address);
+
         dl.openDrawer(Gravity.LEFT);
     }
 
@@ -261,67 +280,219 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // gets the output media file
     private File getOutputMediaFile(int type) {
 
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                APP_TAG);
+
+        File galleryStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_ALARMS),
+                APP_TAG);
 
 
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
                 Locale.getDefault()).format(new Date());
+
         File mediaFileName;
+
         if (type == MEDIA_TYPE_IMAGE) {
-            //mediaFileName = new File(mediaStorageDir.getPath() + File.separator
-            //        + "IMG_" + timeStamp + ".jpg");
-            mediaFileName = new File(mediaStorageDir.getPath() +".jpg");
+
+            mediaFileName = new File(mediaStorageDir.getPath() + ".jpg");
+
+        } else if (type == MEDIA_GALLERY) {
+
+            mediaFileName = new File(galleryStorageDir.getPath() + ".jpg");
+
         } else {
             return null;
         }
 
         return mediaFileName;
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
         drawerToggle.syncState();
+
+    }
+
+    // Trigger gallery selection for a photo
+    public void onPickPhoto(View view) {
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        startActivityForResult(intent, PICK_PHOTO_CODE);
+    }
+
+    public ParseFile conversionBitmapParseFile(Bitmap imageBitmap) {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+        byte[] imageByte = byteArrayOutputStream.toByteArray();
+
+        ParseFile parseFile = new ParseFile("image_file.png", imageByte);
+
+        return parseFile;
     }
 
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // if the result is capturing Image
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE || requestCode == PICK_PHOTO_CODE) {
+
             gps = new GPSTracker(MainActivity.this);
 
             if (resultCode == RESULT_OK) {
                 if (gps.canGetLocation()) {
 
                     final double latitude = gps.getLatitude();
+
                     final double longitude = gps.getLongitude();
+
                     // by this point we have the user's location so add a marker there
                     // we also want to add the image to Parse
+                    if (requestCode == PICK_PHOTO_CODE) {
+
+                        Log.e("UPLOAD", "returning");
+
+                        Bitmap bm = null;
+
+                        Uri imageUri = data.getData();
+
+                        try {
+
+                            bm = BitmapFactory.decodeStream(getContentResolver()
+                                    .openInputStream(imageUri));
+
+                        } catch (FileNotFoundException e) {
+
+                            e.printStackTrace();
+
+                        }
+
+                        Geocoder geocoder = new Geocoder(getApplicationContext(),
+                                Locale.getDefault());
+
+                        List<Address> listAddresses = null;
+
+                        try {
+
+                            listAddresses = geocoder
+                                    .getFromLocation(latitude,
+                                            longitude,
+                                            1);
+
+                            // set this address as the location of the picture
+                        } catch (IOException e) {
+
+                            e.printStackTrace();
+
+                        }
+                        final String address = listAddresses
+                                .get(0)
+                                .getAddressLine(0);
+
+                        final Pics pic = new Pics();
+
+                        final ParseFile pFile = conversionBitmapParseFile(bm);
+
+                        pFile.saveInBackground(new SaveCallback() {
+                            public void done(ParseException e) {
+                                if (null == e) {
+                                    Log.e("UPLOAD", "there is a file returned");
+
+                                    pic.setLocation(address);
+
+                                    pic.setLong(longitude);
+
+                                    pic.setLat(latitude);
+
+                                    final ParseUser user = ParseUser.getCurrentUser();
+
+                                    pic.setUser(user);
+
+                                    pic.setPic(pFile);
+
+                                    pic.setLike();
+
+                                    pic.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+
+                                            if (e == null) { // no errors
+
+                                                Log.e("UPLOAD", "Added Image success!");
+
+                                                Toast.makeText(MainActivity.this,
+                                                        "Image added to Parse!",
+                                                        Toast.LENGTH_SHORT).show();
+
+                                            } else {
+
+                                                Log.e("UPLOAD", "Added Image FAILURE!");
+
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                } else {
+
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+                        return;
+                    }
+
                     final Pics newPic = new Pics();
 
-                    //newPic.setLocation(description); we don't have this implemented yet, but we could add a popup or edit text where the user can type a description of the location
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+
                     // save Parse file in background (image)
                     parseFile.saveInBackground(new SaveCallback() {
                         public void done(ParseException e) {
                             // If successful add image to Pics object
                             if (null == e) {
+
                                 newPic.setPic(parseFile);
+                                Log.e("PARSE", "INSIDE FIRST IF");
+
                                 if (newPic.getPic() != null) {
+                                    Log.e("PARSE", "INSIDE SECOND IF");
+
                                     // if added include the coordinates of picture
                                     Log.d(TAG, "there is a file returned");
+
                                     newPic.setLat(latitude);
                                     newPic.setLong(longitude);
+
+                                    newPic.setLike();
+
+                                    final ParseUser user = ParseUser.getCurrentUser();
+
+                                    newPic.setUser(user);
                                     // now using coordinates, use geocoder get from location to get address of where picture was taken
-                                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                                    Geocoder geocoder = new Geocoder(getApplicationContext(),
+                                            Locale.getDefault());
+
                                     Place place;
+
                                     try {
-                                        List<Address> listAddresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                                        List<Address> listAddresses = geocoder
+                                                .getFromLocation(latitude, longitude, 1);
+
                                         if (null != listAddresses && listAddresses.size() > 0) {
                                             String address = listAddresses.get(0).getAddressLine(0);
                                             // set this address as the location of the picture
+
                                             newPic.setLocation(address);
+
                                             place = new Place() {
                                                 @Override
                                                 public String getId() {
@@ -556,14 +727,19 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                             }
                                         };
                                     }
+
                                     mapFragment.addMarker(place, parseFile);
                                     // save the picture to parse
+
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
                                             if (e == null) { // no errors
                                                 Log.d(TAG, "Added Image success!");
-                                                Toast.makeText(MainActivity.this, "Image added to Parse!", Toast.LENGTH_SHORT).show();
+
+                                                Toast.makeText(MainActivity.this,
+                                                        "Image added to Parse!",
+                                                        Toast.LENGTH_SHORT).show();
                                             } else {
                                                 e.printStackTrace();
                                             }
@@ -578,16 +754,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             }
                         }
                     });
-                    //newPic.setUser(); TO DO : implement when we have log in/sign up
-
-
-                    // \n is for new line
-                    Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-                } else {
-                    // Can't get location.
-                    // GPS or network is not enabled.
-                    // Ask user to enable GPS/network in settings.
-
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
@@ -614,39 +780,17 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         super.onStop();
     }
 
-    private boolean isGooglePlayServicesAvailable() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        if (ConnectionResult.SUCCESS == resultCode) {
-            Log.d("Location Updates", "Google Play services are available.");
-            return true;
-        } else {
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-            if (errorDialog != null) {
-                ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-                errorFragment.setDialog(errorDialog);
-                errorFragment.show(getSupportFragmentManager(), "Location Updates");
-            }
-
-            return false;
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu; this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_filter, menu);
         menu.getItem(0).setVisible(true);
+
         return true;
     }
 
     public void onFilterAction(MenuItem menuItem) {
-//        Intent intent = new Intent(this, FilterFragment.class);
-//        intent.putExtra("isReply", false);
-//        startActivityForResult(intent, 17);
-
         FilterFragment filterDialog = new FilterFragment();
         filterDialog.show(getFragmentManager(), "FilterFragment");
     }
@@ -822,8 +966,17 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             });
         }
     }
+
     public static void clear() {
         arrayList.clear();
         adapter.notifyDataSetChanged();
     }
+
+//    public void likeSwitch() {
+//        if (isLiked) {
+//            likeBtn.setBackgroundResource(R.drawable.ic_star_off);
+//        } else {
+//            likeBtn.setBackgroundResource(R.drawable.ic_star_on);
+//        }
+//    }
 }

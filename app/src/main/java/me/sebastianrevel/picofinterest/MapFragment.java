@@ -3,8 +3,11 @@ package me.sebastianrevel.picofinterest;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
@@ -29,9 +32,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -49,6 +54,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,6 +63,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -104,6 +111,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private long UPDATE_INTERVAL = 60000; // 60 seconds
     private long FASTEST_INTERVAL = 5000; // 5 seconds
 
+    Switch swStyle; // this is the button to change the mapstyle
+    Button btnLogout; // this is the button to log out
+    boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
+
     public MapFragment() {
         // Required empty public constructor
     }
@@ -142,6 +153,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 loadMap(googleMap);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+                daymode = false;
+                changeStyle();
+
                 //this part is harcoded for testing purposes
                 /*ArrayList<LatLng> points = new ArrayList<>();
                 LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
@@ -165,7 +179,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 query.findInBackground(new FindCallback<Pics>(){
                     public void done(List<Pics> itemList, ParseException e){
                         Log.d("MapFragment", "Query done");
-                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                       // Log.d("MapFragment", "ItemList array size : " + itemList.size());
                         // if no errors
                         if(e == null){
                             Log.d("MapFragment", "No errors in querying");
@@ -353,9 +367,72 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         this.mTimeframe = timeframe;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle SavedInstanceState) {
+        // initialize the switch and set listener so that when it's "checked" (clicked), map style changes from night to day or vice versa
+        swStyle = (Switch) view.findViewById(R.id.swStyle);
+        swStyle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                changeStyle();
+            }
+        });
+
+        // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
+        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
+
+    }
+
+    private void logout(){
+        ParseUser.logOutInBackground();
+        // want to go to Log In (main) Activity with intent after successful log out
+        final Intent intent = new Intent(this.getActivity(), LoginActivity.class);
+        startActivity(intent);
+    }
+
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
+    }
+
+    private void changeStyle(){
+        if(daymode){
+            try {
+                // Customise the styling of the base map using a JSON object defined
+                // in a raw resource file.
+                boolean success = map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                getActivity(), R.raw.style_json));
+
+                if (!success) {
+                    Log.e("MapsActivity", "Style parsing failed.");
+                }
+            } catch (Resources.NotFoundException e) {
+                Log.e("MapsActivity", "Can't find style.", e);
+            }
+        }
+        else{
+            try {
+                // Customise the styling of the base map using a JSON object defined
+                // in a raw resource file.
+                boolean success = map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                getActivity(), R.raw.retrostyle_json));
+
+                if (!success) {
+                    Log.e("MapsActivity", "Style parsing failed.");
+                }
+            } catch (Resources.NotFoundException e) {
+                Log.e("MapsActivity", "Can't find style.", e);
+            }
+        }
+        daymode = !daymode;
     }
 
     protected static void loadMap(GoogleMap googleMap) {
