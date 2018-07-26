@@ -110,8 +110,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         uploadBtn = findViewById(R.id.upload_btn);
 
-        // likeBtn = findViewById(R.id.like_btn);
-
         location = findViewById(R.id.location_tv);
 
         lm = new LinearLayoutManager(this);
@@ -121,8 +119,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setLayoutManager(lm);
 
         rv.setHasFixedSize(true);
-
-        // likeSwitch();
 
 
         lm = new LinearLayoutManager(MainActivity.this);
@@ -184,13 +180,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
-//        likeBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                likeSwitch();
-//            }
-//        });
-
 
         // initialize autocomplete search bar fragment and set a listener
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
@@ -238,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         String address = listAddresses.get(0).getAddressLine(0);
 
+        location.setTextSize(14);
         location.setText(address);
 
         final ParseQuery<Pics> query =
@@ -356,7 +346,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             gps = new GPSTracker(MainActivity.this);
 
             if (resultCode == RESULT_OK) {
-//                Log.e("CODEZ2", String.valueOf(resultCode));
                 if (gps.canGetLocation()) {
 
                     final double latitude = gps.getLatitude();
