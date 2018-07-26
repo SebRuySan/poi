@@ -295,7 +295,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                 }
 
                                 map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
-                                hasZoomed = true;
 
                                 if (radiusCircle != null) {
                                     radiusCircle.remove();
