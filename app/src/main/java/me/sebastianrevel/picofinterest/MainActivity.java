@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -97,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private Button signoutBtn;
     private SwipeRefreshLayout swipeContainer;
 
-
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_GALLERY = 2;
@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
+
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
