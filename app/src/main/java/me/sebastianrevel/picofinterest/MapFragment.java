@@ -379,22 +379,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         });
 
         // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
-        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
+//        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
+//        btnLogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                logout();
+//            }
+//        });
 
     }
 
-    private void logout(){
-        ParseUser.logOutInBackground();
-        // want to go to Log In (main) Activity with intent after successful log out
-        final Intent intent = new Intent(this.getActivity(), LoginActivity.class);
-        startActivity(intent);
-    }
+//    private void logout(){
+//        ParseUser.logOutInBackground();
+//        // want to go to Log In (main) Activity with intent after successful log out
+//        final Intent intent = new Intent(this.getActivity(), LoginActivity.class);
+//        startActivity(intent);
+//    }
 
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)

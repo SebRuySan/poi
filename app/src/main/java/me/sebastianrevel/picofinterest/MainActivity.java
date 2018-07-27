@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
     private Button uploadBtn;
+    private Button signoutBtn;
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -160,6 +161,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
+
+
+        signoutBtn = (Button) findViewById(R.id.signout_btn);
+        signoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
 
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -272,6 +282,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 }
             }
         });
+    }
+    private void logout(){
+        ParseUser.logOutInBackground();
+        // want to go to Log In (main) Activity with intent after successful log out
+        final Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     // gets the Uri from the output media file
