@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // add a marker at place selected (from search bar)
+
                 mapFragment.goToSearchedPlace(place);
 
                 Log.d("Maps", "Place selected: " + place.getName());
@@ -874,12 +874,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         LatLng pos;
 
         if (mMarker != null) {
-            Log.e("NULL?", "We are null");
             pos = mMarker.getPosition();
             mapFragment.setmSearchLocation(pos.latitude, pos.longitude);
         } else {
-            Location loc = mapFragment.mSearchLocation;
-            pos = new LatLng(loc.getLatitude(), loc.getLongitude());
+            if (mapFragment.mSearchLocation != null) {
+                pos = mapFragment.mSearchLocation;
+            } else {
+                pos = mapFragment.mCurrentLocation;
+            }
+
+            //xpos = new LatLng(loc.getLatitude(), loc.getLongitude());
         }
 
         final Double lat = pos.latitude;
