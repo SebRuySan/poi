@@ -26,6 +26,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -113,6 +115,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     Switch swStyle; // this is the button to change the mapstyle
     Button btnLogout; // this is the button to log out
+    // the following are for notifications/messages
+    private CardView cvMess;
+    private TextView tvmessage;
     static boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -375,6 +380,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 changeStyle();
+            }
+        });
+
+        // initialize the cardview for messages but set as invisible
+        cvMess = (CardView) view.findViewById(R.id.cvMess);
+        cvMess.setVisibility(View.VISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
+        // initialize the text view within the cardview
+        tvmessage = (TextView) view.findViewById(R.id.tvMessage);
+        tvmessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
             }
         });
 
