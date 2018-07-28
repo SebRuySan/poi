@@ -36,7 +36,7 @@
 
         <ImageView
             android:id="@+id/ivFilterOptionsMain"
-            android:layout_width="51dp"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/place_autocomplete"
@@ -101,7 +101,7 @@
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="12dp"
@@ -114,12 +114,12 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/location_tv"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="All Pics"
                     android:textAlignment="center"
