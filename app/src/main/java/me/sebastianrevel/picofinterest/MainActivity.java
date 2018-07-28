@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -96,7 +95,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private Button cameraBtn;
     private Button uploadBtn;
     private Button signoutBtn;
+    private Button profileBtn;
+    private Button archiveBtn;
+    private TextView profileTv;
+    private TextView createdAtTv;
     private SwipeRefreshLayout swipeContainer;
+
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -121,6 +125,18 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         toolbar = findViewById(R.id.toolBar);
 
+        archiveBtn = findViewById(R.id.archives_btn);
+
+        profileTv = findViewById(R.id.profile_name_tv);
+
+        profileTv.setText(ParseUser.getCurrentUser().getUsername());
+
+        profileBtn = findViewById(R.id.profile_btn);
+
+        createdAtTv = findViewById(R.id.date_joined_tv);
+
+        createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
+
         setSupportActionBar(toolbar);
 
         dl = findViewById(R.id.drawerLayout);
@@ -137,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
-
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -168,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         signoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                finish();
                 logout();
             }
         });
@@ -221,6 +237,21 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profileOpen();
+            }
+        });
+
+        archiveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, ArchiveActivity.class);
+                startActivity(i);
+            }
+        });
+
 
         // initialize autocomplete search bar fragment and set a listener
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
@@ -246,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     }
 
-    public static void drawerOpen(Marker m, Geocoder g) {
+    public static void timelineOpen(Marker m, Geocoder g) {
         mMarker = m;
         mGeocoder = g;
 
@@ -263,27 +294,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         dl.openDrawer(Gravity.LEFT);
     }
 
-    public void loadGeoPics(String address) {
-        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
-        query.findInBackground(new FindCallback<Pics>() {
-            @Override
-            public void done(List<Pics> objects, ParseException e) {
-                if (e == null) {
-                    if (objects == null) {
-                        Log.d("CreateFragment", "Objects is null!");
-                    } else {
-                        Log.d("CreateFragment", "Adding pics: " + objects.size());
-                    }
+    public static void profileOpen() {
 
-                    clear();
-                    arrayList.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
+        dl.openDrawer(Gravity.RIGHT);
     }
+
     private void logout(){
         ParseUser.logOutInBackground();
         // want to go to Log In (main) Activity with intent after successful log out

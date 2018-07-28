@@ -385,7 +385,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         // initialize the cardview for messages but set as invisible
         cvMess = (CardView) view.findViewById(R.id.cvMess);
-        cvMess.setVisibility(View.VISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
+        cvMess.setVisibility(View.INVISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
         // initialize the text view within the cardview
         tvmessage = (TextView) view.findViewById(R.id.tvMessage);
         tvmessage.setOnClickListener(new View.OnClickListener() {
@@ -673,7 +673,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         if (marker != null) {
             //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
 
-            MainActivity.drawerOpen(marker, geocoder);
+            MainActivity.timelineOpen(marker, geocoder);
 
         }
 
