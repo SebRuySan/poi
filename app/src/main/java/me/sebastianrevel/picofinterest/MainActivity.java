@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -94,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn;
     private Button uploadBtn;
+    private Button signoutBtn;
     private SwipeRefreshLayout swipeContainer;
-
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
@@ -160,6 +162,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
+
+
+        signoutBtn = (Button) findViewById(R.id.signout_btn);
+        signoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
+            }
+        });
 
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -272,6 +283,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 }
             }
         });
+    }
+    private void logout(){
+        ParseUser.logOutInBackground();
+        // want to go to Log In (main) Activity with intent after successful log out
+        final Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     // gets the Uri from the output media file
