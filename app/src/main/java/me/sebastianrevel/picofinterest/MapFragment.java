@@ -15,18 +15,22 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.graphics.Matrix;
 
+import java.util.Calendar;
 import com.google.maps.android.SphericalUtil;
 import com.parse.ParseException;
 import android.media.ExifInterface;
+//import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.service.autofill.SaveCallback;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +42,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import android.text.format.DateUtils;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -76,6 +82,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -385,7 +392,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         // initialize the cardview for messages but set as invisible
         cvMess = (CardView) view.findViewById(R.id.cvMess);
-        cvMess.setVisibility(View.VISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
+        cvMess.setVisibility(View.INVISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
         // initialize the text view within the cardview
         tvmessage = (TextView) view.findViewById(R.id.tvMessage);
         tvmessage.setOnClickListener(new View.OnClickListener() {
@@ -394,6 +401,44 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
             }
         });
+
+        new Thread(new Runnable() {
+            public void run() {
+                final ParseUser user = ParseUser.getCurrentUser();
+                Date last;
+                try {
+                    last = user.fetchIfNeeded().getDate("lastnotification");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    last = null;
+                }
+                // if there is a notification sent to this user a minute or less ago, wait
+                while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                // otherwise if there hasn't been a notification recently or ever, set a personalized message and set the cardview to be visible aka send notification
+                String username;
+                try {
+                    username = user.fetchIfNeeded().getString("username");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    username = "You";
+                }
+//                tvmessage.setText(username + ", there is a Pic of Interest near you!");
+//                cvMess.setVisibility(View.VISIBLE);
+
+
+                Date currentTime = Calendar.getInstance().getTime();
+                String mess = "";
+                user.put("lastnotification", currentTime);
+                user.saveInBackground();
+                tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
+                cvMess.setVisibility(View.VISIBLE);
+            }
+        }).start();
 
         // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
 //        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
@@ -766,5 +811,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return relativeDate;
     }
 }
