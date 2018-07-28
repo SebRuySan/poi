@@ -433,8 +433,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
-                tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
-                cvMess.setVisibility(View.VISIBLE);
+                final String message = mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime;
+                //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
+                //cvMess.setVisibility(View.VISIBLE);
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        changeViews(message);
+
+                    }
+                });
+
+//                changeViews(message);
             }
         }).start();
 
@@ -456,6 +467,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //        startActivity(intent);
 //    }
 
+    public void changeViews(String message){
+        tvmessage.setText(message);
+        cvMess.setVisibility(View.VISIBLE);
+    }
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
