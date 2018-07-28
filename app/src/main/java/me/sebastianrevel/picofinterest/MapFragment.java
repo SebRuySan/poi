@@ -98,7 +98,7 @@ import static com.parse.Parse.getApplicationContext;
 //import android.net.ParseException;
 
 @RuntimePermissions
-public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
+public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
     static MapView mMapView;
     private static GoogleMap map;
@@ -108,8 +108,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private static Circle radiusCircle;
     private static float zoomLevel;
 
-    static Location mCurrentLocation;
-    static Location mSearchLocation;
+    public static LatLng mCurrentLocation;
+    public static LatLng mSearchLocation;
     private LocationRequest mLocationRequest;
 
     private static Context context;
@@ -136,8 +136,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         if (savedInstanceState != null && savedInstanceState.keySet().contains(KEY_LOCATION)) {
-            mCurrentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mSearchLocation = mCurrentLocation;
+            Location currentLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            mCurrentLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            mSearchLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         }
 
         mMapView = rootView.findViewById(R.id.mapView);
@@ -197,8 +198,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             Log.d("MapFragment", "No errors in querying");
 
                             if (mSearchLocation != null) {
-                                LatLng current = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
-                                ArrayList<Pics> filteredList = filterList(itemList, current);
+                                ArrayList<Pics> filteredList = filterList(itemList, mSearchLocation);
 
                                 for (Pics p : filteredList) {
                                     boolean added = locs.add(p.getLocation());
@@ -306,10 +306,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             }
 
                             if (mSearchLocation != null) {
-                                LatLng currentCoordinates = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
-                                map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
-
                                 zoomLevel = (float)13.5;
+
                                 if (mRadius >= 2 && mRadius <= 8) {
                                     zoomLevel = (float)12.5;
                                 } else if (mRadius > 8 && mRadius <= 15) {
@@ -320,6 +318,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                     zoomLevel = (float)7.8;
                                 }
 
+                                map.moveCamera(CameraUpdateFactory.newLatLng(mSearchLocation));
                                 map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
 
                                 if (radiusCircle != null) {
@@ -327,7 +326,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                 }
 
                                 CircleOptions circleOptions = new CircleOptions()
-                                        .center(currentCoordinates)
+                                        .center(mSearchLocation)
                                         .radius((double)mRadius / 0.00062137)
                                         .strokeWidth(10)
                                         .strokeColor(Color.WHITE);
@@ -345,8 +344,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static void setmSearchLocation(double lat, double lon) {
-        mSearchLocation.setLatitude(lat);
-        mSearchLocation.setLongitude(lon);
+        mSearchLocation = new LatLng(lat, lon);
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
@@ -499,33 +497,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         map = googleMap;
 
         if (map != null) {
-            // Map is ready
-            //Toast.makeText(getContext(), "Map Fragment was loaded properly.", Toast.LENGTH_SHORT).show();
-
             MapFragmentPermissionsDispatcher.getMyLocationWithPermissionCheck(thisMapFrag);
             MapFragmentPermissionsDispatcher.startLocationUpdatesWithPermissionCheck(thisMapFrag);
-            //map.setOnMapClickListener(this);
-
-            if (mSearchLocation != null) {
-                BitmapDescriptor defaultMarker =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA);
-                LatLng currentCoordinates = new LatLng(mSearchLocation.getLatitude(), mSearchLocation.getLongitude());
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(currentCoordinates)
-                        .title("Current Location")
-                        .icon(defaultMarker));
-
-                //map.moveCamera(CameraUpdateFactory.newLatLng(currentCoordinates));
-                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
-
-                //dropPinEffect(marker);
-
-            }
         } else {
             Toast.makeText(context, "Error - Map was null!", Toast.LENGTH_SHORT).show();
         }
 
         map.setOnMarkerClickListener(thisMapFrag);
+        map.setOnMyLocationButtonClickListener(thisMapFrag);
 
     }
 
@@ -607,15 +586,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static void goToSearchedPlace(Place p){
-        mSearchLocation.setLatitude(p.getLatLng().latitude);
-        mSearchLocation.setLongitude(p.getLatLng().longitude);
+        mSearchLocation = p.getLatLng();
 
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
     }
 
     public static void addMarker(LatLng p){
-
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(p);
@@ -656,6 +633,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         map.moveCamera(CameraUpdateFactory.newLatLng(l));
         map.animateCamera(CameraUpdateFactory.zoomTo(zoomLevel));
     }
+
     public static Bitmap rotateBitmapOrientation(String photoFilePath) {
         // Create and configure BitmapFactory
         BitmapFactory.Options bounds = new BitmapFactory.Options();
@@ -684,43 +662,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return rotatedBitmap;
     }
 
-    private void dropPinEffect(final Marker marker) {
-        final android.os.Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        final long duration = 2000;
-
-        final Interpolator interpolator = new BounceInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                // Calculate t for bounce based on elapsed time
-                float t = Math.max(
-                        1 - interpolator.getInterpolation((float) elapsed
-                                / duration), 0);
-                // Set the anchor
-                marker.setAnchor(0.5f, 1.0f + 14 * t);
-
-                if (t > 0.0) {
-                    // Post this event again 15ms from now.
-                    handler.postDelayed(this, 15);
-                } else { // done elapsing, show window
-                    marker.showInfoWindow();
-                }
-            }
-        });
-    }
-
     @Override
     public boolean onMarkerClick(final Marker marker) {
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         if (marker != null) {
             //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
 
-            MainActivity.drawerOpen(marker, geocoder);
+            MainActivity.timelineOpen(marker, geocoder);
 
         }
+
+        return false;
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        mSearchLocation = mCurrentLocation;
 
         return false;
     }
@@ -784,18 +741,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             return;
         }
 
-        if (mSearchLocation == mCurrentLocation) {
-            // report to the UI that the location was updated
-            mCurrentLocation = location;
-            mSearchLocation = mCurrentLocation;
-        } else {
-            mCurrentLocation = location;
-        }
+        if ((mSearchLocation != null) &&
+                (mSearchLocation.latitude == mCurrentLocation.latitude) &&
+                (mSearchLocation.longitude == mCurrentLocation.longitude)) {
 
-        String msg = "Updated Location: "
-                + Double.toString(location.getLatitude()) + ","
-                + Double.toString(location.getLongitude());
-        //Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+            mCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            mSearchLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        } else {
+            if (mCurrentLocation == null) {
+                mSearchLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+
+            mCurrentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        }
     }
 
     /**
