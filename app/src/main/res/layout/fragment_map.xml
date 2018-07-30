@@ -54,13 +54,22 @@
             android:layout_marginLeft="75dp"
             android:layout_marginRight="24dp"
             android:text="Content of message"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.852"
             app:layout_constraintStart_toEndOf="@+id/like_btn"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/tvMostPop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="See Pic of Interest!"
+            android:layout_marginTop="35dp"
+            android:layout_marginLeft="75dp"
+            android:textColor="@color/colorPrimaryDark" />
     </android.support.v7.widget.CardView>
 
     <!--<Button-->

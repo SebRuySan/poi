@@ -117,6 +117,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     // these are for the in app notifications
     public String locmax;
     public int picmax;
+    public static ArrayList<Marker> markers;
+    public static Marker mostpop;
 
 
     private static Context context;
@@ -132,6 +134,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     // the following are for notifications/messages
     private CardView cvMess;
     private TextView tvmessage;
+    private TextView tvMostPop;
     static boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -176,19 +179,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 daymode = false;
                 changeStyle();
 
-                //this part is harcoded for testing purposes
-                /*ArrayList<LatLng> points = new ArrayList<>();
-                LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
-                points.add(p);
-                LatLng s = new LatLng(47.595, -122.3); // century link field coordinate
-                points.add(s);
-                LatLng t = new LatLng(46.85, -121.76); // mt. rainier coordinate
-                points.add(t);
-                LatLng u = new LatLng(47.611, -122.33); // washington state convention center coordinate
-                points.add(u);
-                LatLng v = new LatLng(67.8, -42.4); // washington state convention center coordinate
-                points.add(v);
-                addPins(points);*/
+                markers = new ArrayList<Marker>();
 
                 // Define the class we would like to Query
                 ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
@@ -404,7 +395,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         tvmessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                simulateclick(mostpop);
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
                 cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+            }
+        });
+
+        tvMostPop = (TextView) view.findViewById(R.id.tvMostPop);
+        tvMostPop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                simulateclick(mostpop);
             }
         });
 
@@ -485,11 +487,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         // now location max contains address with most images taken
                         locmax = locationmax;
                         picmax = most;
+                        // iterate through all markers in map to find the one at the "pic of interest" location, aka the one with the most tagged pictures
+                        for(Marker m: markers)
+                            if(m.getTitle().equals(locmax)){
+                                //simulateclick(m);
+                                mostpop = m;
+                                Log.d("Map Fragment", "Most Pop Initialized");
+                                break;
+                            }
                         Log.d("MapFragment", "Maxes set");
-                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n" + "There have been " + picmax + " pictures taken at " + locmax;
+                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n";
                         Log.d("MapFragment", "Message printed");
-                        //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
-                        //cvMess.setVisibility(View.VISIBLE);
                         getActivity().runOnUiThread(new Runnable() {
 
                             @Override
@@ -587,6 +595,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         .title(p.getName() + "")
                         //.snippet("test address")
                 );
+                markers.add(driver_marker);
+                Log.d("Map Fragment", markers.size() + " markers");
                 Log.d("MapFragment", "Marker created");
                 //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
                 //map.animateCamera(CameraUpdateFactory.zoomTo(13));
@@ -669,6 +679,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
                 //map.animateCamera(CameraUpdateFactory.zoomTo(13));
                 Log.d("MapFragment", "Camera zoomed in hopefully");
+                markers.add(driver_marker);
                 simulateclick(driver_marker);
             }
 
@@ -720,6 +731,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
                 //map.animateCamera(CameraUpdateFactory.zoomTo(13));
                 Log.d("MapFragment", "Camera zoomed in hopefully");
+                markers.add(driver_marker);
                 simulateclick(driver_marker);
             }
 
