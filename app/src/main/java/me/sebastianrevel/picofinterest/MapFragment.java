@@ -433,10 +433,26 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
+<<<<<<< HEAD
 
                 // TODO: The next two lines are making my app crash - Sanura
                 //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
                 //cvMess.setVisibility(View.VISIBLE);
+=======
+                final String message = mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime;
+                //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
+                //cvMess.setVisibility(View.VISIBLE);
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        changeViews(message);
+
+                    }
+                });
+
+//                changeViews(message);
+>>>>>>> 557940fcaaa04638cadbf9cd152fa7aa5b55fe0b
             }
         }).start();
 
@@ -458,6 +474,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //        startActivity(intent);
 //    }
 
+    public void changeViews(String message){
+        tvmessage.setText(message);
+        cvMess.setVisibility(View.VISIBLE);
+    }
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
