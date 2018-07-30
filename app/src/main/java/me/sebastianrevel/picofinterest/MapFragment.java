@@ -653,6 +653,107 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         */
     }
 
+    // this function is exactly like the last one except that this is called when a picture is uploaded/taken and results in the same ffect
+    public static void addMarker(final Place p, ParseFile parseFile, boolean b) {
+        Target mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.d("MapFragment", "Marker is being created");
+                Marker driver_marker = map.addMarker(new MarkerOptions()
+                                .position(p.getLatLng())
+                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .title(p.getName() + "")
+                        //.snippet("test address")
+                );
+                Log.d("MapFragment", "Marker created");
+                //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                Log.d("MapFragment", "Camera zoomed in hopefully");
+                simulateclick(driver_marker);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception ex, Drawable errorDrawable) {
+                ex.printStackTrace();
+                Log.d("picasso", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        String imagePath = null;
+        File imageFile = null;
+        try {
+            imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+            Log.d("MapFragment", "Imagepath is not null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MapFragment", "Picasso about to be called");
+        Picasso.get()
+                .load(imageFile)
+                .resize(200, 200)
+                .centerCrop()
+                .transform(new CircleBubbleTransformation())
+                .into(mTarget);
+        Log.d("MapFragment", "Picasso hopefully done");
+    }
+
+    // this function is for when a picture is uploaded
+    public static void addMarker(final Pics p, ParseFile parseFile, boolean b) {
+        Target mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.d("MapFragment", "Marker is being created");
+                LatLng l = new LatLng(p.getLat(), p.getLong());
+                Marker driver_marker = map.addMarker(new MarkerOptions()
+                                .position(l)
+                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .title(p.getLocation())
+                        //.snippet("test address")
+                );
+                Log.d("MapFragment", "Marker created");
+                //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                Log.d("MapFragment", "Camera zoomed in hopefully");
+                simulateclick(driver_marker);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception ex, Drawable errorDrawable) {
+                ex.printStackTrace();
+                Log.d("picasso", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        String imagePath = null;
+        File imageFile = null;
+        try {
+            imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+            Log.d("MapFragment", "Imagepath is not null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MapFragment", "Picasso about to be called");
+        Picasso.get()
+                .load(imageFile)
+                .resize(200, 200)
+                .centerCrop()
+                .transform(new CircleBubbleTransformation())
+                .into(mTarget);
+        Log.d("MapFragment", "Picasso hopefully done");
+    }
+
     public static void goToSearchedPlace(Place p){
         mSearchLocation = p.getLatLng();
 
@@ -728,6 +829,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         // Return result
         return rotatedBitmap;
+    }
+
+    public static boolean simulateclick(final Marker marker) {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        if (marker != null) {
+            //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
+
+            MainActivity.timelineOpen(marker, geocoder);
+
+        }
+
+        return false;
     }
 
     @Override

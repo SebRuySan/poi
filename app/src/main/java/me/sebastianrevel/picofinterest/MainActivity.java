@@ -441,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setPic(pFile);
 
                                     pic.setLike();
+                                    mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -751,9 +752,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         };
                                     }
 
-                                    mapFragment.addMarker(place, parseFile);
+                                    mapFragment.addMarker(place, parseFile, true);
                                     // save the picture to parse
-
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
