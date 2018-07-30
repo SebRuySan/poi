@@ -433,8 +433,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
-                tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
-                cvMess.setVisibility(View.VISIBLE);
+
+                // TODO: The next two lines are making my app crash - Sanura
+                //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
+                //cvMess.setVisibility(View.VISIBLE);
             }
         }).start();
 
