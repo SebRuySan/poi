@@ -434,7 +434,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                if(un.equals(""))
+                if (un.equals(""))
                     username = "You";
                 else
                     username = un;
@@ -447,35 +447,35 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
                 // Define the class we would like to Query
-                ParseQuery<Pics> query =ParseQuery.getQuery(Pics.class);
+                ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
                 // get all posts
                 final Map<String, Integer> locs = new HashMap<String, Integer>();
                 query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
-                query.findInBackground(new FindCallback<Pics>(){
-                    public void done(List<Pics> itemList, ParseException e){
+                query.findInBackground(new FindCallback<Pics>() {
+                    public void done(List<Pics> itemList, ParseException e) {
                         String locationmax;
                         Log.d("MapFragment", "Query done");
                         Log.d("MapFragment", "ItemList array size : " + itemList.size());
                         // if no errors
-                        if(e == null){
+                        if (e == null) {
                             Log.d("MapFragment", "No errors in querying");
-                            for(Pics p: itemList){
-                                if(locs.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
+                            for (Pics p : itemList) {
+                                if (locs.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
                                     locs.put(p.getLocation(), locs.get(p.getLocation()) + 1);
                                 else
                                     locs.put(p.getLocation(), 1);
                             }
-                        }
-                        else {
+                        } else {
                             Log.d("item", "Error: " + e.getMessage());
                         }
                         // now we want to find the location with the most images
                         locationmax = "";
-                        Integer most = 0;;
-                        for(Map.Entry<String, Integer> entry: locs.entrySet()){
+                        Integer most = 0;
+                        ;
+                        for (Map.Entry<String, Integer> entry : locs.entrySet()) {
                             String key = entry.getKey();
                             Integer value = entry.getValue();
-                            if(value > most){
+                            if (value > most) {
                                 most = value;
                                 picmax = most;
                                 locationmax = key;
@@ -486,7 +486,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         locmax = locationmax;
                         picmax = most;
                         Log.d("MapFragment", "Maxes set");
-                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n" + "There have been " + picmax + " pictures taken at " + locmax ;
+                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n" + "There have been " + picmax + " pictures taken at " + locmax;
                         Log.d("MapFragment", "Message printed");
                         //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
                         //cvMess.setVisibility(View.VISIBLE);
@@ -495,16 +495,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             @Override
                             public void run() {
                                 changeViews(message);
-
                             }
                         });
                     }
                 });
-//                changeViews(message);
             }
         }).start();
-
-
 
         // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
 //        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
