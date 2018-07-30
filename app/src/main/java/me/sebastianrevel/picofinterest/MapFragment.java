@@ -846,9 +846,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public static boolean simulateclick(final Marker marker) {
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         if (marker != null) {
-            //Toast.makeText(getContext(), "Marker click registered", Toast.LENGTH_SHORT).show();
-
             MainActivity.timelineOpen(marker, geocoder);
+            map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+            map.animateCamera(CameraUpdateFactory.zoomTo(15));
 
         }
 
