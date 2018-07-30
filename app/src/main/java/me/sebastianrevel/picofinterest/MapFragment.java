@@ -83,9 +83,11 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
@@ -111,6 +113,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public static LatLng mCurrentLocation;
     public static LatLng mSearchLocation;
     private LocationRequest mLocationRequest;
+
+    // these are for the in app notifications
+    public String locmax;
+    public int picmax;
+
 
     private static Context context;
     private static MapFragment thisMapFrag;
@@ -341,6 +348,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
+
     }
 
     public static void setmSearchLocation(double lat, double lon) {
@@ -400,6 +408,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         });
 
+
         new Thread(new Runnable() {
             public void run() {
                 final ParseUser user = ParseUser.getCurrentUser();
@@ -411,43 +420,91 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     last = null;
                 }
                 // if there is a notification sent to this user a minute or less ago, wait
-                while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0) {
+                while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0 && getRelativeTimeAgo(last.toString()).indexOf("hour") < 0 && getRelativeTimeAgo(last.toString()).indexOf("day") < 0) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException ignored) {
                     }
                 }
                 // otherwise if there hasn't been a notification recently or ever, set a personalized message and set the cardview to be visible aka send notification
-                String username;
+                final String username;
+                String un = "";
                 try {
-                    username = user.fetchIfNeeded().getString("username");
+                    un = user.fetchIfNeeded().getString("username");
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    username = "You";
                 }
+                if(un.equals(""))
+                    username = "You";
+                else
+                    username = un;
 //                tvmessage.setText(username + ", there is a Pic of Interest near you!");
 //                cvMess.setVisibility(View.VISIBLE);
 
 
                 Date currentTime = Calendar.getInstance().getTime();
-                String mess = "";
+                final String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
-                final String message = mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime;
-                //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
-                //cvMess.setVisibility(View.VISIBLE);
-                getActivity().runOnUiThread(new Runnable() {
+                // Define the class we would like to Query
+                ParseQuery<Pics> query =ParseQuery.getQuery(Pics.class);
+                // get all posts
+                final Map<String, Integer> locs = new HashMap<String, Integer>();
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.findInBackground(new FindCallback<Pics>(){
+                    public void done(List<Pics> itemList, ParseException e){
+                        String locationmax;
+                        Log.d("MapFragment", "Query done");
+                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                        // if no errors
+                        if(e == null){
+                            Log.d("MapFragment", "No errors in querying");
+                            for(Pics p: itemList){
+                                if(locs.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
+                                    locs.put(p.getLocation(), locs.get(p.getLocation()) + 1);
+                                else
+                                    locs.put(p.getLocation(), 1);
+                            }
+                        }
+                        else {
+                            Log.d("item", "Error: " + e.getMessage());
+                        }
+                        // now we want to find the location with the most images
+                        locationmax = "";
+                        Integer most = 0;;
+                        for(Map.Entry<String, Integer> entry: locs.entrySet()){
+                            String key = entry.getKey();
+                            Integer value = entry.getValue();
+                            if(value > most){
+                                most = value;
+                                picmax = most;
+                                locationmax = key;
+                                locmax = locationmax;
+                            }
+                        }
+                        // now location max contains address with most images taken
+                        locmax = locationmax;
+                        picmax = most;
+                        Log.d("MapFragment", "Maxes set");
+                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n" + "There have been " + picmax + " pictures taken at " + locmax ;
+                        Log.d("MapFragment", "Message printed");
+                        //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
+                        //cvMess.setVisibility(View.VISIBLE);
+                        getActivity().runOnUiThread(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        changeViews(message);
+                            @Override
+                            public void run() {
+                                changeViews(message);
 
+                            }
+                        });
                     }
                 });
-
 //                changeViews(message);
             }
         }).start();
+
+
 
         // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
 //        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
