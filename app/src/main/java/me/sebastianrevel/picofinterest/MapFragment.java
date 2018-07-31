@@ -102,6 +102,15 @@ import static com.parse.Parse.getApplicationContext;
 @RuntimePermissions
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
+    interface Callback {
+        /**
+         * This method will be implemented by my activity, and my fragment will call this
+         * method when there is a text change event.
+         */
+        void showNotification(String message);
+
+    }
+
     static MapView mMapView;
     private static GoogleMap map;
     private OnFragmentInteractionListener mListener;
@@ -115,10 +124,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private LocationRequest mLocationRequest;
 
     // these are for the in app notifications
-    public String locmax;
-    public int picmax;
+    public static String locmax;
+    public static int picmax;
     public static ArrayList<Marker> markers;
     public static Marker mostpop;
+    private Callback notifyCallback;
+
 
 
     private static Context context;
@@ -131,10 +142,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     Switch swStyle; // this is the button to change the mapstyle
     Button btnLogout; // this is the button to log out
-    // the following are for notifications/messages
-    private CardView cvMess;
-    private TextView tvmessage;
-    private TextView tvMostPop;
     static boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -168,6 +175,37 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         return rootView;
     }
+
+    // initialize callback
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // `instanceof` here is how we check if the containing context (in our case the activity)
+        // implements the required callback interface.
+        //
+        // If it does not implement the required callback, we want
+        if (context instanceof Callback) {
+
+            // If it is an instance of our Callback then we want to cast the context to a Callback
+            // and store it as a reference so we can later update the callback when there has been
+            // a text change event.
+            notifyCallback = (Callback) context;
+        } else {
+            throw new IllegalStateException("Containing context must implement MapFragment.Callback.");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        // Because we grabbed a reference to our containing context in on attach, it is approriate
+        // to clean-up our references in onDetach() so that way we don't leak any references and
+        // run into any odd runtime errors!
+        notifyCallback = null;
+    }
+
 
     public static void showMap() {
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -387,29 +425,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         });
 
-        // initialize the cardview for messages but set as invisible
-        cvMess = (CardView) view.findViewById(R.id.cvMess);
-        cvMess.setVisibility(View.INVISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
-        // initialize the text view within the cardview
-        tvmessage = (TextView) view.findViewById(R.id.tvMessage);
-        tvmessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                simulateclick(mostpop);
-                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
-            }
-        });
-
-        tvMostPop = (TextView) view.findViewById(R.id.tvMostPop);
-        tvMostPop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
-                simulateclick(mostpop);
-            }
-        });
-
 
         new Thread(new Runnable() {
             public void run() {
@@ -473,7 +488,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         // now we want to find the location with the most images
                         locationmax = "";
                         Integer most = 0;
-                        ;
+
                         for (Map.Entry<String, Integer> entry : locs.entrySet()) {
                             String key = entry.getKey();
                             Integer value = entry.getValue();
@@ -502,7 +517,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
                             @Override
                             public void run() {
-                                changeViews(message);
+                                //changeViews(message);
+                                notifyCallback.showNotification(message);
                             }
                         });
                     }
@@ -510,28 +526,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         }).start();
 
-        // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
-//        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
-//        btnLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                logout();
-//            }
-//        });
 
     }
 
-//    private void logout(){
-//        ParseUser.logOutInBackground();
-//        // want to go to Log In (main) Activity with intent after successful log out
-//        final Intent intent = new Intent(this.getActivity(), LoginActivity.class);
-//        startActivity(intent);
-//    }
 
-    public void changeViews(String message){
-        tvmessage.setText(message);
-        cvMess.setVisibility(View.VISIBLE);
-    }
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
@@ -633,34 +631,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 .into(mTarget);
         Log.d("MapFragment", "Picasso hopefully done");
 
-        /*
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        markerOptions.position(p.getLatLng());
-        markerOptions.title(p.getName()+"");
-
-        String imagePath = null;
-        try {
-            File imageFile = parseFile.getFile();
-            imagePath = imageFile.getAbsolutePath();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (imagePath != null) {
-            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            Bitmap bitmap = rotateBitmapOrientation(imagePath);
-            Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-        } else {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-        }
-
-
-        map.addMarker(markerOptions).showInfoWindow();
-        map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13));
-        */
     }
 
     // this function is exactly like the last one except that this is called when a picture is uploaded/taken and results in the same ffect
@@ -844,8 +814,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static boolean simulateclick(final Marker marker) {
+        Log.d("MapFragment", "Simulate click called");
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        Log.d("MapFragment", "Check if marker is null");
         if (marker != null) {
+            Log.d("MapFragment", "Marker not null");
             MainActivity.timelineOpen(marker, geocoder);
             map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
             map.animateCamera(CameraUpdateFactory.zoomTo(15));

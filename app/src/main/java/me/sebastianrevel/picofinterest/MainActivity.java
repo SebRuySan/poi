@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -66,7 +67,7 @@ import me.sebastianrevel.picofinterest.Models.Pics;
 import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
-public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener {
+public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
@@ -101,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private TextView timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
+    // views for notification
+    private CardView cvMess;
+    private TextView tvmessage;
+    private TextView tvMostPop;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -157,6 +162,30 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 R.string.drawer_close);
 
         dl.addDrawerListener(drawerToggle);
+
+        // initialize the cardview for messages but set as invisible
+        cvMess = (CardView) findViewById(R.id.cvMess);
+        cvMess.setVisibility(View.INVISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
+        // initialize the text view within the cardview
+        tvmessage = (TextView) findViewById(R.id.tvMessage);
+        tvmessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapFragment.simulateclick(MapFragment.mostpop);
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+            }
+        });
+
+        tvMostPop = (TextView) findViewById(R.id.tvMostPop);
+        tvMostPop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                MapFragment.simulateclick(MapFragment.mostpop);
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+            }
+        });
 
         clear();
 //        try {
@@ -267,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public static void timelineOpen(Marker m, Geocoder g) {
+        Log.d("Main Activity", "Timeline open called");
         mMarker = m;
         mGeocoder = g;
 
@@ -1002,6 +1032,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static void clear() {
         arrayList.clear();
         adapter.notifyDataSetChanged();
+    }
+
+    public void showNotification(String message){
+        tvmessage.setText(message);
+        cvMess.setVisibility(View.VISIBLE);
     }
 
 //    public void likeSwitch() {
