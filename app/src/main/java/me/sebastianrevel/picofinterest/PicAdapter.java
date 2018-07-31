@@ -1,12 +1,18 @@
 package me.sebastianrevel.picofinterest;
 
+import android.animation.Animator;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.design.widget.SwipeDismissBehavior;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,11 +28,13 @@ import java.util.ArrayList;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
-public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHolder> {
+public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHolder> {
 
 
     ArrayList<Pics> arrayList = new ArrayList<>();
-    private Context context;
+    Context context;
+    Boolean expanded = false;
+    Dialog d;
 
 
     public PicAdapter(ArrayList<Pics> arrayList) {
@@ -69,6 +77,40 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
             Log.e("LIKED", "NOT");
             recyclerViewHolder.btnLike.setBackgroundResource(R.drawable.ic_star_off);
         }
+
+        recyclerViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               d = new Dialog(context);
+
+               d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+               d.setContentView(R.layout.expanded_layout);
+
+                ImageView imageView = d.findViewById(R.id.expanded_pic);
+
+                TextView textView = d.findViewById(R.id.expanded_desc);
+
+                try {
+                    textView.setText(String.valueOf(pic.getUser().fetchIfNeeded().getString("username")));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                ParseFile geoPic = pic.getPic();
+
+                String url = geoPic.getUrl();
+
+                Glide.with(context)
+                        .load(url)
+                        .into(imageView);
+
+                d.show();
+
+
+
+            }
+        });
 
 
         recyclerViewHolder.btnLike.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +186,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
         TextView tvUsername;
         TextView tvLikeCount;
         Button btnLike;
+        CardView c1;
 
         public RecyclerViewHolder(View view) {
             super(view);
