@@ -436,6 +436,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     e.printStackTrace();
                     last = null;
                 }
+                /*
                 // if there is a notification sent to this user a minute or less ago, wait
                 while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0 && getRelativeTimeAgo(last.toString()).indexOf("hour") < 0 && getRelativeTimeAgo(last.toString()).indexOf("day") < 0) {
                     try {
@@ -443,7 +444,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     } catch (InterruptedException ignored) {
                     }
                 }
+                */
                 // otherwise if there hasn't been a notification recently or ever, set a personalized message and set the cardview to be visible aka send notification
+                // Wait 5 seconds after app has been open to show notification
+                try {
+                    Thread.sleep(6500);
+                } catch (InterruptedException ignored) {
+                }
                 final String username;
                 String un = "";
                 try {

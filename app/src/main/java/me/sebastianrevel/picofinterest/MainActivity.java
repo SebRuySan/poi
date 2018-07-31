@@ -35,6 +35,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private CardView cvMess;
     private TextView tvmessage;
     private TextView tvMostPop;
+    private ImageButton btnExit;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -184,6 +186,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 Log.d("Map Fragment", "simulate click supposed to have been called by notification");
                 MapFragment.simulateclick(MapFragment.mostpop);
                 cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+            }
+        });
+
+        btnExit = (ImageButton) findViewById(R.id.btnExit);
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the button is clicked but the cardview isn't opened
             }
         });
 
