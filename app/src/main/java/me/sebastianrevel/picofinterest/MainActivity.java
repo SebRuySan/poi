@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -99,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private Button archiveBtn;
     private TextView profileTv;
     private TextView createdAtTv;
+    private TextView timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -124,35 +124,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.toolBar);
-
         archiveBtn = findViewById(R.id.archives_btn);
-
         profileTv = findViewById(R.id.profile_name_tv);
+        profileBtn = findViewById(R.id.profile_btn);
+        createdAtTv = findViewById(R.id.date_joined_tv);
+        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
+        uploadBtn = findViewById(R.id.upload_btn);
+        dl = findViewById(R.id.drawerLayout);
+        location = findViewById(R.id.location_tv);
+        rv = findViewById(R.id.recyclerView);
 
         profileTv.setText(ParseUser.getCurrentUser().getUsername());
-
-        profileBtn = findViewById(R.id.profile_btn);
-
-        createdAtTv = findViewById(R.id.date_joined_tv);
-
         createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
 
         setSupportActionBar(toolbar);
 
-        dl = findViewById(R.id.drawerLayout);
-
-        uploadBtn = findViewById(R.id.upload_btn);
-
-        location = findViewById(R.id.location_tv);
-
         lm = new LinearLayoutManager(this);
-
-        rv = findViewById(R.id.recyclerView);
-
         rv.setLayoutManager(lm);
-
         rv.setHasFixedSize(true);
-        location = findViewById(R.id.location_tv);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -452,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setPic(pFile);
 
                                     pic.setLike();
+                                    mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -762,9 +752,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         };
                                     }
 
-                                    mapFragment.addMarker(place, parseFile);
+                                    mapFragment.addMarker(place, parseFile, true);
                                     // save the picture to parse
-
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
@@ -844,6 +833,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mTimeframe = timeframe;
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
+
+        timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
 
         if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "

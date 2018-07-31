@@ -15,18 +15,22 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.graphics.Matrix;
 
+import java.util.Calendar;
 import com.google.maps.android.SphericalUtil;
 import com.parse.ParseException;
 import android.media.ExifInterface;
+//import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.service.autofill.SaveCallback;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +42,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import android.text.format.DateUtils;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -76,9 +82,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
@@ -105,6 +114,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public static LatLng mSearchLocation;
     private LocationRequest mLocationRequest;
 
+    // these are for the in app notifications
+    public String locmax;
+    public int picmax;
+    public static ArrayList<Marker> markers;
+    public static Marker mostpop;
+
+
     private static Context context;
     private static MapFragment thisMapFrag;
 
@@ -118,6 +134,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     // the following are for notifications/messages
     private CardView cvMess;
     private TextView tvmessage;
+    private TextView tvMostPop;
     static boolean daymode; // this variable is true if current style is daymode and is false if current map style id night mode
 
     public MapFragment() {
@@ -162,19 +179,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 daymode = false;
                 changeStyle();
 
-                //this part is harcoded for testing purposes
-                /*ArrayList<LatLng> points = new ArrayList<>();
-                LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
-                points.add(p);
-                LatLng s = new LatLng(47.595, -122.3); // century link field coordinate
-                points.add(s);
-                LatLng t = new LatLng(46.85, -121.76); // mt. rainier coordinate
-                points.add(t);
-                LatLng u = new LatLng(47.611, -122.33); // washington state convention center coordinate
-                points.add(u);
-                LatLng v = new LatLng(67.8, -42.4); // washington state convention center coordinate
-                points.add(v);
-                addPins(points);*/
+                markers = new ArrayList<Marker>();
 
                 // Define the class we would like to Query
                 ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
@@ -334,6 +339,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
             }
         });
+
     }
 
     public static void setmSearchLocation(double lat, double lon) {
@@ -389,9 +395,120 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         tvmessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                simulateclick(mostpop);
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
                 cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
             }
         });
+
+        tvMostPop = (TextView) view.findViewById(R.id.tvMostPop);
+        tvMostPop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                simulateclick(mostpop);
+            }
+        });
+
+
+        new Thread(new Runnable() {
+            public void run() {
+                final ParseUser user = ParseUser.getCurrentUser();
+                Date last;
+                try {
+                    last = user.fetchIfNeeded().getDate("lastnotification");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    last = null;
+                }
+                // if there is a notification sent to this user a minute or less ago, wait
+                while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0 && getRelativeTimeAgo(last.toString()).indexOf("hour") < 0 && getRelativeTimeAgo(last.toString()).indexOf("day") < 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                // otherwise if there hasn't been a notification recently or ever, set a personalized message and set the cardview to be visible aka send notification
+                final String username;
+                String un = "";
+                try {
+                    un = user.fetchIfNeeded().getString("username");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (un.equals(""))
+                    username = "You";
+                else
+                    username = un;
+//                tvmessage.setText(username + ", there is a Pic of Interest near you!");
+//                cvMess.setVisibility(View.VISIBLE);
+
+
+                Date currentTime = Calendar.getInstance().getTime();
+                final String mess = "";
+                user.put("lastnotification", currentTime);
+                user.saveInBackground();
+                // Define the class we would like to Query
+                ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+                // get all posts
+                final Map<String, Integer> locs = new HashMap<String, Integer>();
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.findInBackground(new FindCallback<Pics>() {
+                    public void done(List<Pics> itemList, ParseException e) {
+                        String locationmax;
+                        Log.d("MapFragment", "Query done");
+                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                        // if no errors
+                        if (e == null) {
+                            Log.d("MapFragment", "No errors in querying");
+                            for (Pics p : itemList) {
+                                if (locs.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
+                                    locs.put(p.getLocation(), locs.get(p.getLocation()) + 1);
+                                else
+                                    locs.put(p.getLocation(), 1);
+                            }
+                        } else {
+                            Log.d("item", "Error: " + e.getMessage());
+                        }
+                        // now we want to find the location with the most images
+                        locationmax = "";
+                        Integer most = 0;
+                        ;
+                        for (Map.Entry<String, Integer> entry : locs.entrySet()) {
+                            String key = entry.getKey();
+                            Integer value = entry.getValue();
+                            if (value > most) {
+                                most = value;
+                                picmax = most;
+                                locationmax = key;
+                                locmax = locationmax;
+                            }
+                        }
+                        // now location max contains address with most images taken
+                        locmax = locationmax;
+                        picmax = most;
+                        // iterate through all markers in map to find the one at the "pic of interest" location, aka the one with the most tagged pictures
+                        for(Marker m: markers)
+                            if(m.getTitle().equals(locmax)){
+                                //simulateclick(m);
+                                mostpop = m;
+                                Log.d("Map Fragment", "Most Pop Initialized");
+                                break;
+                            }
+                        Log.d("MapFragment", "Maxes set");
+                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n";
+                        Log.d("MapFragment", "Message printed");
+                        getActivity().runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                changeViews(message);
+                            }
+                        });
+                    }
+                });
+            }
+        }).start();
 
         // we also want to initialize the logout button and set an on click listener so the user is logged out when the button is pressed
 //        btnLogout = (Button) view.findViewById(R.id.btnLogOut);
@@ -411,6 +528,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //        startActivity(intent);
 //    }
 
+    public void changeViews(String message){
+        tvmessage.setText(message);
+        cvMess.setVisibility(View.VISIBLE);
+    }
     private void addPins(ArrayList<LatLng> points) {
         for(LatLng p: points)
             addMarker(p);
@@ -474,6 +595,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         .title(p.getName() + "")
                         //.snippet("test address")
                 );
+                markers.add(driver_marker);
+                Log.d("Map Fragment", markers.size() + " markers");
                 Log.d("MapFragment", "Marker created");
                 //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
                 //map.animateCamera(CameraUpdateFactory.zoomTo(13));
@@ -538,6 +661,109 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));
         */
+    }
+
+    // this function is exactly like the last one except that this is called when a picture is uploaded/taken and results in the same ffect
+    public static void addMarker(final Place p, ParseFile parseFile, boolean b) {
+        Target mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.d("MapFragment", "Marker is being created");
+                Marker driver_marker = map.addMarker(new MarkerOptions()
+                                .position(p.getLatLng())
+                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .title(p.getName() + "")
+                        //.snippet("test address")
+                );
+                Log.d("MapFragment", "Marker created");
+                //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                Log.d("MapFragment", "Camera zoomed in hopefully");
+                markers.add(driver_marker);
+                simulateclick(driver_marker);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception ex, Drawable errorDrawable) {
+                ex.printStackTrace();
+                Log.d("picasso", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        String imagePath = null;
+        File imageFile = null;
+        try {
+            imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+            Log.d("MapFragment", "Imagepath is not null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MapFragment", "Picasso about to be called");
+        Picasso.get()
+                .load(imageFile)
+                .resize(200, 200)
+                .centerCrop()
+                .transform(new CircleBubbleTransformation())
+                .into(mTarget);
+        Log.d("MapFragment", "Picasso hopefully done");
+    }
+
+    // this function is for when a picture is uploaded
+    public static void addMarker(final Pics p, ParseFile parseFile, boolean b) {
+        Target mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Log.d("MapFragment", "Marker is being created");
+                LatLng l = new LatLng(p.getLat(), p.getLong());
+                Marker driver_marker = map.addMarker(new MarkerOptions()
+                                .position(l)
+                                .icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .title(p.getLocation())
+                        //.snippet("test address")
+                );
+                Log.d("MapFragment", "Marker created");
+                //map.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+                //map.animateCamera(CameraUpdateFactory.zoomTo(13));
+                Log.d("MapFragment", "Camera zoomed in hopefully");
+                markers.add(driver_marker);
+                simulateclick(driver_marker);
+            }
+
+            @Override
+            public void onBitmapFailed(Exception ex, Drawable errorDrawable) {
+                ex.printStackTrace();
+                Log.d("picasso", "onBitmapFailed");
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
+        String imagePath = null;
+        File imageFile = null;
+        try {
+            imageFile = parseFile.getFile();
+            imagePath = imageFile.getAbsolutePath();
+            Log.d("MapFragment", "Imagepath is not null");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.d("MapFragment", "Picasso about to be called");
+        Picasso.get()
+                .load(imageFile)
+                .resize(200, 200)
+                .centerCrop()
+                .transform(new CircleBubbleTransformation())
+                .into(mTarget);
+        Log.d("MapFragment", "Picasso hopefully done");
     }
 
     public static void goToSearchedPlace(Place p){
@@ -615,6 +841,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         // Return result
         return rotatedBitmap;
+    }
+
+    public static boolean simulateclick(final Marker marker) {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        if (marker != null) {
+            MainActivity.timelineOpen(marker, geocoder);
+            map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+            map.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+        }
+
+        return false;
     }
 
     @Override
@@ -724,5 +962,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return relativeDate;
     }
 }

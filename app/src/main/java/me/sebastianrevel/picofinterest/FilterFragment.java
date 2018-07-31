@@ -43,7 +43,7 @@ public class FilterFragment extends DialogFragment {
             "Up to 1 week ago",
             "Up to 1 month ago",
             "Up to 1 year ago",
-            "All time"};
+            "All Time"};
 
     public FilterFragment() {
         // Required empty public constructor
