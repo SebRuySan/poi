@@ -169,6 +169,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 daymode = false;
                 changeStyle();
 
+                // remove all current markers from map
+                map.clear();
+
                 //this part is harcoded for testing purposes
                 /*ArrayList<LatLng> points = new ArrayList<>();
                 LatLng p = new LatLng(47.62, -122.35); // space needle coordinate
