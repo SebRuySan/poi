@@ -104,7 +104,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private static GoogleMap map;
     private OnFragmentInteractionListener mListener;
     private static int mRadius = 15;
-    private int mTimeframe = 5;
+    private static int mTimeframe = 5;
     private static Circle radiusCircle;
     private static float zoomLevel;
 
@@ -197,28 +197,24 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         if(e == null){
                             Log.d("MapFragment", "No errors in querying");
 
+                            LatLng filterLoc = mCurrentLocation;
+
                             if (mSearchLocation != null) {
-                                ArrayList<Pics> filteredList = filterList(itemList, mSearchLocation);
+                                filterLoc = mSearchLocation;
+                            }
 
-                                for (Pics p : filteredList) {
-                                    boolean added = locs.add(p.getLocation());
-                                    Log.d("MapFragment", "Attempt to add to pictures");
+                            ArrayList<Pics> filteredList = filterList(itemList, filterLoc);
 
-                                    if (added) {
-                                        pictures.add(p);
-                                        Log.d("MapFragment", "Item added to pictures");
-                                    }
-                                }
-                            } else {
-                                for (Pics p : itemList) {
-                                    boolean added = locs.add(p.getLocation());
-                                    Log.d("MapFragment", "Attempt to add to pictures");
-                                    if (added) {
-                                        pictures.add(p);
-                                        Log.d("MapFragment", "Item added to pictures");
-                                    }
+                            for (Pics p : filteredList) {
+                                boolean added = locs.add(p.getLocation());
+                                Log.d("MapFragment", "Attempt to add to pictures");
+
+                                if (added) {
+                                    pictures.add(p);
+                                    Log.d("MapFragment", "Item added to pictures");
                                 }
                             }
+
 
                             Log.d("MapFragment", "Pictures array size1 : " + pictures.size());
                             Place place;
@@ -348,7 +344,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
+        Toast.makeText(context, "original list: " + toFiler.size(), 0).show();
         ArrayList<Pics> filtered = new ArrayList<>();
+
+//        Date currDate = new Date();
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(currDate);
+//
+//        int currMonth = cal.get(Calendar.MONTH); // months start at 0, not 1
+//        int currDay = cal.get(Calendar.DAY_OF_MONTH);
+//        int currYear = cal.get(Calendar.YEAR);
 
         if (fromLoc != null) {
             for (Pics p : toFiler) {
@@ -357,14 +362,92 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 double distanceMiles = distanceMeters * 0.00062137;
 
                 if (distanceMiles <= mRadius) {
-                    filtered.add(p);
+                    //int[] date = p.getDate();
+                    Date date = p.getDate();
+
+//                    Calendar today = Calendar.getInstance();
+
+                    Calendar yesterday = Calendar.getInstance();
+                    yesterday.add(Calendar.DAY_OF_YEAR, -1); // sets to yesterday's date
+
+                    Calendar tomorrow = Calendar.getInstance();
+                    tomorrow.add(Calendar.DAY_OF_YEAR, 1); // sets to tomorrow's date
+
+                    Calendar weekAgo = Calendar.getInstance();
+                    weekAgo.add(Calendar.DAY_OF_YEAR, -7); // sets to a week ago's date
+
+                    Calendar monthAgo = Calendar.getInstance();
+                    monthAgo.add(Calendar.MONTH, -1); // sets to a month ago's date
+
+                    Calendar yearAgo = Calendar.getInstance();
+                    yearAgo.add(Calendar.YEAR, -1);
+
+                    switch (mTimeframe) {
+                        case 0:
+//                            if (date[0] == currMonth &&
+//                                    date[1] == currDay &&
+//                                    date[2] == currYear) {
+//                                filtered.add(p);
+//                            }
+
+                            if (date.after(yesterday.getTime())) {
+                                filtered.add(p);
+                            }
+
+                            break;
+
+                        case 1:
+//                            // if is yesterday or today
+//                            if ((date[0] == currMonth &&
+//                                    date[1] == currDay &&
+//                                    date[2] == currYear) ||
+//                                    (date[0] == yesterday.get(Calendar.MONTH) &&
+//                                    date[1] == yesterday.get(Calendar.DAY_OF_MONTH) &&
+//                                    date[2] == yesterday.get(Calendar.YEAR))) {
+//                                filtered.add(p);
+//                            }
+
+                            if (!date.before(yesterday.getTime())) {
+                                filtered.add(p);
+                            }
+
+                            break;
+
+                        case 2:
+                            if (!date.before(weekAgo.getTime())) {
+                                filtered.add(p);
+                            }
+
+                            break;
+
+                        case 3:
+                            if (!date.before(monthAgo.getTime())) {
+                                filtered.add(p);
+                            }
+
+                            break;
+
+                        case 4:
+                            if (!date.before(yearAgo.getTime())) {
+                                filtered.add(p);
+                            }
+
+                            break;
+
+                        case 5:
+                            filtered.add(p);
+
+                            break;
+                    }
                 }
             }
         }
 
         if (filtered != null) {
+            Toast.makeText(context, "filtered not null: " + filtered.size(), 0).show();
             return filtered;
         } else {
+            Toast.makeText(context, "filtered null", 0).show();
             return (ArrayList<Pics>) toFiler;
         }
     }
@@ -433,12 +516,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
-<<<<<<< HEAD
 
-                // TODO: The next two lines are making my app crash - Sanura
-                //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
-                //cvMess.setVisibility(View.VISIBLE);
-=======
                 final String message = mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime;
                 //tvmessage.setText(mess + " " + username + ", there is a Pic of Interest near you!"+ currentTime);
                 //cvMess.setVisibility(View.VISIBLE);
@@ -452,7 +530,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 });
 
 //                changeViews(message);
->>>>>>> 557940fcaaa04638cadbf9cd152fa7aa5b55fe0b
+
             }
         }).start();
 

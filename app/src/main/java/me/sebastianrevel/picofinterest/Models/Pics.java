@@ -10,6 +10,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @ParseClassName("Pics")
@@ -46,6 +47,21 @@ public class Pics extends ParseObject {
         put(KEY_LONG, longCoord);
     }
 
+//    public int[] getDate() {
+//        // create an array of size 3 that will represent the date
+//        // the date will essentially be in the format {MM, DD, YYYY}
+//        int[] date = new int[3];
+//
+//        date[0] = getCreatedAt().getMonth(); // months start at 0, not 1
+//        date[1] = getCreatedAt().getDate();
+//        date[2] = getCreatedAt().getYear();
+//
+//        return date;
+//    }
+
+    public Date getDate() {
+        return getCreatedAt();
+    }
 
     public List<String> getLike() {
 //        if (getList(KEY_LIKE) == null) {

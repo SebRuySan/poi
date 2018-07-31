@@ -51,6 +51,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
         try {
             recyclerViewHolder.tvUsername.setText( /*"@" + */ pic.getUser().fetchIfNeeded().getString("username"));
             recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
+            recyclerViewHolder.tvCreatedAt.setText(pic.getDate().toString());
         } catch (NullPointerException e){
 
         } catch (ParseException e) {
@@ -143,6 +144,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
         ImageView imageView;
         TextView tvUsername;
         TextView tvLikeCount;
+        TextView tvCreatedAt;
         Button btnLike;
 
         public RecyclerViewHolder(View view) {
@@ -151,7 +153,7 @@ public class PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHol
             tvUsername = view.findViewById(R.id.tvUsername);
             btnLike = view.findViewById(R.id.like_btn);
             tvLikeCount = view.findViewById(R.id.likeCounter);
-
+            tvCreatedAt = view.findViewById(R.id.tvCreatedAt);
         }
     }
 }
