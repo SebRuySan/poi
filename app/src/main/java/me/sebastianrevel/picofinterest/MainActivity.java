@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -92,7 +93,7 @@ import me.sebastianrevel.picofinterest.Models.Pics;
 import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
-public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener {
+public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
     Toolbar toolbar;
     ActionBarDrawerToggle drawerToggle;
     RecyclerView rv;
@@ -123,12 +124,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private TextView profileTv, createdAtTv, userScoreTv;
     private SwipeRefreshLayout swipeContainer;
 
-    ProgressBar progressBar;
-    Handler handler;
-    Runnable runnable;
-    Timer timer;
 
-
+    // views for notification
+    private CardView cvMess;
+    private TextView tvmessage;
+    private TextView tvMostPop;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -203,104 +203,31 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         dl.addDrawerListener(drawerToggle);
 
-        clear();
-
-
-
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        new Thread(new Runnable() {
+        // initialize the cardview for messages but set as invisible
+        cvMess = (CardView) findViewById(R.id.cvMess);
+        cvMess.setVisibility(View.INVISIBLE); // it starts off as invisible but becomes visible when certain conditions are met
+        // initialize the text view within the cardview
+        tvmessage = (TextView) findViewById(R.id.tvMessage);
+        tvmessage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setProgress(100);
-                    }
-                });
-                try {
-                    Thread.sleep(500);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            public void onClick(View view) {
+                MapFragment.simulateclick(MapFragment.mostpop);
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        tvMostPop = (TextView) findViewById(R.id.tvMostPop);
+        tvMostPop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Map Fragment", "simulate click supposed to have been called by notification");
+                MapFragment.simulateclick(MapFragment.mostpop);
+                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+            }
+        });
+
+        clear();
 
         signoutBtn = (Button) findViewById(R.id.signout_btn);
         signoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -410,6 +337,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     public static void timelineOpen(Marker m, Geocoder g) {
+        Log.d("Main Activity", "Timeline open called");
         mMarker = m;
         mGeocoder = g;
 
@@ -513,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        progressBar = findViewById(R.id.progress_bar);
         // if the result is capturing Image
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE || requestCode == PICK_PHOTO_CODE) {
 
@@ -529,8 +456,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // by this point we have the user's location so add a marker there
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        progressBar.setProgress(40);
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -605,7 +530,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         public void done(ParseException e) {
 
                                             if (e == null) { // no errors
-                                                progressBar.setVisibility(View.INVISIBLE);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
@@ -1201,4 +1125,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         arrayList.clear();
         adapter.notifyDataSetChanged();
     }
+
+    public void showNotification(String message){
+        tvmessage.setText(message);
+        cvMess.setVisibility(View.VISIBLE);
+    }
+
 }
