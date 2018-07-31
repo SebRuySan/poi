@@ -1,6 +1,8 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
+import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,11 +10,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.PersistableBundle;
 import android.os.StrictMode;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,12 +34,29 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.transition.Explode;
+import android.transition.Scene;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.Button;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +68,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -60,6 +84,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
@@ -85,21 +111,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
+    public int likeScore, totalScore;
+
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
 
     GPSTracker gps; // to get location of pics taken with camera
 
     PlaceAutocompleteFragment placeAutoComplete;
-    private Button cameraBtn;
-    private Button uploadBtn;
-    private Button signoutBtn;
-    private Button profileBtn;
-    private Button archiveBtn;
-    private TextView profileTv;
-    private TextView createdAtTv;
-    private TextView timeframeTv;
+    private Button cameraBtn, uploadBtn, signoutBtn, profileBtn, archiveBtn;
+    private TextView profileTv, createdAtTv, userScoreTv;
     private SwipeRefreshLayout swipeContainer;
+
+    ProgressBar progressBar;
+    Handler handler;
+    Runnable runnable;
+    Timer timer;
+
 
 
     // activity request code to store image
@@ -124,24 +152,41 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.toolBar);
+
         archiveBtn = findViewById(R.id.archives_btn);
+
         profileTv = findViewById(R.id.profile_name_tv);
-        profileBtn = findViewById(R.id.profile_btn);
-        createdAtTv = findViewById(R.id.date_joined_tv);
-        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
-        uploadBtn = findViewById(R.id.upload_btn);
-        dl = findViewById(R.id.drawerLayout);
-        location = findViewById(R.id.location_tv);
-        rv = findViewById(R.id.recyclerView);
 
         profileTv.setText(ParseUser.getCurrentUser().getUsername());
+
+        profileBtn = findViewById(R.id.profile_btn);
+
+        createdAtTv = findViewById(R.id.date_joined_tv);
+
+        userScoreTv = findViewById(R.id.user_score_tv);
+
+
+        userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
+
         createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
 
         setSupportActionBar(toolbar);
 
+        dl = findViewById(R.id.drawerLayout);
+
+        uploadBtn = findViewById(R.id.upload_btn);
+
+        location = findViewById(R.id.location_tv);
+
         lm = new LinearLayoutManager(this);
+
+        rv = findViewById(R.id.recyclerView);
+
         rv.setLayoutManager(lm);
+
         rv.setHasFixedSize(true);
+        location = findViewById(R.id.location_tv);
+
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -159,13 +204,102 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         dl.addDrawerListener(drawerToggle);
 
         clear();
-//        try {
-//            loadAll();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+
+
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress(100);
+                    }
+                });
+                try {
+                    Thread.sleep(500);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         signoutBtn = (Button) findViewById(R.id.signout_btn);
@@ -213,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
                 i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                startActivityForResult(i,CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                startActivityForResult(i, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
             }
         });
 
@@ -226,9 +360,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Create the scene
                 profileOpen();
             }
         });
@@ -259,6 +395,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+        try {
+            setScore();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        adapter.notifyDataSetChanged();
+        // Create the scene root for the scenes in this app
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
@@ -280,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         Log.e("ADDRESS", address);
 
+
         dl.openDrawer(Gravity.LEFT);
     }
 
@@ -288,7 +432,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         dl.openDrawer(Gravity.RIGHT);
     }
 
-    private void logout(){
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    private void logout() {
         ParseUser.logOutInBackground();
         // want to go to Log In (main) Activity with intent after successful log out
         final Intent intent = new Intent(this, LoginActivity.class);
@@ -364,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        progressBar = findViewById(R.id.progress_bar);
         // if the result is capturing Image
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE || requestCode == PICK_PHOTO_CODE) {
 
@@ -379,6 +529,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // by this point we have the user's location so add a marker there
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        progressBar.setProgress(40);
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                        Toast.makeText(MainActivity.this,
+                                "Removed Touch",
+                                Toast.LENGTH_SHORT).show();
 
                         Log.e("UPLOAD", "returning");
 
@@ -441,13 +599,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setPic(pFile);
 
                                     pic.setLike();
-                                    mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
 
                                             if (e == null) { // no errors
+                                                progressBar.setVisibility(View.INVISIBLE);
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
 
@@ -752,8 +911,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         };
                                     }
 
-                                    mapFragment.addMarker(place, parseFile, true);
+                                    mapFragment.addMarker(place, parseFile);
                                     // save the picture to parse
+
                                     newPic.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
@@ -834,8 +994,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
-        timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
-
         if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
@@ -872,7 +1030,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             return mDialog;
         }
     }
-//    public void loadGeoPics(String address) {
+
+    //    public void loadGeoPics(String address) {
 //        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
 //        query.findInBackground(new FindCallback<Pics>() {
 //            @Override
@@ -893,7 +1052,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //            }
 //        });
 //    }
-    public static void loadAll() throws IOException, ParseException { ;
+    public static void loadAll() throws IOException, ParseException {
+        ;
         LatLng pos;
 
         if (mMarker != null) {
@@ -969,12 +1129,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
             ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
             query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
-            query.findInBackground(new FindCallback<Pics>(){
-                public void done(List<Pics> itemList, ParseException e){
+            query.findInBackground(new FindCallback<Pics>() {
+                public void done(List<Pics> itemList, ParseException e) {
                     Log.d(TAG, "Query done");
                     Log.d(TAG, "ItemList array size : " + itemList.size());
                     // if no errors
-                    if(e == null){
+                    if (e == null) {
                         Log.d(TAG, "No errors in querying");
 
                         ArrayList<Pics> picsInRadius = mapFragment.filterList(itemList, latLng);
@@ -989,8 +1149,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         }
 
                         adapter.notifyDataSetChanged();
-                    }
-                    else {
+                    } else {
                         Log.d("item", "Error: " + e.getMessage());
                     }
                 }
@@ -999,16 +1158,47 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
     }
 
+    public void setScore() throws ParseException {
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("user", ParseUser.getCurrentUser());
+        final int amountOfPicsPostedScore = query.count() * 10;
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        int likes = objects.get(i).getLike().size();
+                        likeScore += (likes * 50);
+                        Log.e("USERSCORE", String.valueOf(likes));
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+                totalScore = likeScore + amountOfPicsPostedScore;
+                ParseUser user = ParseUser.getCurrentUser();
+                user.put("userScore", totalScore);
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+
+                        if (e == null) { // no errors
+
+                            Log.e("SCORE", "Updated Score");
+
+                        } else {
+
+                            Log.e("Score", "Failed to update score");
+
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
+        });
+    }
+
     public static void clear() {
         arrayList.clear();
         adapter.notifyDataSetChanged();
     }
-
-//    public void likeSwitch() {
-//        if (isLiked) {
-//            likeBtn.setBackgroundResource(R.drawable.ic_star_off);
-//        } else {
-//            likeBtn.setBackgroundResource(R.drawable.ic_star_on);
-//        }
-//    }
 }
