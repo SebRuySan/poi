@@ -944,6 +944,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mThisAddyOnly = thisAddyOnly;
         mRadius = radius;
         mTimeframe = timeframe;
+
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
@@ -1019,6 +1020,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 pos = mapFragment.mCurrentLocation;
             }
 
+//            if (isNotificationClick) {
+//                pos = mapFragment.mCurrentLocation;
+//            }
             //xpos = new LatLng(loc.getLatitude(), loc.getLongitude());
         }
 
@@ -1050,13 +1054,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             Log.d("CreateFragment", "Adding pics: " + objects.size());
                         }
 
-                        ArrayList<Pics> picsInRadius = mapFragment.filterList(objects, latLng);
+                        ArrayList<Pics> filteredPics = mapFragment.filterList(objects, latLng);
 
                         clear();
 
-                        if (picsInRadius.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(picsInRadius);
+                        if (filteredPics.size() == 0) {
+                            //Toast.makeText(MainActivity.this, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                            arrayList.addAll(filteredPics);
                         } else {
                             arrayList.addAll(objects);
                         }
