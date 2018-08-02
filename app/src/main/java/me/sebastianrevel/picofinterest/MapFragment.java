@@ -669,7 +669,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                 break;
                             }
                         Log.d("MapFragment", "Maxes set");
-                        final String message = username + ", there is a popular place near you! \nThere have been " + picmax + " pictures taken there in the last" + timemess + "\n";
+                        String mess = "";
+                        if(username.length() > 7) // if the username is too long then don't include in printed message
+                            mess = "There is a popular location near you! \nThere have been " + picmax + " pictures taken there in the last" + timemess + "\n";
+                        else
+                            mess = username + ", there's a popular place near you! \nThere have been " + picmax + " pictures taken there in the last" + timemess + "\n";
+                        final String message = mess;
                         Log.d("MapFragment", "Message printed");
                         getActivity().runOnUiThread(new Runnable() {
 
