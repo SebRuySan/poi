@@ -1,7 +1,11 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,6 +18,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
+
+import android.os.VibrationEffect;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,6 +71,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.os.Vibrator;
+
 import me.sebastianrevel.picofinterest.Models.Pics;
 
 //@RuntimePermissions
@@ -104,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private TextView tvmessage;
     private TextView tvMostPop;
     private ImageButton btnExit;
+    private Vibrator v;
 
     private Uri mFileUri;
 
@@ -164,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -190,7 +202,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void onClick(View view) {
                 MapFragment.simulateclick(MapFragment.mostpop);
                 Log.d("Map Fragment", "simulate click supposed to have been called by notification");
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel(); // stop vibrating in case it hasn't already
             }
         });
 
@@ -200,7 +219,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void onClick(View view) {
                 Log.d("Map Fragment", "simulate click supposed to have been called by notification");
                 MapFragment.simulateclick(MapFragment.mostpop);
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel();
             }
         });
 
@@ -208,7 +234,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the button is clicked but the cardview isn't opened
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel();
             }
         });
 
@@ -1135,6 +1168,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public void showNotification(String message){
         tvmessage.setText(message);
         cvMess.setVisibility(View.VISIBLE);
+
+        // animate to fade in
+        cvMess.setAlpha(0);
+        cvMess.animate().setDuration(400).alpha(1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                cvMess.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Vibrate for 400 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500,VibrationEffect.DEFAULT_AMPLITUDE));
+        }else {
+            //deprecated in API 26
+            v.vibrate(400);
+        }
     }
 
 }
