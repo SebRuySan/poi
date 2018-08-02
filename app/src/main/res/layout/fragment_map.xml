@@ -31,36 +31,36 @@
         android:textStyle="bold"
         tools:checked="true" />
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cvMess"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/colorPrimaryDark"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="20dp">
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:id="@+id/cvMess"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="60dp"-->
+        <!--android:background="@color/colorPrimaryDark"-->
+        <!--tools:layout_editor_absoluteX="17dp"-->
+        <!--tools:layout_editor_absoluteY="20dp">-->
 
 
-        <ImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="87dp"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/globelogo" />
+        <!--<ImageView-->
+            <!--android:id="@+id/ivLogo"-->
+            <!--android:layout_width="87dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:srcCompat="@drawable/globelogo" />-->
 
-        <TextView
-            android:id="@+id/tvMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="16dp"
-            android:text="Content of message"
-            android:textColor="@color/colorPrimaryDark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.852"
-            app:layout_constraintStart_toEndOf="@+id/like_btn"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
-    </android.support.v7.widget.CardView>
+        <!--<TextView-->
+            <!--android:id="@+id/tvMessage"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_marginLeft="8dp"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:text="Content of message"-->
+            <!--android:textColor="@color/colorPrimaryDark"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintHorizontal_bias="0.852"-->
+            <!--app:layout_constraintStart_toEndOf="@+id/like_btn"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintVertical_bias="1.0" />-->
+    <!--</android.support.v7.widget.CardView>-->
 
 </RelativeLayout>

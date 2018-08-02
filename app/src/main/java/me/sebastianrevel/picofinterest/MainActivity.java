@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static DrawerLayout dl;
     static RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
+    static MainActivity context;
 
     static ArrayList<Pics> arrayList = new ArrayList<>();
     static TextView location;
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static Marker mMarker;
     static Geocoder mGeocoder;
 
-    private static boolean mThisAddyOnly = true;
+    public static boolean mThisAddyOnly = true;
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn, uploadBtn, signoutBtn, profileBtn, archiveBtn;
-    private TextView profileTv, createdAtTv, userScoreTv;
+    private TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -157,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         userScoreTv = findViewById(R.id.user_score_tv);
 
+        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
+
 
         userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
 
@@ -178,6 +182,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
+
+        context = MainActivity.this;
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -350,7 +356,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
 
         Log.e("ADDRESS", address);
-
 
         dl.openDrawer(Gravity.LEFT);
     }
@@ -919,6 +924,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
+        timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
+
         if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
@@ -1029,9 +1036,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         clear();
 
-                        if (filteredPics.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(filteredPics);
+                        if (filteredPics != null) {
+                            if (filteredPics.isEmpty()) {
+                                Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                arrayList.addAll(filteredPics);
+                            }
                         } else {
                             arrayList.addAll(objects);
                         }
@@ -1065,13 +1076,17 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     if (e == null) {
                         Log.d(TAG, "No errors in querying");
 
-                        ArrayList<Pics> picsInRadius = mapFragment.filterList(itemList, latLng);
+                        ArrayList<Pics> filteredPics = mapFragment.filterList(itemList, latLng);
 
                         clear();
 
-                        if (picsInRadius.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(picsInRadius);
+                        if (filteredPics != null) {
+                            if (filteredPics.isEmpty()) {
+                                Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                arrayList.addAll(filteredPics);
+                            }
                         } else {
                             arrayList.addAll(itemList);
                         }

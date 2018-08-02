@@ -68,8 +68,30 @@ public class FilterFragment extends DialogFragment {
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOk = view.findViewById(R.id.action_ok);
 
-        mRadiusBar.setProgress(MainActivity.mRadius);
-        mRadiusProgress.setText("Radius: " + MainActivity.mRadius + " mi");
+        mThisAddyOnly = MainActivity.mThisAddyOnly;
+        mRadius = MainActivity.mRadius;
+        mTimeframe = MainActivity.mTimeframe;
+
+        if (mRadius == 0) {
+            mSwitchDistance.setChecked(true);
+            mSwitchDistance2.setChecked(false);
+
+            mSwitchDistance2.setVisibility(View.GONE);
+            mRadiusProgress.setVisibility(View.GONE);
+            mRadiusBar.setVisibility(View.GONE);
+
+        } else if (mRadius == 1) {
+            mSwitchDistance.setChecked(false);
+            mSwitchDistance2.setChecked(true);
+
+            mSwitchDistance2.setVisibility(View.VISIBLE);
+            mRadiusProgress.setVisibility(View.GONE);
+            mRadiusBar.setVisibility(View.GONE);
+
+        } else {
+            mRadiusBar.setProgress(mRadius);
+            mRadiusProgress.setText("Radius: " + mRadius + " mi");
+        }
 
         mSwitchDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -110,7 +132,6 @@ public class FilterFragment extends DialogFragment {
             }
         });
 
-        mRadius = 15;
         mRadiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -131,6 +152,7 @@ public class FilterFragment extends DialogFragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, timeframes);
         mSpinnerTime.setAdapter(adapter);
+        mSpinnerTime.setSelection(mTimeframe);
         mSpinnerTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
