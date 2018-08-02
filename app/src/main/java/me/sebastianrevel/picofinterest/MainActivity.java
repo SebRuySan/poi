@@ -1,6 +1,7 @@
 package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.app.Dialog;
@@ -11,20 +12,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
+
+import android.os.VibrationEffect;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -36,18 +36,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.transition.Explode;
-import android.transition.Scene;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -61,7 +55,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -77,12 +70,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import android.os.Vibrator;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
-
-import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
@@ -123,6 +114,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private TextView tvmessage;
     private TextView tvMostPop;
     private ImageButton btnExit;
+    private Vibrator v;
+
+    private Uri mFileUri;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -183,7 +177,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
+<<<<<<< HEAD
         context = MainActivity.this;
+=======
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+>>>>>>> 24c315158fc8967e3d6d6d393ef030d5556c3494
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -211,7 +209,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void onClick(View view) {
                 MapFragment.simulateclick(MapFragment.mostpop);
                 Log.d("Map Fragment", "simulate click supposed to have been called by notification");
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel(); // stop vibrating in case it hasn't already
             }
         });
 
@@ -221,7 +226,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void onClick(View view) {
                 Log.d("Map Fragment", "simulate click supposed to have been called by notification");
                 MapFragment.simulateclick(MapFragment.mostpop);
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the text is clicked.
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel();
             }
         });
 
@@ -229,7 +241,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         btnExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cvMess.setVisibility(View.INVISIBLE); // this is so that the "notification"/message goes away when the button is clicked but the cardview isn't opened
+                // this is so that the "notification"/message goes away when the text is clicked.
+                cvMess.animate().setDuration(250).alpha(0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        cvMess.setVisibility(View.GONE);
+                    }
+                });
+                v.cancel();
             }
         });
 
@@ -564,6 +583,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     final Pics newPic = new Pics();
 
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+
+                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).getPath();
+                    if (mFilePath != null) {
+                        Log.e("PATH", "NOT NULL");
+                        Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
+                        intent.putExtra("filepath", mFilePath);
+                        startActivity(intent);
+                    }
+//
+//                    try {
+//                        parseFile.save();
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Intent i = new Intent(MainActivity.this, DescriptionActivity.class);
+//                    i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+//                    startActivity(i);
 
                     // save Parse file in background (image)
                     parseFile.saveInBackground(new SaveCallback() {
@@ -1148,6 +1184,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public void showNotification(String message){
         tvmessage.setText(message);
         cvMess.setVisibility(View.VISIBLE);
+
+        // animate to fade in
+        cvMess.setAlpha(0);
+        cvMess.animate().setDuration(400).alpha(1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                cvMess.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Vibrate for 400 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500,VibrationEffect.DEFAULT_AMPLITUDE));
+        }else {
+            //deprecated in API 26
+            v.vibrate(400);
+        }
     }
 
 }

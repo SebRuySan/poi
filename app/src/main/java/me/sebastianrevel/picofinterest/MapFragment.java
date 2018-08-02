@@ -502,7 +502,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
 
         if (filtered != null) {
-            Toast.makeText(context, "filtered not null: " + filtered.size(), 0).show();
+            Toast.makeText(context, "filtered    not null: " + filtered.size(), 0).show();
             return filtered;
         } else {
             Toast.makeText(context, "filtered null", 0).show();
@@ -545,24 +545,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         new Thread(new Runnable() {
             public void run() {
                 final ParseUser user = ParseUser.getCurrentUser();
-                Date last;
-                try {
-                    last = user.fetchIfNeeded().getDate("lastnotification");
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    last = null;
-                }
-                /*
-                // if there is a notification sent to this user a minute or less ago, wait
-                while (last != null && getRelativeTimeAgo(last.toString()).indexOf("minutes") < 0 && getRelativeTimeAgo(last.toString()).indexOf("hour") < 0 && getRelativeTimeAgo(last.toString()).indexOf("day") < 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                */
-                // otherwise if there hasn't been a notification recently or ever, set a personalized message and set the cardview to be visible aka send notification
-                // Wait 5 seconds after app has been open to show notification
+                // Wait 6.5 seconds after app has been open to show notification
                 try {
                     Thread.sleep(6500);
                 } catch (InterruptedException ignored) {
@@ -583,6 +566,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
 
                 Date currentTime = Calendar.getInstance().getTime();
+
+                // create Calendar objects so we can check if pic object was created a day/week ago
+                final Calendar yesterday = Calendar.getInstance();
+                yesterday.add(Calendar.DAY_OF_YEAR, -1); // sets to yesterday's date
+                final Calendar weekAgo = Calendar.getInstance();
+                weekAgo.add(Calendar.DAY_OF_YEAR, -7); // sets to a week ago's date
+
                 final String mess = "";
                 user.put("lastnotification", currentTime);
                 user.saveInBackground();
@@ -604,17 +594,41 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // Define the class we would like to Query
                 ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
                 // get all posts
-                final Map<String, Integer> locs = new HashMap<String, Integer>();
+                final Map<String, Integer> locs = new HashMap<String, Integer>(); // locs stores all locations where pictures have been taken in the last day (also stores the amount of pictures taken there in the last day)
+                final Map<String, Integer> locs2 = new HashMap<String, Integer>(); // locs2 stores all locations where pictures have been taken in the last week (also stores the amount of pictures taken there in the last week)
                 query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
                 query.findInBackground(new FindCallback<Pics>() {
                     public void done(List<Pics> itemList, ParseException e) {
                         String locationmax;
                         Log.d("MapFragment", "Query done");
                         Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                        LatLng from = mCurrentLocation;
                         // if no errors
                         if (e == null) {
                             Log.d("MapFragment", "No errors in querying");
-                            for (Pics p : itemList) {
+                            for (Pics p : itemList) { // however, we don't just want to include all pics, we only want to count them if they happened recently and nearby
+
+                                LatLng to = new LatLng(p.getLat(), p.getLong()); // this is the latlng location of the picture
+                                double distanceMeters = SphericalUtil.computeDistanceBetween(from, to);
+                                double distanceMiles = distanceMeters * 0.00062137;
+                                if(distanceMiles >= 1)
+                                    continue; // in other words, if it's not within walking distance from current location (we define this as 1 mile) then don't add to any list, go to next Pic
+
+                                // now we want to check how recent the Pic object was created
+                                Date date = p.getDate();
+                                if (date.before(weekAgo.getTime())) {
+                                    continue; // if Pic object was created over a week ago, then go to next Pic object
+                                }
+                                // else we want to add it to locs2 or increment the number of images taken at that location
+                                if (locs2.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
+                                    locs2.put(p.getLocation(), locs2.get(p.getLocation()) + 1);
+                                else
+                                    locs2.put(p.getLocation(), 1);
+
+                                if (date.before(yesterday.getTime())) { //if image is taken before yesterday then continue
+                                    continue;
+                                }
+                                // else then add it to locs or increment the number of images taken at that location
                                 if (locs.containsKey(p.getLocation())) // hashmap contains the number of images taken at each address
                                     locs.put(p.getLocation(), locs.get(p.getLocation()) + 1);
                                 else
@@ -623,10 +637,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         } else {
                             Log.d("item", "Error: " + e.getMessage());
                         }
-                        // now we want to find the location with the most images
+                        // now we want to find the location with the most images, both taken in last week and in last day
                         locationmax = "";
                         Integer most = 0;
-
+                        // first we want to see if there is a location within walking distance with pictures taken in last day (and if so get the one with the most pictures)
                         for (Map.Entry<String, Integer> entry : locs.entrySet()) {
                             String key = entry.getKey();
                             Integer value = entry.getValue();
@@ -640,6 +654,28 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         // now location max contains address with most images taken
                         locmax = locationmax;
                         picmax = most;
+                        String timemess = " day!";
+
+                        // but we also want to check if for some reason there hasn't been in any pictures taken in a location within walking distance in the past day
+                        if(picmax == 0){
+                            // if this is the case, then find the location within walking distance with the most pictures taken in past week
+                            for (Map.Entry<String, Integer> entry : locs2.entrySet()) {
+                                String key = entry.getKey();
+                                Integer value = entry.getValue();
+                                if (value > most) {
+                                    most = value;
+                                    picmax = most;
+                                    locationmax = key;
+                                    locmax = locationmax;
+                                }
+                            }
+                            locmax = locationmax;
+                            picmax = most;
+                            timemess = " week!";
+                        }
+
+
+
                         // iterate through all markers in map to find the one at the "pic of interest" location, aka the one with the most tagged pictures
                         for(Marker m: markers)
                             if(m.getTitle().equals(locmax)){
@@ -649,7 +685,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                 break;
                             }
                         Log.d("MapFragment", "Maxes set");
-                        final String message = mess + " " + username + ", there is a Pic of Interest near you! \n";
+                        String mess = "";
+                        if(username.length() > 7) // if the username is too long then don't include in printed message
+                            mess = "There is a popular location near you! \nThere have been " + picmax + " pictures taken there in the last" + timemess + "\n";
+                        else
+                            mess = username + ", there's a popular place near you! \nThere have been " + picmax + " pictures taken there in the last" + timemess + "\n";
+                        final String message = mess;
                         Log.d("MapFragment", "Message printed");
                         getActivity().runOnUiThread(new Runnable() {
 
