@@ -177,11 +177,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
-<<<<<<< HEAD
         context = MainActivity.this;
-=======
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
->>>>>>> 24c315158fc8967e3d6d6d393ef030d5556c3494
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -584,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
 
-                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).getPath();
+                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
                     if (mFilePath != null) {
                         Log.e("PATH", "NOT NULL");
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);

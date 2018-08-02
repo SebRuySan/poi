@@ -601,7 +601,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     public void done(List<Pics> itemList, ParseException e) {
                         String locationmax;
                         Log.d("MapFragment", "Query done");
-                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                  //      Log.d("MapFragment", "ItemList array size : " + itemList.size());
                         LatLng from = mCurrentLocation;
                         // if no errors
                         if (e == null) {

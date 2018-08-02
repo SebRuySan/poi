@@ -35,7 +35,7 @@ public class DescriptionActivity extends AppCompatActivity {
         //String filePath = getIntent().getStringExtra("pictures");
 
         Intent intent = getIntent();
-        String filepath = intent.getStringExtra("filepath");
+        String filepath = new String(intent.getStringExtra("filepath"));
         Log.e("DESC", filepath);
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 8; // down sizing image as it throws OutOfMemory Exception for larger images
