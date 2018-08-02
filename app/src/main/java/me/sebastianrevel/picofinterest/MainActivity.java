@@ -13,21 +13,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.PersistableBundle;
 import android.os.StrictMode;
+
 import android.os.VibrationEffect;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
@@ -39,18 +37,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.transition.Explode;
-import android.transition.Scene;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -64,7 +56,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -80,16 +71,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.media.ExifInterface;
 
 import android.os.Vibrator;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
-
-import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
@@ -99,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static DrawerLayout dl;
     static RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager lm;
+    static MainActivity context;
 
     static ArrayList<Pics> arrayList = new ArrayList<>();
     static TextView location;
@@ -107,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static Marker mMarker;
     static Geocoder mGeocoder;
 
-    private static boolean mThisAddyOnly = true;
+    public static boolean mThisAddyOnly = true;
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
@@ -120,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn, uploadBtn, signoutBtn, profileBtn, archiveBtn;
-    private TextView profileTv, createdAtTv, userScoreTv;
+    private TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -134,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private ImageButton btnExit;
     private Vibrator v;
+
+    private Uri mFileUri;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -170,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         userScoreTv = findViewById(R.id.user_score_tv);
 
+        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
+
 
         userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
 
@@ -192,7 +184,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
+        context = MainActivity.this;
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
 
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -386,7 +380,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
 
         Log.e("ADDRESS", address);
-
 
         dl.openDrawer(Gravity.LEFT);
     }
@@ -653,6 +646,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     final Pics newPic = new Pics();
 
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+
+                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).getPath();
+                    if (mFilePath != null) {
+                        Log.e("PATH", "NOT NULL");
+                        Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
+                        intent.putExtra("filepath", mFilePath);
+                        startActivity(intent);
+                    }
+//
+//                    try {
+//                        parseFile.save();
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Intent i = new Intent(MainActivity.this, DescriptionActivity.class);
+//                    i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+//                    startActivity(i);
 
                     // save Parse file in background (image)
                     parseFile.saveInBackground(new SaveCallback() {
@@ -1048,6 +1058,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
+        timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
+
         if (mThisAddyOnly) {
             location.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
@@ -1158,9 +1170,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         clear();
 
-                        if (filteredPics.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(filteredPics);
+                        if (filteredPics != null) {
+                            if (filteredPics.isEmpty()) {
+                                Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                arrayList.addAll(filteredPics);
+                            }
                         } else {
                             arrayList.addAll(objects);
                         }
@@ -1194,13 +1210,17 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     if (e == null) {
                         Log.d(TAG, "No errors in querying");
 
-                        ArrayList<Pics> picsInRadius = mapFragment.filterList(itemList, latLng);
+                        ArrayList<Pics> filteredPics = mapFragment.filterList(itemList, latLng);
 
                         clear();
 
-                        if (picsInRadius.size() == 0) {
-                            //Toast.makeText(MainActivity.this, "Number pins to show: " + picsInRadius.size(), Toast.LENGTH_SHORT).show();
-                            arrayList.addAll(picsInRadius);
+                        if (filteredPics != null) {
+                            if (filteredPics.isEmpty()) {
+                                Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                arrayList.addAll(filteredPics);
+                            }
                         } else {
                             arrayList.addAll(itemList);
                         }

@@ -169,6 +169,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             e.printStackTrace();
         }
 
+        daymode = true;
+
         context = getContext();
         thisMapFrag = MapFragment.this;
         showMap();
@@ -214,7 +216,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 loadMap(googleMap);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-                daymode = false;
+                daymode = !daymode;
                 changeStyle();
 
                 // remove all current markers from map
@@ -419,22 +421,24 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     //int[] date = p.getDate();
                     Date date = p.getDate();
 
-//                    Calendar today = Calendar.getInstance();
+                    Calendar today = Calendar.getInstance();
+                    today.add(Calendar.DAY_OF_YEAR, -1); // subtract a day to only include today
 
                     Calendar yesterday = Calendar.getInstance();
                     yesterday.add(Calendar.DAY_OF_YEAR, -1); // sets to yesterday's date
 
-                    Calendar tomorrow = Calendar.getInstance();
-                    tomorrow.add(Calendar.DAY_OF_YEAR, 1); // sets to tomorrow's date
 
                     Calendar weekAgo = Calendar.getInstance();
                     weekAgo.add(Calendar.DAY_OF_YEAR, -7); // sets to a week ago's date
+                    weekAgo.add(Calendar.DAY_OF_YEAR, -1); // subtract a day to include the day of a week ago
 
                     Calendar monthAgo = Calendar.getInstance();
                     monthAgo.add(Calendar.MONTH, -1); // sets to a month ago's date
+                    monthAgo.add(Calendar.DAY_OF_YEAR, -1); // subtract a day to include the day of a month ago
 
                     Calendar yearAgo = Calendar.getInstance();
-                    yearAgo.add(Calendar.YEAR, -1);
+                    yearAgo.add(Calendar.YEAR, -1); // sets to a year ago's date
+                    yearAgo.add(Calendar.DAY_OF_YEAR, -1); // subtract a day to include the day of a year ago
 
                     switch (mTimeframe) {
                         case 0:
@@ -444,7 +448,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //                                filtered.add(p);
 //                            }
 
-                            if (date.after(yesterday.getTime())) {
+                            if (date.after(today.getTime())) {
                                 filtered.add(p);
                             }
 
@@ -461,28 +465,28 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //                                filtered.add(p);
 //                            }
 
-                            if (!date.before(yesterday.getTime())) {
+                            if (date.after(yesterday.getTime())) {
                                 filtered.add(p);
                             }
 
                             break;
 
                         case 2:
-                            if (!date.before(weekAgo.getTime())) {
+                            if (date.after(weekAgo.getTime())) {
                                 filtered.add(p);
                             }
 
                             break;
 
                         case 3:
-                            if (!date.before(monthAgo.getTime())) {
+                            if (date.after(monthAgo.getTime())) {
                                 filtered.add(p);
                             }
 
                             break;
 
                         case 4:
-                            if (!date.before(yearAgo.getTime())) {
+                            if (date.after(yearAgo.getTime())) {
                                 filtered.add(p);
                             }
 
@@ -525,6 +529,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         });
 
+        // TODO: work on this
+        if (map != null) {
+            Toast.makeText(context, "map not null", 0).show();
+
+            map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+                @Override
+                public boolean onMyLocationButtonClick() {
+                    mSearchLocation = mCurrentLocation;
+                    return false;
+                }
+            });
+        }
 
         new Thread(new Runnable() {
             public void run() {

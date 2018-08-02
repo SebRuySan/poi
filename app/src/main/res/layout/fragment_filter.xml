@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FilterFragment">
 
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="225dp"
+        android:layout_height="287dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:padding="10dp">
+        android:padding="10dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="1dp">
 
         <TextView
             android:id="@+id/heading"
@@ -28,10 +31,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/heading"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="-79dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="30dp"
             android:text="Show results for selected location only"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintTop_toBottomOf="@+id/heading"
+            tools:layout_editor_absoluteX="10dp" />
 
         <Switch
             android:id="@+id/switchDistance2"
@@ -39,28 +43,38 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/switchDistance"
-            android:layout_marginTop="88dp"
+            android:layout_marginTop="70dp"
             android:text="Within Walking Distance"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintTop_toBottomOf="@+id/heading"
+            tools:layout_editor_absoluteX="77dp" />
 
         <TextView
             android:id="@+id/tvRadius"
             android:layout_width="134dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/switchDistance2"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="115dp"
             android:text="Radius: 15 mi"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
 
         <SeekBar
             android:id="@+id/sbRadius"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_alignEnd="@+id/heading"
             android:layout_below="@+id/switchDistance2"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="115dp"
             android:max="50"
             android:min="1"
-            android:progress="15" />
+            android:progress="15"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
 
         <TextView
             android:id="@+id/tvTimeframe"
@@ -69,8 +83,12 @@
             android:layout_alignParentStart="true"
             android:layout_alignStart="@+id/switchDistance2"
             android:layout_alignTop="@+id/spinnerTime"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="150dp"
             android:text="Timeframe:"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
 
         <Spinner
             android:id="@+id/spinnerTime"
@@ -78,7 +96,11 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/heading"
             android:layout_below="@+id/tvRadius"
-            android:spinnerMode="dropdown" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="140dp"
+            android:spinnerMode="dropdown"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/heading" />
 
         <TextView
             android:id="@+id/action_ok"
@@ -86,10 +108,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:text="OK"
             android:textColor="#33bbff"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/action_cancel"
@@ -97,13 +122,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
             android:text="CANCEL"
             android:textColor="#33bbff"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
