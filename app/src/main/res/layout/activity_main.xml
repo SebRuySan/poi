@@ -26,7 +26,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/cvMess"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             app:cardBackgroundColor="@android:color/white"
             app:cardCornerRadius="5dp"
@@ -62,8 +62,8 @@
                 android:id="@+id/tvMostPop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="75dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginLeft="180dp"
+                android:layout_marginTop="33dp"
                 android:text="See Pic of Interest!"
                 android:textColor="@color/colorPrimaryDark" />
 
@@ -73,7 +73,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="325dp"
                 android:background="@android:color/white"
-                android:src="@android:drawable/ic_delete" />
+                android:src="@android:drawable/ic_delete"
+                android:tint="@android:color/holo_blue_dark" />
         </android.support.v7.widget.CardView>
 
         <fragment
