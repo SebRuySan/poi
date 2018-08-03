@@ -1,11 +1,8 @@
 package me.sebastianrevel.picofinterest;
 
-import android.animation.Animator;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.design.widget.SwipeDismissBehavior;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -60,6 +57,7 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
             recyclerViewHolder.tvUsername.setText( /*"@" + */ pic.getUser().fetchIfNeeded().getString("username"));
             recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
             recyclerViewHolder.tvCreatedAt.setText(pic.getDate().toString());
+            recyclerViewHolder.tvDesc.setText(pic.getDesc());
         } catch (NullPointerException e){
 
         } catch (ParseException e) {
@@ -90,10 +88,14 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
 
                 ImageView imageView = d.findViewById(R.id.expanded_pic);
 
-                TextView textView = d.findViewById(R.id.expanded_desc);
+                TextView textView = d.findViewById(R.id.expanded_user);
+
+                TextView descView = d.findViewById(R.id.expanded_desc);
 
                 try {
                     textView.setText(String.valueOf(pic.getUser().fetchIfNeeded().getString("username")));
+                    descView.setText(pic.getDesc());
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -187,11 +189,13 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
         TextView tvUsername;
         TextView tvLikeCount;
         TextView tvCreatedAt;
+        TextView tvDesc;
         Button btnLike;
         CardView c1;
 
         public RecyclerViewHolder(View view) {
             super(view);
+            tvDesc = view.findViewById(R.id.card_desc);
             imageView = view.findViewById(R.id.imageView);
             tvUsername = view.findViewById(R.id.tvUsername);
             btnLike = view.findViewById(R.id.like_btn);

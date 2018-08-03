@@ -12,12 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.SaveCallback;
 
 import java.io.File;
+
+import me.sebastianrevel.picofinterest.Models.Pics;
 
 public class DescriptionActivity extends AppCompatActivity {
     EditText descriptionEt;
@@ -45,16 +50,31 @@ public class DescriptionActivity extends AppCompatActivity {
 //            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
 //            picIv.setImageBitmap(bitmap);
 
+        uploadBtn = findViewById(R.id.upload_post_btn);
+        final Pics newPic = (Pics) intent.getExtras().get("pic");
+
+        ParseFile pFile = newPic.getPic();
+
         Glide.with(this)
-                .load(filepath)
+                .load(pFile.getUrl())
                 .into(picIv);
 
-        uploadBtn = findViewById(R.id.upload_post_btn);
 
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 picIv.setImageDrawable(null);
+                String userDesc = String.valueOf(descriptionEt.getText());
+
+                newPic.setDesc(userDesc);
+                newPic.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Log.d("DESCACTIVITY", "added description");
+                        Toast.makeText(getApplicationContext(), "Image added", Toast.LENGTH_SHORT);
+
+                    }
+                });
                 finish();
             }
         });

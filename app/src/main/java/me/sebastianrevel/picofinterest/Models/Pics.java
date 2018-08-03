@@ -23,6 +23,7 @@ public class Pics extends ParseObject {
     private static final String KEY_LONG = "long";
     private static final String KEY_LIKE = "liked";
     private static final String KEY_NUM_LIKES = "number_of_likes";
+    private static final String KEY_DESCRIPTION = "description";
 
 //RuyG
     public String getLocation() {
@@ -48,6 +49,10 @@ public class Pics extends ParseObject {
     public void setLong(double longCoord) {
         put(KEY_LONG, longCoord);
     }
+
+    public String getDesc() {return getString(KEY_DESCRIPTION);}
+
+    public void setDesc(String desc) {put(KEY_DESCRIPTION, desc);}
 
 //    public int[] getDate() {
 //        // create an array of size 3 that will represent the date
