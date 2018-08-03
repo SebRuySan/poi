@@ -55,6 +55,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.mukesh.image_processing.ImageProcessor;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -533,6 +534,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                             bm = BitmapFactory.decodeStream(getContentResolver()
                                     .openInputStream(imageUri));
+                            ImageProcessor imageProcessor = new ImageProcessor();
+
+                            bm = imageProcessor.doGreyScale(bm);
 
                         } catch (FileNotFoundException e) {
 
