@@ -400,16 +400,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
-        Toast.makeText(context, "original list: " + toFiler.size(), 0).show();
+        //Toast.makeText(context, "original list: " + toFiler.size(), 0).show();
         ArrayList<Pics> filtered = new ArrayList<>();
-
-//        Date currDate = new Date();
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(currDate);
-//
-//        int currMonth = cal.get(Calendar.MONTH); // months start at 0, not 1
-//        int currDay = cal.get(Calendar.DAY_OF_MONTH);
-//        int currYear = cal.get(Calendar.YEAR);
 
         if (fromLoc != null) {
             for (Pics p : toFiler) {
@@ -442,11 +434,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
                     switch (mTimeframe) {
                         case 0:
-//                            if (date[0] == currMonth &&
-//                                    date[1] == currDay &&
-//                                    date[2] == currYear) {
-//                                filtered.add(p);
-//                            }
 
                             if (date.after(today.getTime())) {
                                 filtered.add(p);
@@ -455,15 +442,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             break;
 
                         case 1:
-//                            // if is yesterday or today
-//                            if ((date[0] == currMonth &&
-//                                    date[1] == currDay &&
-//                                    date[2] == currYear) ||
-//                                    (date[0] == yesterday.get(Calendar.MONTH) &&
-//                                    date[1] == yesterday.get(Calendar.DAY_OF_MONTH) &&
-//                                    date[2] == yesterday.get(Calendar.YEAR))) {
-//                                filtered.add(p);
-//                            }
 
                             if (date.after(yesterday.getTime())) {
                                 filtered.add(p);
@@ -502,10 +480,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
 
         if (filtered != null) {
-            Toast.makeText(context, "filtered    not null: " + filtered.size(), 0).show();
+            //Toast.makeText(context, "filtered    not null: " + filtered.size(), 0).show();
             return filtered;
         } else {
-            Toast.makeText(context, "filtered null", 0).show();
+            //Toast.makeText(context, "filtered null", 0).show();
             return (ArrayList<Pics>) toFiler;
         }
     }
@@ -707,12 +685,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }).start();
 
 
-    }
-
-
-    private void addPins(ArrayList<LatLng> points) {
-        for(LatLng p: points)
-            addMarker(p);
     }
 
     private static void changeStyle(){

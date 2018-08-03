@@ -92,7 +92,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static Marker mMarker;
     static Geocoder mGeocoder;
 
-    public static boolean mThisAddyOnly = true;
+    public static boolean mThisAddyOnly;
+    public static boolean mSortByLikes;
+    public static boolean mSortByScores;
+
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
@@ -177,12 +180,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         rv.setHasFixedSize(true);
         location = findViewById(R.id.location_tv);
 
-<<<<<<< HEAD
         context = MainActivity.this;
-=======
-        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
->>>>>>> 24c315158fc8967e3d6d6d393ef030d5556c3494
 
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -349,6 +349,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         try {
             setScore();
+            setNumLikes();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -359,6 +360,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
         fragmentTransaction.commit();
 
+    }
+
+    private void setNumLikes() {
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    for (Pics p : objects) {
+                        p.setNumLikes();
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static void timelineOpen(Marker m, Geocoder g) {
@@ -949,11 +966,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(boolean thisAddyOnly, int radius, int timeframe) {
+    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe) {
         Log.d(TAG, "sendFilterInput: got the input");
         //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
         mThisAddyOnly = thisAddyOnly;
+        mSortByLikes = sortByLikes;
+        mSortByScores = sortByScores;
+
         mRadius = radius;
         mTimeframe = timeframe;
 
@@ -1057,7 +1077,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     + "\n\t at this address only.");
 
             final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+
+            // sort by
+            if (mSortByLikes || mSortByScores) {
+                if (mSortByLikes) {
+                    query.orderByDescending("number_of_likes");
+                } else {
+                    // TODO: sort by scores
+                }
+
+                query.addDescendingOrder("createdAt");
+            } else {
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            }
+
             query.findInBackground(new FindCallback<Pics>() {
                 @Override
                 public void done(List<Pics> objects, ParseException e) {
@@ -1076,7 +1109,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
                                 arrayList.addAll(filteredPics);
                             }
                         } else {
@@ -1103,7 +1136,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
 
             ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+
+            // sort by
+            if (mSortByLikes || mSortByScores) {
+                if (mSortByLikes) {
+                    query.orderByDescending("number_of_likes");
+                } else {
+                    // TODO: sort by scores
+                }
+
+                query.addDescendingOrder("createdAt");
+            } else {
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            }
+
             query.findInBackground(new FindCallback<Pics>() {
                 public void done(List<Pics> itemList, ParseException e) {
                     Log.d(TAG, "Query done");
@@ -1120,7 +1166,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
                                 arrayList.addAll(filteredPics);
                             }
                         } else {

@@ -25,16 +25,24 @@ import java.util.Map;
 
 public class FilterFragment extends DialogFragment {
 
-    private Switch mSwitchDistance; // show results for selected location only
-    private Switch mSwitchDistance2; // show results within walking distance
-    private TextView mRadiusProgress;
-    private SeekBar mRadiusBar;
     private boolean mThisAddyOnly;
+    private boolean mSortByLikes;
+    private boolean mSortByScores;
+
     private int mRadius;
-    private Spinner mSpinnerTime;
     private int mTimeframe;
+
+    private TextView mRadiusProgress;
     private TextView mActionCancel;
     private TextView mActionOk;
+
+    private Switch mSwitchDistance; // show results for selected location only
+    private Switch mSwitchDistance2; // show results within walking distance
+    private Switch mSwitchLikes;
+    private Switch mSwitchScores;
+
+    private SeekBar mRadiusBar;
+    private Spinner mSpinnerTime;
 
     public OnFilterInputListener mOnFilterInputListener;
 
@@ -60,18 +68,27 @@ public class FilterFragment extends DialogFragment {
 
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
 
-        mSwitchDistance = view.findViewById(R.id.switchDistance);
-        mSwitchDistance2 = view.findViewById(R.id.switchDistance2);
         mRadiusProgress = view.findViewById(R.id.tvRadius);
-        mRadiusBar = view.findViewById(R.id.sbRadius);
-        mSpinnerTime = view.findViewById(R.id.spinnerTime);
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOk = view.findViewById(R.id.action_ok);
 
+        mSwitchDistance = view.findViewById(R.id.switchDistance);
+        mSwitchDistance2 = view.findViewById(R.id.switchDistance2);
+        mSwitchLikes = view.findViewById(R.id.switchLikes);
+        mSwitchScores = view.findViewById(R.id.switchScores);
+
+        mRadiusBar = view.findViewById(R.id.sbRadius);
+        mSpinnerTime = view.findViewById(R.id.spinnerTime);
+
+        // set global variables to last updated values
         mThisAddyOnly = MainActivity.mThisAddyOnly;
+        mSortByLikes = MainActivity.mSortByLikes;
+        mSortByScores = MainActivity.mSortByScores;
+
         mRadius = MainActivity.mRadius;
         mTimeframe = MainActivity.mTimeframe;
 
+        // set items on screen to represent these values
         if (mRadius == 0) {
             mSwitchDistance.setChecked(true);
             mSwitchDistance2.setChecked(false);
@@ -93,6 +110,19 @@ public class FilterFragment extends DialogFragment {
             mRadiusProgress.setText("Radius: " + mRadius + " mi");
         }
 
+        if (mSortByLikes) {
+            mSwitchLikes.setChecked(true);
+        } else {
+            mSwitchLikes.setChecked(false);
+        }
+
+        if (mSortByScores) {
+            mSwitchScores.setChecked(true);
+        } else {
+            mSwitchScores.setChecked(false);
+        }
+
+        // add listeners to necessary items on screen
         mSwitchDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -128,6 +158,28 @@ public class FilterFragment extends DialogFragment {
 
                     mRadiusProgress.setVisibility(View.GONE);
                     mRadiusBar.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mSwitchLikes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!mSwitchLikes.isChecked()) {
+                    mSortByLikes = false;
+                } else {
+                    mSortByLikes = true;
+                }
+            }
+        });
+
+        mSwitchScores.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!mSwitchScores.isChecked()) {
+                    mSortByScores = false;
+                } else {
+                    mSortByScores = true;
                 }
             }
         });
@@ -178,7 +230,7 @@ public class FilterFragment extends DialogFragment {
             public void onClick(View view) {
                 Log.d("FilterFragment", "onClick: capturing input");
 
-                mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mRadius, mTimeframe);
+                mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mSortByLikes, mSortByScores, mRadius, mTimeframe);
 
                 try {
                     MainActivity.clear();
@@ -209,7 +261,7 @@ public class FilterFragment extends DialogFragment {
     }
 
     public interface OnFilterInputListener {
-        void sendFilterInput(boolean thisAddyOnly, int radius, int timeframe);
+        void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe);
     }
 
 }
