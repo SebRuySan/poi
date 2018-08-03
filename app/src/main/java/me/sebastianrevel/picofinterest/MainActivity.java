@@ -8,6 +8,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -71,6 +72,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.media.ExifInterface;
+
 import android.os.Vibrator;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
@@ -116,6 +119,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private CardView cvMess;
     private TextView tvmessage;
     private TextView tvMostPop;
+
+    // this is a string to store the filepath of an uploaded image, and use it to hopefully get the location where it was taken
+    private String filepath;
+
     private ImageButton btnExit;
     private Vibrator v;
 
@@ -435,11 +442,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         File mediaFileName;
 
         if (type == MEDIA_TYPE_IMAGE) {
-
             mediaFileName = new File(mediaStorageDir.getPath() + ".jpg");
 
         } else if (type == MEDIA_GALLERY) {
-
             mediaFileName = new File(galleryStorageDir.getPath() + ".jpg");
 
         } else {
@@ -508,7 +513,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         Bitmap bm = null;
 
+                        Log.d("Main Activity", "Got to point A");
                         Uri imageUri = data.getData();
+
 
                         try {
 
@@ -547,16 +554,76 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         final ParseFile pFile = conversionBitmapParseFile(bm);
 
+                        filepath = getRealPathFromUri(getApplicationContext(), imageUri);
+                        boolean hasLoc = false;
+
+                        try {
+                            ExifInterface exif = new ExifInterface(filepath);
+                            Log.d("Main Activity", "Got to point B");
+                            String lat = ExifInterface.TAG_GPS_LATITUDE;
+                            String lat_data = exif.getAttribute(lat); // this is the latitude of where the image was taken in a weird format
+                            String lng = ExifInterface.TAG_GPS_LONGITUDE;
+                            String lng_data = exif.getAttribute(lng); // this is the longitude of where the image was taken in a weird format
+                            if(lat_data != null && lng_data != null) {
+                                Log.d("Main Activity", lat_data);
+                                Log.d("Main Activity", lng_data);
+                                double lati = formatCoordinates(lat_data);
+                                double longi = formatCoordinates(lng_data) * -1;
+                                Log.d("Main Activity", "Formatted: " + lati);
+                                Log.d("Main Activity", "Formatted: " + longi);
+
+                                // set the location of the picture to be the reformatted gps coordinates
+                                pic.setLat(lati);
+                                pic.setLong(longi);
+                                hasLoc = true;
+
+                                Geocoder geocoder2 = new Geocoder(getApplicationContext(),
+                                        Locale.getDefault());
+
+                                List<Address> listAddresses2 = null;
+
+                                try {
+
+                                    listAddresses2 = geocoder2
+                                            .getFromLocation(lati,
+                                                    longi,
+                                                    1);
+
+                                    // set this address as the location of the picture
+                                } catch (IOException e) {
+
+                                    e.printStackTrace();
+
+                                }
+                                final String address2 = listAddresses2
+                                        .get(0)
+                                        .getAddressLine(0);
+                                pic.setLocation(address2);
+                                Log.d("Main Activity", address2);
+                            }
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d("Main Activity", "Problem with exifinterface");
+                        }
+
+                        final boolean foundLoc = hasLoc;
+
                         pFile.saveInBackground(new SaveCallback() {
                             public void done(ParseException e) {
                                 if (null == e) {
                                     Log.e("UPLOAD", "there is a file returned");
 
-                                    pic.setLocation(address);
+                                    if(!foundLoc) {
 
-                                    pic.setLong(longitude);
+                                        pic.setLocation(address);
 
-                                    pic.setLat(latitude);
+                                        pic.setLong(longitude);
+
+                                        pic.setLat(latitude);
+
+                                    }
 
                                     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -565,6 +632,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setPic(pFile);
 
                                     pic.setLike();
+
+                                    mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -601,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
 
-                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).getPath();
+                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
                     if (mFilePath != null) {
                         Log.e("PATH", "NOT NULL");
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
@@ -893,7 +962,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         };
                                     }
 
-                                    mapFragment.addMarker(place, parseFile);
+                                    mapFragment.addMarker(place, parseFile, true);
                                     // save the picture to parse
 
                                     newPic.saveInBackground(new SaveCallback() {
@@ -934,6 +1003,41 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         }
     }
+
+    // this gets the uri of the image and returns the filepath that can be used to get the image's location if available
+    public static String getRealPathFromUri(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    // this method takes in a latitude/longitude in a weird format and uses math to format it to normal gps coordinates
+    public static double formatCoordinates(String lat){ // we're going to call it lat but the same function works for longitude
+        String[] words  = lat.split(","); // splits lat into three "words" like 51/1, "42/1", "234/2321"
+        double[] nums = new double[3];
+        for(int i = 0; i < 3; i ++){
+            String w = words[i];
+            double a = Double.parseDouble(w.substring(0,w.indexOf("/")));
+            double b = Double.parseDouble(w.substring(w.indexOf("/") + 1));
+            nums[i] = a/b;
+
+        }
+        double whole = nums[0];
+        double seconds = nums[1] * 60 + nums[2];
+        double fractional = seconds / 3600;
+        return whole + fractional;
+    }
+
+
 
     @Override
     protected void onStart() {

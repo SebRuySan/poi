@@ -579,7 +579,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     public void done(List<Pics> itemList, ParseException e) {
                         String locationmax;
                         Log.d("MapFragment", "Query done");
-                        Log.d("MapFragment", "ItemList array size : " + itemList.size());
+                  //      Log.d("MapFragment", "ItemList array size : " + itemList.size());
                         LatLng from = mCurrentLocation;
                         // if no errors
                         if (e == null) {
@@ -707,7 +707,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // Customise the styling of the base map using a JSON object defined
                 // in a raw resource file.
                 boolean success = map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(context, R.raw.retrostyle_json));
+                        MapStyleOptions.loadRawResourceStyle(context, R.raw.bentley_json));
 
                 if (!success) {
                     Log.e("MapsActivity", "Style parsing failed.");
