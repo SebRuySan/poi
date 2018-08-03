@@ -1,6 +1,7 @@
 package me.sebastianrevel.picofinterest.Models;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -75,6 +76,15 @@ public class Pics extends ParseObject {
             return likedList;
         // }
     }
+    public class Tuple<X, Y> {
+        public final X x;
+        public final Y y;
+        public Tuple(X x, Y y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
 
     public void setLike() {
         put(KEY_LIKE, Collections.emptyList());

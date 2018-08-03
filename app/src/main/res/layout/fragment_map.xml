@@ -12,15 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!--<ProgressBar-->
-        <!--android:id="@+id/progress_bar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:indeterminate="false"-->
-        <!--android:elevation="10dp"/>-->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminate="false"
+        android:elevation="10dp"/>
 
     <Switch
         android:id="@+id/swStyle"

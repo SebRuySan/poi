@@ -56,6 +56,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -124,6 +125,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     private Vibrator v;
 
     private Uri mFileUri;
+
+    boolean on = true;
+    boolean off = false;
 
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -482,6 +486,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // by this point we have the user's location so add a marker there
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
+                        MapFragment.setProgress(on);
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -495,6 +500,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         Log.d("Main Activity", "Got to point A");
                         Uri imageUri = data.getData();
+
+                        final ParseFile pFile = new ParseFile(new File(String.valueOf(imageUri)));
 
 
                         try {
@@ -532,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         final Pics pic = new Pics();
 
-                        final ParseFile pFile = conversionBitmapParseFile(bm);
+                       // final ParseFile pFile = conversionBitmapParseFile(bm);
 
                         filepath = getRealPathFromUri(getApplicationContext(), imageUri);
                         boolean hasLoc = false;
@@ -616,6 +623,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         public void done(ParseException e) {
 
                                             if (e == null) { // no errors
+                                                MapFragment.setProgress(off);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
