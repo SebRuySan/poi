@@ -22,6 +22,7 @@ public class Pics extends ParseObject {
     private static final String KEY_LAT = "lat";
     private static final String KEY_LONG = "long";
     private static final String KEY_LIKE = "liked";
+    private static final String KEY_NUM_LIKES = "number_of_likes";
 
 //RuyG
     public String getLocation() {
@@ -100,6 +101,7 @@ public class Pics extends ParseObject {
         Log.d("Pics", "Added Like");
       //  List<String> newList = likeList.add(username);
         put(KEY_LIKE, concatList);
+        put(KEY_NUM_LIKES, concatList.size());
     }
 
     //            for (String userList : likeList) {
@@ -108,7 +110,10 @@ public class Pics extends ParseObject {
 //                }
 //            }
 
-
+    public void setNumLikes() {
+        List<String> likes = getLike();
+        put(KEY_NUM_LIKES, likes.size());
+    }
 
     public void deleteLike(String username) {
         Log.e("Pics", "Deleted Like");
@@ -117,10 +122,12 @@ public class Pics extends ParseObject {
             likeList.remove(username);
             Log.e("USERDELETE", username);
             put(KEY_LIKE, likeList);
+            put(KEY_NUM_LIKES, likeList.size());
             Log.e("DELETESIZE", String.valueOf(likeList.size()));
         } else {
             likeList = Collections.emptyList();
             put(KEY_LIKE, likeList);
+            put(KEY_NUM_LIKES, likeList.size());
         }
     }
 

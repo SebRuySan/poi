@@ -96,7 +96,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static Marker mMarker;
     static Geocoder mGeocoder;
 
-    public static boolean mThisAddyOnly = true;
+    public static boolean mThisAddyOnly;
+    public static boolean mSortByLikes;
+    public static boolean mSortByScores;
+
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
@@ -189,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         location = findViewById(R.id.location_tv);
 
         context = MainActivity.this;
-        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -357,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         try {
             setScore();
+            setNumLikes();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -367,6 +371,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
         fragmentTransaction.commit();
 
+    }
+
+    private void setNumLikes() {
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    for (Pics p : objects) {
+                        p.setNumLikes();
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static void timelineOpen(Marker m, Geocoder g) {
@@ -551,41 +571,43 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             String lat_data = exif.getAttribute(lat); // this is the latitude of where the image was taken in a weird format
                             String lng = ExifInterface.TAG_GPS_LONGITUDE;
                             String lng_data = exif.getAttribute(lng); // this is the longitude of where the image was taken in a weird format
-                            Log.d("Main Activity", lat_data);
-                            Log.d("Main Activity", lng_data);
-                            double lati = formatCoordinates(lat_data);
-                            double longi = formatCoordinates(lng_data) * -1;
-                            Log.d("Main Activity", "Formatted: " + lati);
-                            Log.d("Main Activity", "Formatted: " + longi);
+                            if(lat_data != null && lng_data != null) {
+                                Log.d("Main Activity", lat_data);
+                                Log.d("Main Activity", lng_data);
+                                double lati = formatCoordinates(lat_data);
+                                double longi = formatCoordinates(lng_data) * -1;
+                                Log.d("Main Activity", "Formatted: " + lati);
+                                Log.d("Main Activity", "Formatted: " + longi);
 
-                            // set the location of the picture to be the reformatted gps coordinates
-                            pic.setLat(lati);
-                            pic.setLong(longi);
-                            hasLoc = true;
+                                // set the location of the picture to be the reformatted gps coordinates
+                                pic.setLat(lati);
+                                pic.setLong(longi);
+                                hasLoc = true;
 
-                            Geocoder geocoder2 = new Geocoder(getApplicationContext(),
-                                    Locale.getDefault());
+                                Geocoder geocoder2 = new Geocoder(getApplicationContext(),
+                                        Locale.getDefault());
 
-                            List<Address> listAddresses2 = null;
+                                List<Address> listAddresses2 = null;
 
-                            try {
+                                try {
 
-                                listAddresses2 = geocoder2
-                                        .getFromLocation(lati,
-                                                longi,
-                                                1);
+                                    listAddresses2 = geocoder2
+                                            .getFromLocation(lati,
+                                                    longi,
+                                                    1);
 
-                                // set this address as the location of the picture
-                            } catch (IOException e) {
+                                    // set this address as the location of the picture
+                                } catch (IOException e) {
 
-                                e.printStackTrace();
+                                    e.printStackTrace();
 
+                                }
+                                final String address2 = listAddresses2
+                                        .get(0)
+                                        .getAddressLine(0);
+                                pic.setLocation(address2);
+                                Log.d("Main Activity", address2);
                             }
-                            final String address2 = listAddresses2
-                                    .get(0)
-                                    .getAddressLine(0);
-                            pic.setLocation(address2);
-                            Log.d("Main Activity", address2);
 
 
                         } catch (IOException e) {
@@ -617,6 +639,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     pic.setPic(pFile);
 
                                     pic.setLike();
+
+                                    mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
                                         @Override
@@ -946,7 +970,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         };
                                     }
 
-                                    mapFragment.addMarker(place, parseFile);
+                                    mapFragment.addMarker(place, parseFile, true);
                                     // save the picture to parse
 
                                     newPic.saveInBackground(new SaveCallback() {
@@ -1054,11 +1078,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(boolean thisAddyOnly, int radius, int timeframe) {
+    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe) {
         Log.d(TAG, "sendFilterInput: got the input");
         //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
         mThisAddyOnly = thisAddyOnly;
+        mSortByLikes = sortByLikes;
+        mSortByScores = sortByScores;
+
         mRadius = radius;
         mTimeframe = timeframe;
 
@@ -1162,7 +1189,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     + "\n\t at this address only.");
 
             final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("location", address);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+
+            // sort by
+            if (mSortByLikes || mSortByScores) {
+                if (mSortByLikes) {
+                    query.orderByDescending("number_of_likes");
+                } else {
+                    // TODO: sort by scores
+                }
+
+                query.addDescendingOrder("createdAt");
+            } else {
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            }
+
             query.findInBackground(new FindCallback<Pics>() {
                 @Override
                 public void done(List<Pics> objects, ParseException e) {
@@ -1181,7 +1221,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
                                 arrayList.addAll(filteredPics);
                             }
                         } else {
@@ -1208,7 +1248,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
 
             ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
-            query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+
+            // sort by
+            if (mSortByLikes || mSortByScores) {
+                if (mSortByLikes) {
+                    query.orderByDescending("number_of_likes");
+                } else {
+                    // TODO: sort by scores
+                }
+
+                query.addDescendingOrder("createdAt");
+            } else {
+                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+            }
+
             query.findInBackground(new FindCallback<Pics>() {
                 public void done(List<Pics> itemList, ParseException e) {
                     Log.d(TAG, "Query done");
@@ -1225,7 +1278,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
                                 arrayList.addAll(filteredPics);
                             }
                         } else {
