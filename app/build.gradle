@@ -31,6 +31,7 @@ allprojects {
     repositories {
         jcenter()
         google()
+        //maven { url "https://jitpack.io" } // this is for filters
     }
 }
 
@@ -67,6 +68,9 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
+    // this is for filters
+    implementation "com.github.mukeshsolanki:photofilter:1.0.3"
 
     // use Picasso for marker frame
     implementation 'com.squareup.picasso:picasso:2.71828'

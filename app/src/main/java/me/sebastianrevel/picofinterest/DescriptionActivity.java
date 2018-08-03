@@ -23,6 +23,7 @@ public class DescriptionActivity extends AppCompatActivity {
     EditText descriptionEt;
     ImageView picIv;
     Button uploadBtn;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String filepath = new String(intent.getStringExtra("filepath"));
-        Log.e("DESC", filepath);
+        //Log.e("DESC", filepath);
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 8; // down sizing image as it throws OutOfMemory Exception for larger images
 //        // filepath = filepath.replace("file://", ""); // remove to avoid BitmapFactory.decodeFile return null

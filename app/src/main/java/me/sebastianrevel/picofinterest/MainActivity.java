@@ -55,6 +55,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.mukesh.image_processing.ImageProcessor;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -521,6 +522,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                             bm = BitmapFactory.decodeStream(getContentResolver()
                                     .openInputStream(imageUri));
+                            ImageProcessor imageProcessor = new ImageProcessor();
+
+                            bm = imageProcessor.doGreyScale(bm);
 
                         } catch (FileNotFoundException e) {
 
@@ -668,9 +672,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     final Pics newPic = new Pics();
 
-                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    final File f = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                    final ParseFile parseFile = new ParseFile(f);
+                    String mFilePath = f.toString();
 
-                    String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
+                    //final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+
+                    //String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
                     if (mFilePath != null) {
                         Log.e("PATH", "NOT NULL");
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
