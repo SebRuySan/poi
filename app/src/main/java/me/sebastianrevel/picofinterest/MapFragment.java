@@ -735,7 +735,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // Customise the styling of the base map using a JSON object defined
                 // in a raw resource file.
                 boolean success = map.setMapStyle(
-                        MapStyleOptions.loadRawResourceStyle(context, R.raw.retrostyle_json));
+                        MapStyleOptions.loadRawResourceStyle(context, R.raw.bentley_json));
 
                 if (!success) {
                     Log.e("MapsActivity", "Style parsing failed.");

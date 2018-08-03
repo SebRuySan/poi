@@ -544,41 +544,43 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             String lat_data = exif.getAttribute(lat); // this is the latitude of where the image was taken in a weird format
                             String lng = ExifInterface.TAG_GPS_LONGITUDE;
                             String lng_data = exif.getAttribute(lng); // this is the longitude of where the image was taken in a weird format
-                            Log.d("Main Activity", lat_data);
-                            Log.d("Main Activity", lng_data);
-                            double lati = formatCoordinates(lat_data);
-                            double longi = formatCoordinates(lng_data) * -1;
-                            Log.d("Main Activity", "Formatted: " + lati);
-                            Log.d("Main Activity", "Formatted: " + longi);
+                            if(lat_data != null && lng_data != null) {
+                                Log.d("Main Activity", lat_data);
+                                Log.d("Main Activity", lng_data);
+                                double lati = formatCoordinates(lat_data);
+                                double longi = formatCoordinates(lng_data) * -1;
+                                Log.d("Main Activity", "Formatted: " + lati);
+                                Log.d("Main Activity", "Formatted: " + longi);
 
-                            // set the location of the picture to be the reformatted gps coordinates
-                            pic.setLat(lati);
-                            pic.setLong(longi);
-                            hasLoc = true;
+                                // set the location of the picture to be the reformatted gps coordinates
+                                pic.setLat(lati);
+                                pic.setLong(longi);
+                                hasLoc = true;
 
-                            Geocoder geocoder2 = new Geocoder(getApplicationContext(),
-                                    Locale.getDefault());
+                                Geocoder geocoder2 = new Geocoder(getApplicationContext(),
+                                        Locale.getDefault());
 
-                            List<Address> listAddresses2 = null;
+                                List<Address> listAddresses2 = null;
 
-                            try {
+                                try {
 
-                                listAddresses2 = geocoder2
-                                        .getFromLocation(lati,
-                                                longi,
-                                                1);
+                                    listAddresses2 = geocoder2
+                                            .getFromLocation(lati,
+                                                    longi,
+                                                    1);
 
-                                // set this address as the location of the picture
-                            } catch (IOException e) {
+                                    // set this address as the location of the picture
+                                } catch (IOException e) {
 
-                                e.printStackTrace();
+                                    e.printStackTrace();
 
+                                }
+                                final String address2 = listAddresses2
+                                        .get(0)
+                                        .getAddressLine(0);
+                                pic.setLocation(address2);
+                                Log.d("Main Activity", address2);
                             }
-                            final String address2 = listAddresses2
-                                    .get(0)
-                                    .getAddressLine(0);
-                            pic.setLocation(address2);
-                            Log.d("Main Activity", address2);
 
 
                         } catch (IOException e) {
