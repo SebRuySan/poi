@@ -1150,6 +1150,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         ;
         LatLng pos;
 
+        // this essentially checks if the function was called after a marker was clicked
+        //   or if it was called after filters were updated.
+        // this is check is necessary for using the correct location (to filter and to display)
         if (mMarker != null) {
             pos = mMarker.getPosition();
             mapFragment.setmSearchLocation(pos.latitude, pos.longitude);
@@ -1190,6 +1193,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     query.orderByDescending("number_of_likes");
                 } else {
                     // TODO: sort by scores
+
                 }
 
                 query.addDescendingOrder("createdAt");

@@ -32,8 +32,8 @@
         android:id="@+id/password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textForgot"
         android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_layout">
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="92dp"
+        android:layout_marginBottom="138dp"
         android:background="@android:color/darker_gray"
         android:text="Log In"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="72dp"
         android:layout_marginStart="68dp"
         android:text="Don't have an account?" />
 
@@ -93,9 +93,9 @@
         android:id="@+id/textForgot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/imageView"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="175dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/password_layout"
+        android:layout_marginEnd="25dp"
         android:text="Forgot password?"
         android:textColor="@android:color/holo_blue_dark" />
 
@@ -105,9 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="199dp"
-        android:alpha=".7"
-        app:srcCompat="@drawable/poifull_transparent" />
+        android:layout_marginTop="75dp"
+        app:srcCompat="@drawable/imageedit_7_6701174050" />
 
 
 </RelativeLayout>
