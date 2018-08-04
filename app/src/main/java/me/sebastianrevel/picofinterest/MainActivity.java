@@ -633,6 +633,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                     pic.setLike();
 
+                                    pic.setNumLikeColumn();
+
                                     mapFragment.addMarker(pic, pFile, true);
 
                                     pic.saveInBackground(new SaveCallback() {
