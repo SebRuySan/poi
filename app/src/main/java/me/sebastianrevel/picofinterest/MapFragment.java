@@ -39,6 +39,7 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -129,6 +130,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public static ArrayList<Marker> markers;
     public static Marker mostpop;
     private Callback notifyCallback;
+    static ProgressBar progressBar;
 
 
 
@@ -173,9 +175,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         context = getContext();
         thisMapFrag = MapFragment.this;
+        progressBar = rootView.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
         showMap();
 
+
+
+
         return rootView;
+    }
+
+    public static void setProgress(Boolean on) {
+        if (on) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     // initialize callback
@@ -400,7 +415,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     }
 
     public static ArrayList<Pics> filterList (List<Pics> toFiler, LatLng fromLoc) {
-        //Toast.makeText(context, "original list: " + toFiler.size(), 0).show();
         ArrayList<Pics> filtered = new ArrayList<>();
 
         if (fromLoc != null) {
@@ -480,10 +494,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         }
 
         if (filtered != null) {
-            //Toast.makeText(context, "filtered    not null: " + filtered.size(), 0).show();
+        //    Toast.makeText(context, "filtered    not null: " + filtered.size(), 0).show();
             return filtered;
         } else {
-            //Toast.makeText(context, "filtered null", 0).show();
+        //    Toast.makeText(context, "filtered null", 0).show()
             return (ArrayList<Pics>) toFiler;
         }
     }
@@ -509,7 +523,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         // TODO: work on this
         if (map != null) {
-            Toast.makeText(context, "map not null", 0).show();
+         //   Toast.makeText(context, "map not null", 0).show();
 
             map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
                 @Override

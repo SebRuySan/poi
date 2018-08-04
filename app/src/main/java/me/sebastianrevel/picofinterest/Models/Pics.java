@@ -1,6 +1,7 @@
 package me.sebastianrevel.picofinterest.Models;
 
 import android.util.Log;
+import android.util.Pair;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
@@ -22,6 +23,7 @@ public class Pics extends ParseObject {
     private static final String KEY_LONG = "long";
     private static final String KEY_LIKE = "liked";
     private static final String KEY_NUM_LIKES = "number_of_likes";
+    private static final String KEY_DESCRIPTION = "description";
 
 //RuyG
     public String getLocation() {
@@ -47,6 +49,10 @@ public class Pics extends ParseObject {
     public void setLong(double longCoord) {
         put(KEY_LONG, longCoord);
     }
+
+    public String getDesc() {return getString(KEY_DESCRIPTION);}
+
+    public void setDesc(String desc) {put(KEY_DESCRIPTION, desc);}
 
 //    public int[] getDate() {
 //        // create an array of size 3 that will represent the date
@@ -76,6 +82,15 @@ public class Pics extends ParseObject {
             return likedList;
         // }
     }
+    public class Tuple<X, Y> {
+        public final X x;
+        public final Y y;
+        public Tuple(X x, Y y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
 
     public void setLike() {
         put(KEY_LIKE, Collections.emptyList());

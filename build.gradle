@@ -5,6 +5,8 @@ buildscript {
     repositories {
         google()
         jcenter()
+
+        maven { url "https://maven.google.com" } // this is for filters
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.3'
@@ -20,6 +22,8 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        maven { url "https://jitpack.io" } // this is for filters
     }
 }
 

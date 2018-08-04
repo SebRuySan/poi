@@ -16,8 +16,8 @@
         <ImageView
             android:id="@+id/expanded_pic"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_height="400dp"
+            android:layout_below="@+id/expanded_user"
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -28,11 +28,11 @@
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark_focused" />
 
         <TextView
-            android:id="@+id/expanded_desc"
+            android:id="@+id/expanded_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/close_btn"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:text="User"
             android:textAlignment="center"
             android:textSize="18sp"
@@ -45,12 +45,13 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/expanded_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:text="The holder for any values that the Transition wishes to store. Values are stored in the values field of this TransitionValues object and are keyed from a String value." />
+            android:layout_below="@+id/expanded_pic"
+            android:text="The holder for any values that the Transition wishes to store. Values are stored in the values field of this TransitionValues object and are keyed from a String value."
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/close_btn"

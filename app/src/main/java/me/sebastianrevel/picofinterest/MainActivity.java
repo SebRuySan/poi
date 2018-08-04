@@ -55,7 +55,9 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.mukesh.image_processing.ImageProcessor;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -128,9 +130,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private Uri mFileUri;
 
+    boolean on = true;
+    boolean off = false;
+
     // activity request code to store image
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_GALLERY = 2;
+    public static final int GET_DESCRIPTION = 12345;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private final static int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 120;
     // PICK_PHOTO_CODE is a constant integer
@@ -376,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void done(List<Pics> objects, ParseException e) {
                 if (e == null) {
                     for (Pics p : objects) {
-                        p.setNumLikes();
+//                        p.setNumLikes();
                     }
                 } else {
                     e.printStackTrace();
@@ -498,10 +504,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     final double latitude = gps.getLatitude();
 
                     final double longitude = gps.getLongitude();
-
+//
+//                    if (requestCode == GET_DESCRIPTION) {
+//                        Pic descPic = data.getExtras().get("pic");
+//                        String desc = data.getData().get
+//                    }
                     // by this point we have the user's location so add a marker there
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
+                        MapFragment.setProgress(on);
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -516,11 +527,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Log.d("Main Activity", "Got to point A");
                         Uri imageUri = data.getData();
 
+              // USE THIS          final ParseFile pFile = new ParseFile(new File(String.valueOf(imageUri)));
+
 
                         try {
 
                             bm = BitmapFactory.decodeStream(getContentResolver()
                                     .openInputStream(imageUri));
+                            ImageProcessor imageProcessor = new ImageProcessor();
+
+                            bm = imageProcessor.doGreyScale(bm);
 
                         } catch (FileNotFoundException e) {
 
@@ -642,6 +658,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         public void done(ParseException e) {
 
                                             if (e == null) { // no errors
+                                                MapFragment.setProgress(off);
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
@@ -671,13 +688,274 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     final Pics newPic = new Pics();
 
                     final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    parseFile.saveInBackground();
+                    newPic.setPic(parseFile);
+                    newPic.setLat(latitude);
+                    newPic.setLong(longitude);
+                    final ParseUser user = ParseUser.getCurrentUser();
+                    newPic.setLike();
+                    newPic.setUser(user);
+                    // now using coordinates, use geocoder get from location to get address of where picture was taken
+                    Geocoder geocoder = new Geocoder(getApplicationContext(),
+                            Locale.getDefault());
+
+                    Place place;
+
+                    try {
+
+                        List<Address> listAddresses = geocoder
+                                .getFromLocation(latitude, longitude, 1);
+
+                        if (null != listAddresses && listAddresses.size() > 0) {
+                            String address = listAddresses.get(0).getAddressLine(0);
+                            // set this address as the location of the picture
+
+                            newPic.setLocation(address);
+
+                            place = new Place() {
+                                @Override
+                                public String getId() {
+                                    return "Picture Location";
+                                }
+
+                                @Override
+                                public List<Integer> getPlaceTypes() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getAddress() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Locale getLocale() {
+                                    return null;
+                                }
+
+                                @Override
+                                public CharSequence getName() {
+                                    return newPic.getLocation();
+                                }
+
+                                @Override
+                                public LatLng getLatLng() {
+                                    return new LatLng(latitude, longitude);
+                                }
+
+                                @Nullable
+                                @Override
+                                public LatLngBounds getViewport() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public Uri getWebsiteUri() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getPhoneNumber() {
+                                    return null;
+                                }
+
+                                @Override
+                                public float getRating() {
+                                    return 0;
+                                }
+
+                                @Override
+                                public int getPriceLevel() {
+                                    return 0;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getAttributions() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Place freeze() {
+                                    return null;
+                                }
+
+                                @Override
+                                public boolean isDataValid() {
+                                    return false;
+                                }
+                            };
+
+                        } else {
+                            place = new Place() {
+                                @Override
+                                public String getId() {
+                                    return "Picture Location";
+                                }
+
+                                @Override
+                                public List<Integer> getPlaceTypes() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getAddress() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Locale getLocale() {
+                                    return null;
+                                }
+
+                                @Override
+                                public CharSequence getName() {
+                                    return "Picture Location";
+                                }
+
+                                @Override
+                                public LatLng getLatLng() {
+                                    return new LatLng(latitude, longitude);
+                                }
+
+                                @Nullable
+                                @Override
+                                public LatLngBounds getViewport() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public Uri getWebsiteUri() {
+                                    return null;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getPhoneNumber() {
+                                    return null;
+                                }
+
+                                @Override
+                                public float getRating() {
+                                    return 0;
+                                }
+
+                                @Override
+                                public int getPriceLevel() {
+                                    return 0;
+                                }
+
+                                @Nullable
+                                @Override
+                                public CharSequence getAttributions() {
+                                    return null;
+                                }
+
+                                @Override
+                                public Place freeze() {
+                                    return null;
+                                }
+
+                                @Override
+                                public boolean isDataValid() {
+                                    return false;
+                                }
+                            };
+                        }
+                    } catch (IOException f) {
+                        f.printStackTrace();
+                        place = new Place() {
+                            @Override
+                            public String getId() {
+                                return "Picture Location";
+                            }
+
+                            @Override
+                            public List<Integer> getPlaceTypes() {
+                                return null;
+                            }
+
+                            @Nullable
+                            @Override
+                            public CharSequence getAddress() {
+                                return null;
+                            }
+
+                            @Override
+                            public Locale getLocale() {
+                                return null;
+                            }
+
+                            @Override
+                            public CharSequence getName() {
+                                return "Picture Location";
+                            }
+
+                            @Override
+                            public LatLng getLatLng() {
+                                return new LatLng(latitude, longitude);
+                            }
+
+                            @Nullable
+                            @Override
+                            public LatLngBounds getViewport() {
+                                return null;
+                            }
+
+                            @Nullable
+                            @Override
+                            public Uri getWebsiteUri() {
+                                return null;
+                            }
+
+                            @Nullable
+                            @Override
+                            public CharSequence getPhoneNumber() {
+                                return null;
+                            }
+
+                            @Override
+                            public float getRating() {
+                                return 0;
+                            }
+
+                            @Override
+                            public int getPriceLevel() {
+                                return 0;
+                            }
+
+                            @Nullable
+                            @Override
+                            public CharSequence getAttributions() {
+                                return null;
+                            }
+
+                            @Override
+                            public Place freeze() {
+                                return null;
+                            }
+
+                            @Override
+                            public boolean isDataValid() {
+                                return false;
+                            }
+                        };
+                    }
+                    mapFragment.addMarker(place, parseFile, true);
+
 
                     String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
                     if (mFilePath != null) {
                         Log.e("PATH", "NOT NULL");
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
                         intent.putExtra("filepath", mFilePath);
-                        startActivity(intent);
+                        intent.putExtra("pic", newPic);
+                        startActivityForResult(intent, GET_DESCRIPTION);
                     }
 //
 //                    try {
@@ -690,306 +968,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //                    startActivity(i);
 
                     // save Parse file in background (image)
-                    parseFile.saveInBackground(new SaveCallback() {
-                        public void done(ParseException e) {
-                            // If successful add image to Pics object
-                            if (null == e) {
 
-                                newPic.setPic(parseFile);
-                                Log.e("PARSE", "INSIDE FIRST IF");
-
-                                if (newPic.getPic() != null) {
-                                    Log.e("PARSE", "INSIDE SECOND IF");
-
-                                    // if added include the coordinates of picture
-                                    Log.d(TAG, "there is a file returned");
-
-                                    newPic.setLat(latitude);
-                                    newPic.setLong(longitude);
-
-                                    newPic.setLike();
-
-                                    final ParseUser user = ParseUser.getCurrentUser();
-
-                                    newPic.setUser(user);
-                                    // now using coordinates, use geocoder get from location to get address of where picture was taken
-                                    Geocoder geocoder = new Geocoder(getApplicationContext(),
-                                            Locale.getDefault());
-
-                                    Place place;
-
-                                    try {
-
-                                        List<Address> listAddresses = geocoder
-                                                .getFromLocation(latitude, longitude, 1);
-
-                                        if (null != listAddresses && listAddresses.size() > 0) {
-                                            String address = listAddresses.get(0).getAddressLine(0);
-                                            // set this address as the location of the picture
-
-                                            newPic.setLocation(address);
-
-                                            place = new Place() {
-                                                @Override
-                                                public String getId() {
-                                                    return "Picture Location";
-                                                }
-
-                                                @Override
-                                                public List<Integer> getPlaceTypes() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getAddress() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public Locale getLocale() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public CharSequence getName() {
-                                                    return newPic.getLocation();
-                                                }
-
-                                                @Override
-                                                public LatLng getLatLng() {
-                                                    return new LatLng(latitude, longitude);
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public LatLngBounds getViewport() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public Uri getWebsiteUri() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getPhoneNumber() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public float getRating() {
-                                                    return 0;
-                                                }
-
-                                                @Override
-                                                public int getPriceLevel() {
-                                                    return 0;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getAttributions() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public Place freeze() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public boolean isDataValid() {
-                                                    return false;
-                                                }
-                                            };
-
-                                        } else {
-                                            place = new Place() {
-                                                @Override
-                                                public String getId() {
-                                                    return "Picture Location";
-                                                }
-
-                                                @Override
-                                                public List<Integer> getPlaceTypes() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getAddress() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public Locale getLocale() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public CharSequence getName() {
-                                                    return "Picture Location";
-                                                }
-
-                                                @Override
-                                                public LatLng getLatLng() {
-                                                    return new LatLng(latitude, longitude);
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public LatLngBounds getViewport() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public Uri getWebsiteUri() {
-                                                    return null;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getPhoneNumber() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public float getRating() {
-                                                    return 0;
-                                                }
-
-                                                @Override
-                                                public int getPriceLevel() {
-                                                    return 0;
-                                                }
-
-                                                @Nullable
-                                                @Override
-                                                public CharSequence getAttributions() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public Place freeze() {
-                                                    return null;
-                                                }
-
-                                                @Override
-                                                public boolean isDataValid() {
-                                                    return false;
-                                                }
-                                            };
-                                        }
-                                    } catch (IOException f) {
-                                        f.printStackTrace();
-                                        place = new Place() {
-                                            @Override
-                                            public String getId() {
-                                                return "Picture Location";
-                                            }
-
-                                            @Override
-                                            public List<Integer> getPlaceTypes() {
-                                                return null;
-                                            }
-
-                                            @Nullable
-                                            @Override
-                                            public CharSequence getAddress() {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public Locale getLocale() {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public CharSequence getName() {
-                                                return "Picture Location";
-                                            }
-
-                                            @Override
-                                            public LatLng getLatLng() {
-                                                return new LatLng(latitude, longitude);
-                                            }
-
-                                            @Nullable
-                                            @Override
-                                            public LatLngBounds getViewport() {
-                                                return null;
-                                            }
-
-                                            @Nullable
-                                            @Override
-                                            public Uri getWebsiteUri() {
-                                                return null;
-                                            }
-
-                                            @Nullable
-                                            @Override
-                                            public CharSequence getPhoneNumber() {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public float getRating() {
-                                                return 0;
-                                            }
-
-                                            @Override
-                                            public int getPriceLevel() {
-                                                return 0;
-                                            }
-
-                                            @Nullable
-                                            @Override
-                                            public CharSequence getAttributions() {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public Place freeze() {
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public boolean isDataValid() {
-                                                return false;
-                                            }
-                                        };
-                                    }
-
-                                    mapFragment.addMarker(place, parseFile, true);
-                                    // save the picture to parse
-
-                                    newPic.saveInBackground(new SaveCallback() {
-                                        @Override
-                                        public void done(ParseException e) {
-                                            if (e == null) { // no errors
-                                                Log.d(TAG, "Added Image success!");
-
-                                                Toast.makeText(MainActivity.this,
-                                                        "Image added to Parse!",
-                                                        Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                } else
-                                    Log.d(TAG, "there is no file returned");
-                                Log.d(TAG, "Pic save requested");
-                            } else {
-                                e.printStackTrace();
-                                Log.d("Main Activity", "Pic save failed");
-                            }
-                        }
-                    });
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
