@@ -130,6 +130,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     private Uri mFileUri;
 
+    // for filter, to be acessed from description activity
+    public static Bitmap bitm;
+
     boolean on = true;
     boolean off = false;
 
@@ -693,7 +696,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     final Pics newPic = new Pics();
 
-                    final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    // get file using getoutput media file, and save it
+                    File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                    // get bitmap from file using bitmapfactory.decodefile
+                    Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+                    // assign the global static variable to be this
+                    this.bitm = bm;
+
+                    //final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    final ParseFile parseFile = new ParseFile(file);
                     parseFile.saveInBackground();
                     newPic.setPic(parseFile);
                     newPic.setLat(latitude);
@@ -954,13 +965,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     }
                     mapFragment.addMarker(place, parseFile, true);
 
-
                     String mFilePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE).toString();
                     if (mFilePath != null) {
                         Log.e("PATH", "NOT NULL");
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
-                        intent.putExtra("filepath", mFilePath);
+                        //intent.putExtra("filepath", mFilePath);
                         intent.putExtra("pic", newPic);
+                        //intent.putExtra("bitmap", bm); // add bitmap to intent to description activity. Just kidding this is too large a file. Instead, add global static variable and access from description activity
                         startActivityForResult(intent, GET_DESCRIPTION);
                     }
 //
