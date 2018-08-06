@@ -537,9 +537,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                             bm = BitmapFactory.decodeStream(getContentResolver()
                                     .openInputStream(imageUri));
-                            ImageProcessor imageProcessor = new ImageProcessor();
+                            //ImageProcessor imageProcessor = new ImageProcessor();
 
-                            bm = imageProcessor.doGreyScale(bm);
+                            //bm = imageProcessor.doGreyScale(bm); // adds the greyscale filter on the image, this is automatic and only temporary
 
                         } catch (FileNotFoundException e) {
 

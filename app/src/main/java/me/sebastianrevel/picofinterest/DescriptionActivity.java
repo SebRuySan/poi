@@ -32,6 +32,11 @@ public class DescriptionActivity extends AppCompatActivity {
     EditText descriptionEt;
     ImageView picIv;
     Button uploadBtn;
+    ImageView ivrarrow, ivlarrow;
+    Bitmap[] images;
+    ParseFile current;
+    private int i;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,6 +46,10 @@ public class DescriptionActivity extends AppCompatActivity {
         descriptionEt = findViewById(R.id.description);
 
         picIv = findViewById(R.id.pic_preview);
+
+        ivlarrow = findViewById(R.id.ivlarrow);
+        ivrarrow = findViewById(R.id.ivrarrow);
+
 
         //String filePath = getIntent().getStringExtra("pictures");
 
@@ -62,9 +71,19 @@ public class DescriptionActivity extends AppCompatActivity {
         // now make parsefile using bitmap but first apply filter (just for test)
         ImageProcessor imageProcessor = new ImageProcessor();
 
-        bm = imageProcessor.doGreyScale(bm);
-        final ParseFile pile = conversionBitmapParseFile(bm);
+        // want to make an array with the original image and two filtered versions of the image
+        Bitmap bm1 = imageProcessor.doGreyScale(bm); // this applies the greyscale filter to the image, by taking in and returning a bitmap
+        Bitmap bm2 = imageProcessor.createSepiaToningEffect(bm, 2, 12.0, 32.0, 69.0); // this applies a filter to make the picture "blue"
+        images = new Bitmap[3];
+        images[0] = bm;
+        images[1] = bm1;
+        images[2] = bm2;
 
+        //bm = imageProcessor.doGreyScale(bm); // this applies the greyscale filter to the image, by taking in and returning a bitmap
+        //bm = imageProcessor.createSepiaToningEffect(bm, 2, 12.0, 32.0, 69.0); // this applies a filter to make the picture "blue"
+
+        final ParseFile pile = conversionBitmapParseFile(bm); // this is the normal bitmap parsefile
+        i = 0;
         //ParseFile pFile = newPic.getPic();
         //ParseFile pf = newPic.getPic();
         pile.saveInBackground(new SaveCallback() {
@@ -82,6 +101,21 @@ public class DescriptionActivity extends AppCompatActivity {
                 }
             }
         });
+        current = pile;
+
+        ivlarrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filter(true);
+            }
+        });
+
+        ivrarrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filter(false);
+            }
+        });
 //
 //        Glide.with(this)
 //                //.load(pFile.getUrl())
@@ -95,7 +129,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 picIv.setImageDrawable(null);
                 String userDesc = String.valueOf(descriptionEt.getText());
 
-                newPic.setPic(pile);
+                newPic.setPic(current);
                 newPic.setDesc(userDesc);
                 newPic.saveInBackground(new SaveCallback() {
                     @Override
@@ -110,6 +144,38 @@ public class DescriptionActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void filter(boolean left){
+        if(left){ // if left arrow clicked
+            i--;
+            if(i < 0)
+                i = 2;
+        }
+        else{ // if left arrow clicked
+            i++;
+            if(i > 2)
+                i = 0;
+        }
+
+        final ParseFile pf = conversionBitmapParseFile(images[i]); // this is the current bitmap
+        //ParseFile pFile = newPic.getPic();
+        //ParseFile pf = newPic.getPic();
+        pf.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(null == e){
+                    Glide.with(DescriptionActivity.this)
+                            .load(pf.getUrl())
+                            .into(picIv);
+                } else {
+
+                    e.printStackTrace();
+
+                }
+            }
+        });
+        current = pf;
     }
 
     public ParseFile conversionBitmapParseFile(Bitmap imageBitmap) {
