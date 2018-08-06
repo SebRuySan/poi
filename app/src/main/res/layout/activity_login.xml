@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_back"
     tools:context=".LoginActivity">
 
 
@@ -11,9 +12,8 @@
         android:id="@+id/username_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/password_layout"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="118dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,12 +33,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="189dp"
+        android:layout_centerVertical="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_layout"
-        >
+        app:layout_constraintTop_toBottomOf="@+id/username_layout">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/password_et"
@@ -105,10 +103,10 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/username_layout"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-118dp"
-        app:srcCompat="@drawable/poifull1" />
+        android:layout_marginTop="75dp"
+        app:srcCompat="@drawable/imageedit_7_6701174050" />
 
 
 </RelativeLayout>

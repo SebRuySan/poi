@@ -154,6 +154,10 @@ public class Pics extends ParseObject {
         put(KEY_USER, user);
     }
 
+    public void setNumLikeColumn() {
+        put(KEY_NUM_LIKES, 0);
+    }
+
     public static class Query extends ParseQuery<Pics> {
         public Query() {
             super(Pics.class);
