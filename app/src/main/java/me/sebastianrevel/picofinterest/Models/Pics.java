@@ -8,11 +8,14 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import me.sebastianrevel.picofinterest.MainActivity;
 
 @ParseClassName("Pics")
 public class Pics extends ParseObject {
@@ -107,6 +110,12 @@ public class Pics extends ParseObject {
       //  List<String> newList = likeList.add(username);
         put(KEY_LIKE, concatList);
         put(KEY_NUM_LIKES, concatList.size());
+
+        try {
+            MainActivity.setScore();
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+        }
     }
 
     //            for (String userList : likeList) {
@@ -135,8 +144,6 @@ public class Pics extends ParseObject {
             put(KEY_NUM_LIKES, likeList.size());
         }
     }
-
-
 
     public ParseFile getPic() {
         return getParseFile(KEY_PIC);

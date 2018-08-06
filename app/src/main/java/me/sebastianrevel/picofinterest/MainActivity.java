@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
-    public int likeScore, totalScore;
+    public static int likeScore, totalScore;
 
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void done(List<Pics> objects, ParseException e) {
                 if (e == null) {
                     for (Pics p : objects) {
-//                        p.setNumLikes();
+                        p.setNumLikes();
                     }
                 } else {
                     e.printStackTrace();
@@ -666,6 +666,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                                 Toast.makeText(MainActivity.this,
                                                         "Image added to Parse!",
                                                         Toast.LENGTH_SHORT).show();
+
+                                                try {
+                                                    setScore();
+                                                } catch (ParseException exception) {
+                                                    exception.printStackTrace();
+                                                }
 
                                             } else {
 
@@ -1272,7 +1278,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
     }
 
-    public void setScore() throws ParseException {
+    public static void setScore() throws ParseException {
         final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("user", ParseUser.getCurrentUser());
         final int amountOfPicsPostedScore = query.count() * 10;
         query.findInBackground(new FindCallback<Pics>() {
