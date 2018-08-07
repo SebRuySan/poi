@@ -64,6 +64,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -506,17 +507,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         final ParseFile imageFile = new ParseFile("image.png", bitmapdata);
         return imageFile;
 
-        /*
-        //byte[] imgByteArray = encodeToByteArray(imageBitmap);
-        int width = imageBitmap.getWidth();
-        int height = imageBitmap.getHeight();
-
-        int size = imageBitmap.getRowBytes() * imageBitmap.getHeight();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
-        imageBitmap.copyPixelsToBuffer(byteBuffer);
-        byte[] byteArray = byteBuffer.array();
-        final ParseFile imageFile = new ParseFile("image.jpg", byteArray);
-        return imageFile; */
     }
 
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
@@ -719,12 +709,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     // get file using getoutput media file, and save it
                     File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+                    /*
                     // get bitmap from file using bitmapfactory.decodefile
                     Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                    // this will hopefully compress the bitmap
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bm.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
+                    Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+
                     // assign the global static variable to be this
-                    this.bitm = bm;
+                    this.bitm = decoded;
+                    final ParseFile parseFile = bittobytetoparse(decoded);
 
                     //final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    */
                     final ParseFile parseFile = new ParseFile(file);
                     parseFile.saveInBackground();
                     newPic.setPic(parseFile);
