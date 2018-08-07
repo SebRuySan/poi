@@ -12,6 +12,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+import java.util.Collections;
+
 public class SignupActivity extends AppCompatActivity {
     private EditText usernameInput;
     private EditText passwordInput;
@@ -44,7 +46,9 @@ public class SignupActivity extends AppCompatActivity {
         // Set core properties
         user.setUsername(username);
         user.setPassword(password);
-        user.put("UserScore", 0);
+        user.put("userScore", 0);
+        user.put("followers", Collections.emptyList());
+
         //final File file = new File("/desktop/profilepicturedef.png"); // create a default profile pic
         //final ParseFile parseFile = new ParseFile(file);
         /*parseFile.saveInBackground(new SaveCallback() {

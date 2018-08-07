@@ -2,6 +2,7 @@ package me.sebastianrevel.picofinterest;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -22,21 +23,23 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
-public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHolder> {
+public class PicAdapter extends RecyclerView.Adapter<PicAdapter.RecyclerViewHolder> {
 
 
     ArrayList<Pics> arrayList = new ArrayList<>();
     Context context;
     Boolean expanded = false;
-    Dialog d;
-
+    static Dialog d;
+    static boolean following;
 
     public PicAdapter(ArrayList<Pics> arrayList) {
         this.arrayList = arrayList;
     }
+
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int i) {
 
@@ -58,16 +61,16 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
             recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
             recyclerViewHolder.tvCreatedAt.setText(pic.getDate().toString());
             recyclerViewHolder.tvDesc.setText(pic.getDesc());
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         final String currentUserId = ParseUser.getCurrentUser().getObjectId();
+        final String currentUsername = ParseUser.getCurrentUser().getUsername();
 
         final Boolean liked = pic.getLike().contains(currentUserId);
-
-
 
         if (liked) {
             Log.e("LIKED", "ALREADY LIKED");
@@ -80,28 +83,69 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
         recyclerViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               d = new Dialog(context);
+                d = new Dialog(context);
 
-               d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-               d.setContentView(R.layout.expanded_layout);
+                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                d.setContentView(R.layout.expanded_layout);
 
                 ImageView imageView = d.findViewById(R.id.expanded_pic);
-
-                TextView textView = d.findViewById(R.id.expanded_user);
-
+                final Button ivFollow = d.findViewById(R.id.ivFollow);
+                final TextView userView = d.findViewById(R.id.expanded_user);
                 TextView descView = d.findViewById(R.id.expanded_desc);
 
-                try {
-                    textView.setText(String.valueOf(pic.getUser().fetchIfNeeded().getString("username")));
-                    descView.setText(pic.getDesc());
+                final String picUsername = pic.getUser().getUsername();
 
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                userView.setText(String.valueOf(picUsername));
+                descView.setText(pic.getDesc());
+
+                List<String> followingList = ParseUser.getCurrentUser().getList("following");
+
+                if (followingList != null) {
+                    following = followingList.contains(picUsername);
+                }
+
+                if (following) {
+                    Log.e("FOLLOWING", "ALREADY FOLLOWING");
+                    ivFollow.setBackgroundResource(R.drawable.following_icon_trans);
+                } else {
+                    Log.e("FOLLOWING", "NOT");
+                    ivFollow.setBackgroundResource(R.drawable.follow_icon_trans);
+                }
+
+                ivFollow.setVisibility(View.GONE);
+
+                if (!currentUsername.equals(picUsername)) {
+                    ivFollow.setVisibility(View.VISIBLE);
+
+                    ivFollow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            List<String> followingList = ParseUser.getCurrentUser().getList("following");
+
+                            if (followingList != null) {
+                                following = followingList.contains(picUsername);
+                            }
+
+                            if (following) {
+                                ivFollow.setBackgroundResource(R.drawable.follow_icon_trans);
+
+                                pic.deleteFollower(picUsername);
+                                following = false;
+
+                                Toast.makeText(context, "No longer following", Toast.LENGTH_SHORT).show();
+                            } else {
+                                ivFollow.setBackgroundResource(R.drawable.following_icon_trans);
+
+                                pic.addFollower(picUsername);
+                                following = true;
+
+                                Toast.makeText(context, "followed", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
 
                 ParseFile geoPic = pic.getPic();
-
                 String url = geoPic.getUrl();
 
                 Glide.with(context)
@@ -109,8 +153,6 @@ public class  PicAdapter extends RecyclerView.Adapter <PicAdapter.RecyclerViewHo
                         .into(imageView);
 
                 d.show();
-
-
 
             }
         });
