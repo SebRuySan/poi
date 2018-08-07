@@ -39,7 +39,9 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -131,6 +133,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public static Marker mostpop;
     private Callback notifyCallback;
     static ProgressBar progressBar;
+    static TextView uploadingtxt;
 
 
 
@@ -176,20 +179,30 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         context = getContext();
         thisMapFrag = MapFragment.this;
         progressBar = rootView.findViewById(R.id.progress_bar);
+        uploadingtxt = rootView.findViewById(R.id.uploading);
         progressBar.setVisibility(View.GONE);
+        uploadingtxt.setVisibility(View.INVISIBLE);
         showMap();
 
 
 
-
+        // Get the button view
+        View locationButton = ((View) rootView.findViewById(1).getParent()).findViewById(2);
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+// position on right bottom
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        rlp.setMargins(0, 180, 300, 0);
         return rootView;
     }
 
     public static void setProgress(Boolean on) {
         if (on) {
             progressBar.setVisibility(View.VISIBLE);
+            uploadingtxt.setVisibility(View.VISIBLE);
         } else {
             progressBar.setVisibility(View.GONE);
+            uploadingtxt.setVisibility(View.GONE);
         }
     }
 

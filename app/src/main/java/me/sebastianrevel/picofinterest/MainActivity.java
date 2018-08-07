@@ -325,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+        dl.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
 
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -513,8 +514,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
                         MapFragment.setProgress(on);
-                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        //        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                         Toast.makeText(MainActivity.this,
                                 "Removed Touch",
@@ -659,7 +660,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                             if (e == null) { // no errors
                                                 MapFragment.setProgress(off);
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                               // getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
 
@@ -955,7 +956,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
                         intent.putExtra("filepath", mFilePath);
                         intent.putExtra("pic", newPic);
-                        startActivityForResult(intent, GET_DESCRIPTION);
+                        startActivity(intent);
                     }
 //
 //                    try {
