@@ -1335,7 +1335,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             public void done(List<ParseUser> objects, ParseException e) {
                                 if (e == null) {
                                     for (int i = 0; i < objects.size(); i++) {
-                                        boolean isFollower = objects.get(i).getList("following").contains(ParseUser.getCurrentUser().getUsername());
+                                        List<String> followingList = objects.get(i).getList("following");
+                                        boolean isFollower = false;
+
+                                        if (followingList != null) {
+                                            isFollower = followingList.contains(ParseUser.getCurrentUser().getUsername());
+                                        }
 
                                         if (isFollower) {
                                             followers++;

@@ -1,5 +1,6 @@
 package me.sebastianrevel.picofinterest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -17,6 +19,7 @@ import java.util.Collections;
 public class SignupActivity extends AppCompatActivity {
     private EditText usernameInput;
     private EditText passwordInput;
+    private EditText passwordConfirmInput;
     private Button registerBtn;
 
     @Override
@@ -24,8 +27,11 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        final Context context = this;
+
         usernameInput = findViewById(R.id.username_et);
         passwordInput = findViewById(R.id.password_et);
+        passwordConfirmInput = findViewById(R.id.passwordConfirm_et);
         registerBtn = findViewById(R.id.register_btn);
 
         registerBtn.setOnClickListener(new View.OnClickListener() {
@@ -34,7 +40,22 @@ public class SignupActivity extends AppCompatActivity {
                 // get references to username, password and email that user typed once user clicks on Sign up button
                 final String username = usernameInput.getText().toString();
                 final String password = passwordInput.getText().toString();
-                signup(username, password);
+                final String confirmPassword = passwordConfirmInput.getText().toString();
+
+                if ((!username.equals("")) && !(password.equals("")) && password.equals(confirmPassword)) {
+                    signup(username, password);
+                } else {
+                    if (username.equals("")) {
+                        Toast.makeText(context, "Please enter a username", Toast.LENGTH_SHORT).show();
+                    } else if (password.equals("")) {
+                        Toast.makeText(context, "Please enter a password", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Passwords do not match!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    passwordInput.setText("");
+                    passwordConfirmInput.setText("");
+                }
             }
         });
     }
