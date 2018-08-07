@@ -68,6 +68,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,6 +80,8 @@ import android.media.ExifInterface;
 import android.os.Vibrator;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
+
+import static android.app.Activity.RESULT_OK;
 
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
@@ -315,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+        dl.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
 
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,6 +490,28 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         return parseFile;
     }
 
+    // this function will hopefully replace the function above
+    public ParseFile bittobytetoparse(Bitmap imageBitmap) {
+
+        ByteArrayOutputStream blob = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 0 /* Ignored for PNGs */, blob);
+        byte[] bitmapdata = blob.toByteArray();
+        final ParseFile imageFile = new ParseFile("image.png", bitmapdata);
+        return imageFile;
+
+        /*
+        //byte[] imgByteArray = encodeToByteArray(imageBitmap);
+        int width = imageBitmap.getWidth();
+        int height = imageBitmap.getHeight();
+
+        int size = imageBitmap.getRowBytes() * imageBitmap.getHeight();
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+        imageBitmap.copyPixelsToBuffer(byteBuffer);
+        byte[] byteArray = byteBuffer.array();
+        final ParseFile imageFile = new ParseFile("image.jpg", byteArray);
+        return imageFile; */
+    }
+
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -509,8 +535,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // we also want to add the image to Parse
                     if (requestCode == PICK_PHOTO_CODE) {
                         MapFragment.setProgress(on);
-                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        //        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                         Toast.makeText(MainActivity.this,
                                 "Removed Touch",
@@ -530,9 +556,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                             bm = BitmapFactory.decodeStream(getContentResolver()
                                     .openInputStream(imageUri));
-                            ImageProcessor imageProcessor = new ImageProcessor();
+                            //ImageProcessor imageProcessor = new ImageProcessor();
 
-                            bm = imageProcessor.doGreyScale(bm);
+                            //bm = imageProcessor.doGreyScale(bm); // adds the greyscale filter on the image, this is automatic and only temporary
 
                         } catch (FileNotFoundException e) {
 
@@ -564,7 +590,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         final Pics pic = new Pics();
 
-                        final ParseFile pFile = conversionBitmapParseFile(bm);
+                        //final ParseFile pFile = conversionBitmapParseFile(bm);
+                        final ParseFile pFile = bittobytetoparse(bm);
 
                         filepath = getRealPathFromUri(getApplicationContext(), imageUri);
                         boolean hasLoc = false;
@@ -655,7 +682,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                                             if (e == null) { // no errors
                                                 MapFragment.setProgress(off);
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                               // getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                                                 Log.e("UPLOAD", "Added Image success!");
 
@@ -964,8 +991,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
                         //intent.putExtra("filepath", mFilePath);
                         intent.putExtra("pic", newPic);
-                        //intent.putExtra("bitmap", bm); // add bitmap to intent to description activity. Just kidding this is too large a file. Instead, add global static variable and access from description activity
-                        startActivityForResult(intent, GET_DESCRIPTION);
+                        startActivity(intent);
+
                     }
 //
 //                    try {

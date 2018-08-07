@@ -16,7 +16,7 @@ public class ParseApp extends Application {
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
                 .applicationId("poi")
                 .clientKey("POI2018!")
-                .server("http://picofinterestv4.herokuapp.com/parse")
+                .server("http://picofinterestv5.herokuapp.com/parse")
                 .build();
 
         Parse.initialize(configuration);
