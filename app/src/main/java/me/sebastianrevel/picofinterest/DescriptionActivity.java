@@ -50,6 +50,7 @@ public class DescriptionActivity extends AppCompatActivity {
     boolean rightclicked, leftclicked;
     //ParseFile current;
     private int i;
+    int counter;
     Bitmap b1, b2, b3, b4;
 
 
@@ -142,10 +143,15 @@ public class DescriptionActivity extends AppCompatActivity {
                 .load(pf.getUrl())
                 .into(picIv);
         */
+        counter = 0; // current picture displayed is nonfiltered picture
         loadImages(pf, picIv);
-        current = bm;
         rightclicked = false;
         leftclicked = false;
+//        images = new Bitmap[4];
+//        images[0] = bm;
+//        images[1] = b2;
+//        images[2] = b3;
+//        images[3] = b4;
 //        b3 = toGrayscale(bm);
        // b4 = changeBitmapColor(bm,  Color.CYAN, Color.BLACK); // aquamarine filter
 
@@ -153,28 +159,43 @@ public class DescriptionActivity extends AppCompatActivity {
         ivrarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(leftclicked){
-                    current = bm;
-                    picIv.setImageBitmap(current);
-                    leftclicked = false;
+                if(counter == 3){
+                    counter = 0;
+                    picIv.setImageBitmap(images[counter]);
                 }
+                else{
+                    counter ++;
+                    picIv.setImageBitmap(images[counter]);
+                }
+                /*
+                picIv.setImageBitmap(images[]);
                 //Bitmap bm1 = imageProcessor.doGreyScale(bm); // this applies the greyscale filter to the image, by taking in and returning a bitmap
                 //picIv.setImageBitmap(imageProcessor.doGreyScale(bm));
                 rightclicked = true;
                 //current = toGrayscale(bm);
                 //picIv.setImageBitmap(current);
-                picIv.setImageBitmap(b3);
+                picIv.setImageBitmap(b3);*/
             }
         });
 
         ivlarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(counter == 0){
+                    counter = 3;
+                    picIv.setImageBitmap(images[counter]);
+                }
+                else{
+                    counter --;
+                    picIv.setImageBitmap(images[counter]);
+                }
+                /*
                 if(rightclicked){
                     current = bm;
                     picIv.setImageBitmap(current);
                     rightclicked = false;
-                }
+                }*/
+
         //        picIv.setImageBitmap(createSepiaToningEffect(bm, 2, 12.0, 32.0, 69.0));
                 /*
                 leftclicked = true;
@@ -187,7 +208,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 //current = applyShadingFilter(bm, Color.GREEN); // green filter
                 //current = doInvert(bm);
                 //picIv.setImageBitmap(current);
-                picIv.setImageBitmap(b2);
+                //picIv.setImageBitmap(b2);
             }
         });
 
@@ -198,7 +219,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 picIv.setImageDrawable(null);
                 String userDesc = String.valueOf(descriptionEt.getText());
 
-                final ParseFile pfile = bittobytetoparse(current);
+                final ParseFile pfile = bittobytetoparse(images[counter]);
                 pfile.saveInBackground();
 
                 //newPic.setPic(current);
@@ -232,16 +253,26 @@ public class DescriptionActivity extends AppCompatActivity {
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        images = new Bitmap[4];
                         bm = bmp;
+                        images[0] = bm;
                         img.setImageBitmap(bmp);
+                        b2 = applyShadingFilter(bm, Color.GREEN); // green filter
+                        images[1] = b2;
                         b3 = toGrayscale(bm);
+                        images[2] = b3;
                         b4 = changeBitmapColor(bm,  Color.CYAN, Color.BLACK); // aquamarine filter
-                        /*new Thread() {
+                        images[3] = b4;
+                        // the code commented out below leads to a loading screen while the thread below is executing so isn't optimal
+                        /*
+                        new Thread(new Runnable() {
+                            @Override
                             public void run() {
                                 b2 = doInvert(bm);
                             }
-                        }.start();*/
-                        b2 = doInvert(bm);
+                        }).start();
+                        */
+                        //b2 = doInvert(bm);
                     } else {
                     }
                 }
