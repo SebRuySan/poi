@@ -137,6 +137,11 @@ public class DescriptionActivity extends AppCompatActivity {
                         Log.d("DESCACTIVITY", "added description");
                         Toast.makeText(getApplicationContext(), "Image added", Toast.LENGTH_SHORT);
 
+                        try {
+                            MainActivity.setScore();
+                        } catch (ParseException exception) {
+                            exception.printStackTrace();
+                        }
                     }
                 });
                 finish();

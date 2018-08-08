@@ -1,18 +1,21 @@
 package me.sebastianrevel.picofinterest.Models;
 
 import android.util.Log;
-import android.util.Pair;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import me.sebastianrevel.picofinterest.MainActivity;
 
 @ParseClassName("Pics")
 public class Pics extends ParseObject {
@@ -24,6 +27,7 @@ public class Pics extends ParseObject {
     private static final String KEY_LIKE = "liked";
     private static final String KEY_NUM_LIKES = "number_of_likes";
     private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_FOLLOWING = "following";
 
 //RuyG
     public String getLocation() {
@@ -70,6 +74,94 @@ public class Pics extends ParseObject {
         return getCreatedAt();
     }
 
+    public List<String> getFollowers() {
+        Log.d("PICS", "In getFollowers");
+
+        List<String> followingList = ParseUser.getCurrentUser().getList(KEY_FOLLOWING);
+
+        if (followingList != null) {
+            Log.e("SIZE", String.valueOf(followingList.size()));
+            return followingList;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public void addFollower(String username) {
+        ParseUser user = ParseUser.getCurrentUser();
+
+        List<String> followersList = getFollowers();
+        List<String> concatList = new ArrayList<>();
+        List<String> singleList = new ArrayList<>();
+
+        singleList.add(username);
+        concatList.addAll(singleList);
+        concatList.addAll(followersList);
+
+        Log.d("Pics", "Added Follower");
+
+        //  List<String> newList = likeList.add(username);
+        user.put(KEY_FOLLOWING, concatList);
+
+        try {
+            MainActivity.setScore();
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+        }
+
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                if (e == null) { // no errors
+
+                    Log.e("FOLLOWING", "UPDATED FOLLOWING");
+
+                } else {
+
+                    Log.e("FOLLOWING", "FAILED UPDATING");
+
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void deleteFollower(String username) {
+        ParseUser user = ParseUser.getCurrentUser();
+
+        Log.e("Pics", "Deleted Follower");
+        List<String> followList = getFollowers();
+
+        if (followList != null) {
+            followList.remove(username);
+            Log.e("FOLLOWDELETE", username);
+
+            user.put(KEY_FOLLOWING, followList);
+            Log.e("DELETESIZE", String.valueOf(followList.size()));
+        } else {
+            followList = Collections.emptyList();
+            user.put(KEY_FOLLOWING, followList);
+        }
+
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                if (e == null) { // no errors
+
+                    Log.e("FOLLOWING", "UPDATED FOLLOWING");
+
+                } else {
+
+                    Log.e("FOLLOWING", "FAILED UPDATING");
+
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     public List<String> getLike() {
 //        if (getList(KEY_LIKE) == null) {
 //            List<String> emptyList = Collections.emptyList();
@@ -82,15 +174,6 @@ public class Pics extends ParseObject {
             return likedList;
         // }
     }
-    public class Tuple<X, Y> {
-        public final X x;
-        public final Y y;
-        public Tuple(X x, Y y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
 
     public void setLike() {
         put(KEY_LIKE, Collections.emptyList());
@@ -107,6 +190,12 @@ public class Pics extends ParseObject {
       //  List<String> newList = likeList.add(username);
         put(KEY_LIKE, concatList);
         put(KEY_NUM_LIKES, concatList.size());
+
+        try {
+            MainActivity.setScore();
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+        }
     }
 
     //            for (String userList : likeList) {
@@ -114,11 +203,6 @@ public class Pics extends ParseObject {
 //
 //                }
 //            }
-
-    public void setNumLikes() {
-        List<String> likes = getLike();
-        put(KEY_NUM_LIKES, likes.size());
-    }
 
     public void deleteLike(String username) {
         Log.e("Pics", "Deleted Like");
@@ -136,7 +220,16 @@ public class Pics extends ParseObject {
         }
     }
 
+    // update the number_of_likes
+    public void setNumLikes() {
+        List<String> likes = getLike();
+        put(KEY_NUM_LIKES, likes.size());
+    }
 
+    // initialize the number_of_like column for a new pic with 0
+    public void setNumLikeColumn() {
+        put(KEY_NUM_LIKES, 0);
+    }
 
     public ParseFile getPic() {
         return getParseFile(KEY_PIC);
@@ -152,10 +245,6 @@ public class Pics extends ParseObject {
 
     public void setUser (ParseUser user) {
         put(KEY_USER, user);
-    }
-
-    public void setNumLikeColumn() {
-        put(KEY_NUM_LIKES, 0);
     }
 
     public static class Query extends ParseQuery<Pics> {

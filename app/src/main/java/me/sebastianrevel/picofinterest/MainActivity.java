@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static MainActivity context;
 
     static ArrayList<Pics> arrayList = new ArrayList<>();
-    static TextView location;
+    static TextView locationTv;
     static String address;
 
     static Marker mMarker;
@@ -108,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static int mRadius = 15;
     public static int mTimeframe = 5;
 
-    public int likeScore, totalScore;
+    public static int likeScore, followScore, totalScore;
+
+    public static int followers = 0;
 
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     PlaceAutocompleteFragment placeAutoComplete;
     private Button cameraBtn, uploadBtn, signoutBtn, profileBtn, archiveBtn;
-    private TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
+    public static TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -163,42 +165,27 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.toolBar);
-
         archiveBtn = findViewById(R.id.archives_btn);
-
+        profileBtn = findViewById(R.id.profile_btn);
+        uploadBtn = findViewById(R.id.upload_btn);
+        createdAtTv = findViewById(R.id.date_joined_tv);
+        userScoreTv = findViewById(R.id.user_score_tv);
+        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
         profileTv = findViewById(R.id.profile_name_tv);
+        locationTv = findViewById(R.id.location_tv);
+        dl = findViewById(R.id.drawerLayout);
+        rv = findViewById(R.id.recyclerView);
 
         profileTv.setText(ParseUser.getCurrentUser().getUsername());
-
-        profileBtn = findViewById(R.id.profile_btn);
-
-        createdAtTv = findViewById(R.id.date_joined_tv);
-
-        userScoreTv = findViewById(R.id.user_score_tv);
-
-        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
-
-
         userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
-
         createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
 
         setSupportActionBar(toolbar);
 
-        dl = findViewById(R.id.drawerLayout);
-
-        uploadBtn = findViewById(R.id.upload_btn);
-
-        location = findViewById(R.id.location_tv);
-
         lm = new LinearLayoutManager(this);
 
-        rv = findViewById(R.id.recyclerView);
-
         rv.setLayoutManager(lm);
-
         rv.setHasFixedSize(true);
-        location = findViewById(R.id.location_tv);
 
         context = MainActivity.this;
 
@@ -337,6 +324,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                try {
+                    setScore();
+                } catch (ParseException exception) {
+                    exception.printStackTrace();
+                }
+
                 // Create the scene
                 profileOpen();
             }
@@ -393,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void done(List<Pics> objects, ParseException e) {
                 if (e == null) {
                     for (Pics p : objects) {
-//                        p.setNumLikes();
+                        p.setNumLikes();
                     }
                 } else {
                     e.printStackTrace();
@@ -700,6 +693,12 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                                 Toast.makeText(MainActivity.this,
                                                         "Image added to Parse!",
                                                         Toast.LENGTH_SHORT).show();
+
+                                                try {
+                                                    setScore();
+                                                } catch (ParseException exception) {
+                                                    exception.printStackTrace();
+                                                }
 
                                             } else {
 
@@ -1110,16 +1109,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
 
         if (mThisAddyOnly) {
-            location.setText(address + "\nShowing results for "
+            locationTv.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
                     + "\n\t at this address only.");
         } else {
             if (mRadius > 1) {
-                location.setText(address + "\nShowing results for "
+                locationTv.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and up to " + mRadius + " miles away.");
             } else {
-                location.setText(address + "\nShowing results for "
+                locationTv.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and within walking distance.");
             }
@@ -1221,8 +1220,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
 
         if (mThisAddyOnly) {
-            location.setTextSize(14);
-            location.setText(address + "\nShowing results for "
+            locationTv.setTextSize(14);
+            locationTv.setText(address + "\nShowing results for "
                     + FilterFragment.timeframes[mTimeframe].toLowerCase()
                     + "\n\t at this address only.");
 
@@ -1275,13 +1274,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             });
         } else {
             if (mRadius > 1) {
-                location.setTextSize(14);
-                location.setText(address + "\nShowing results for "
+                locationTv.setTextSize(14);
+                locationTv.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and up to " + mRadius + " miles away.");
             } else {
-                location.setTextSize(14);
-                location.setText(address + "\nShowing results for "
+                locationTv.setTextSize(14);
+                locationTv.setText(address + "\nShowing results for "
                         + FilterFragment.timeframes[mTimeframe].toLowerCase()
                         + "\n\t and within walking distance.");
             }
@@ -1334,9 +1333,10 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         }
     }
 
-    public void setScore() throws ParseException {
+    public static void setScore() throws ParseException {
         final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class).whereEqualTo("user", ParseUser.getCurrentUser());
         final int amountOfPicsPostedScore = query.count() * 10;
+
         query.findInBackground(new FindCallback<Pics>() {
             @Override
             public void done(List<Pics> objects, ParseException e) {
@@ -1346,10 +1346,42 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         likeScore += (likes * 50);
                         Log.e("USERSCORE", String.valueOf(likes));
                     }
+
                 } else {
                     e.printStackTrace();
                 }
-                totalScore = likeScore + amountOfPicsPostedScore;
+
+                followers = 0;
+                final ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+                userQuery.findInBackground(
+                        new FindCallback<ParseUser>() {
+                            @Override
+                            public void done(List<ParseUser> objects, ParseException e) {
+                                if (e == null) {
+                                    for (int i = 0; i < objects.size(); i++) {
+                                        List<String> followingList = objects.get(i).getList("following");
+                                        boolean isFollower = false;
+
+                                        if (followingList != null) {
+                                            isFollower = followingList.contains(ParseUser.getCurrentUser().getUsername());
+                                        }
+
+                                        if (isFollower) {
+                                            followers++;
+                                        }
+                                    }
+
+                                } else {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                );
+
+                followScore = followers * 100;
+
+                totalScore = likeScore + followScore + amountOfPicsPostedScore;
+
                 ParseUser user = ParseUser.getCurrentUser();
                 user.put("userScore", totalScore);
                 user.saveInBackground(new SaveCallback() {
@@ -1358,6 +1390,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         if (e == null) { // no errors
 
+                            userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
                             Log.e("SCORE", "Updated Score");
 
                         } else {

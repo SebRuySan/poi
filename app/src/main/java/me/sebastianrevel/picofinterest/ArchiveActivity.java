@@ -48,7 +48,6 @@ public class ArchiveActivity extends AppCompatActivity {
                 Log.e("GLOBE", "Button clicked");
             }
         });
-
     }
 
     public void loadArchivePics() {
