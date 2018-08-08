@@ -219,6 +219,7 @@ public class DescriptionActivity extends AppCompatActivity {
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MapFragment.setProgress(true);
                 picIv.setImageDrawable(null);
                 String userDesc = String.valueOf(descriptionEt.getText());
 
@@ -231,9 +232,11 @@ public class DescriptionActivity extends AppCompatActivity {
                 newPic.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
+                        MapFragment.setProgress(false);
                         Log.d("DESCACTIVITY", "added description");
                         Toast.makeText(getApplicationContext(), "Image added", Toast.LENGTH_SHORT);
 
+                        MapFragment.addMarker(newPic, pfile, true);
                         try {
                             MainActivity.setScore();
                         } catch (ParseException exception) {
