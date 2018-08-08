@@ -4,16 +4,19 @@ import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -43,6 +46,8 @@ public class GridAdapter extends RecyclerView.Adapter <GridAdapter.RecyclerViewH
         recyclerViewHolder.tvLocation.setText(pic.getLocation());
         //recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
 
+        final String currentUserId = ParseUser.getCurrentUser().getObjectId();
+
 
         recyclerViewHolder.picView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,15 +55,18 @@ public class GridAdapter extends RecyclerView.Adapter <GridAdapter.RecyclerViewH
                 d = new Dialog(context);
 
                 d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
                 d.setContentView(R.layout.expanded_layout);
 
                 ImageView imageView = d.findViewById(R.id.expanded_pic);
+                TextView descView = d.findViewById(R.id.expanded_desc);
+                TextView userView = d.findViewById(R.id.expanded_user);
+                Button ivFollow = d.findViewById(R.id.ivFollow);
 
-                TextView textView = d.findViewById(R.id.expanded_desc);
+                ivFollow.setVisibility(View.GONE);
 
                 try {
-                    textView.setText(String.valueOf(pic.getUser().fetchIfNeeded().getString("username")));
+                    userView.setText(String.valueOf(pic.getUser().fetchIfNeeded().getString("username")));
+                    descView.setText(pic.getDesc());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
