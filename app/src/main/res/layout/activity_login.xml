@@ -23,6 +23,8 @@
             android:id="@+id/username_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:hint="Enter Username:"
             android:textColor="@android:color/holo_blue_light" />
     </android.support.design.widget.TextInputLayout>
@@ -42,6 +44,8 @@
             android:id="@+id/password_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:hint="Enter Password:"
             android:inputType="textPassword"
             android:textColor="@android:color/holo_blue_light" />
@@ -97,7 +101,7 @@
         android:layout_below="@+id/password_layout"
         android:layout_marginEnd="25dp"
         android:text="Forgot password?"
-        android:textColor="@android:color/holo_blue_dark" />
+        android:textColor="@android:color/white" />
 
     <ImageView
         android:id="@+id/imageView"

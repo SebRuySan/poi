@@ -57,6 +57,32 @@
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progress_bar_load"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="66dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="128dp"-->
+        <!--android:elevation="10dp"-->
+        <!--android:indeterminate="false"-->
+        <!--android:indeterminateTint="#000000"-->
+        <!--android:indeterminateTintMode="src_in"/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/uploading_pics"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@+id/progress_bar"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="-128dp"-->
+        <!--android:text="Loading pics of interest..."-->
+        <!--android:textAlignment="center"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textSize="24sp"-->
+        <!--android:textStyle="bold|italic" />-->
+
     <!--<android.support.v7.widget.CardView-->
         <!--android:id="@+id/cvMess"-->
         <!--android:layout_width="match_parent"-->
