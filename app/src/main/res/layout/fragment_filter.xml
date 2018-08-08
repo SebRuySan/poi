@@ -5,15 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".FilterFragment">
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="361dp"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:padding="10dp"
+        android:background="@drawable/roundbuttonv2"
+        app:barrierAllowsGoneWidgets="false"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="1dp">
 
@@ -21,6 +24,7 @@
             android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:text="Set Filters"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
@@ -31,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/heading"
             android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white"
             android:layout_marginTop="30dp"
             android:text="Show results for selected location only"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -43,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/switchDistance"
+            android:textColor="@android:color/white"
             android:layout_marginTop="70dp"
             android:text="Within Walking Distance"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -53,6 +59,7 @@
             android:id="@+id/tvRadius"
             android:layout_width="134dp"
             android:layout_height="0dp"
+            android:textColor="@android:color/white"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/switchDistance2"
             android:layout_marginStart="8dp"
@@ -70,6 +77,7 @@
             android:layout_below="@+id/switchDistance2"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="115dp"
+            android:textColor="@android:color/white"
             android:max="50"
             android:min="2"
             android:progress="15"
@@ -81,6 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:textColor="@android:color/white"
             android:layout_alignStart="@+id/switchDistance2"
             android:layout_alignTop="@+id/spinnerTime"
             android:layout_marginStart="8dp"
@@ -93,12 +102,14 @@
         <Spinner
             android:id="@+id/spinnerTime"
             android:layout_width="145dp"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_alignEnd="@+id/heading"
             android:layout_below="@+id/tvRadius"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="140dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="148dp"
+            android:background="#ffffff"
             android:spinnerMode="dropdown"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
 
@@ -107,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:textColor="@android:color/white"
             android:layout_alignStart="@+id/switchDistance2"
             android:layout_marginStart="8dp"
             android:layout_marginTop="200dp"
@@ -122,7 +134,10 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="200dp"
+            android:checked="false"
+
             android:text="Post Likes"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tvSortBy"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
@@ -135,6 +150,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="User Scores"
+            android:textColor="@android:color/white"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.564"
             app:layout_constraintStart_toEndOf="@+id/tvSortBy"

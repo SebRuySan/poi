@@ -74,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import android.media.ExifInterface;
 
@@ -357,6 +358,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             public void onPlaceSelected(Place place) {
 
                 mapFragment.goToSearchedPlace(place);
+                mMarker = null;
 
                 Log.d("Maps", "Place selected: " + place.getName());
             }
@@ -368,12 +370,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         });
 
         try {
+        //    firstLoad();
             setScore();
             setNumLikes();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
+       // MapFragment.showMap();
         // Create the scene root for the scenes in this app
         final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -1162,7 +1166,28 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //                }
 //            }
 //        });
-//    }
+//   }
+    public static void firstLoad() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(5);
+        clear();
+        final ParseQuery<Pics> query = ParseQuery.getQuery(Pics.class);
+        query.findInBackground(new FindCallback<Pics>() {
+            @Override
+            public void done(List<Pics> objects, ParseException e) {
+                if (e == null) {
+                    if (objects == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d("CreateFragment", "Adding pics: " + objects.size());
+                        arrayList.addAll(objects);
+                    }
+                    adapter.notifyDataSetChanged();
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     public static void loadAll() throws IOException, ParseException {
         ;
         LatLng pos;
@@ -1185,7 +1210,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 //            }
             //xpos = new LatLng(loc.getLatitude(), loc.getLongitude());
         }
-
         final Double lat = pos.latitude;
         final Double lon = pos.longitude;
 

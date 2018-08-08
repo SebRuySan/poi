@@ -67,6 +67,7 @@ public class FilterFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
+       //getDialog().getWindow().setBackgroundDrawableResource(R.drawable.rounded_dialog);
 
         mRadiusProgress = view.findViewById(R.id.tvRadius);
         mActionCancel = view.findViewById(R.id.action_cancel);
