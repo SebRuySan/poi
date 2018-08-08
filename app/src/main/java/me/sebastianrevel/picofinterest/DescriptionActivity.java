@@ -10,7 +10,9 @@ import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LightingColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.service.autofill.SaveCallback;
@@ -34,6 +36,7 @@ import com.parse.GetDataCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
@@ -253,6 +256,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 public void done(byte[] data, ParseException e) {
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+
                         images = new Bitmap[4];
                         bm = bmp;
                         images[0] = bm;
