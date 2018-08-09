@@ -364,6 +364,18 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 // TODO: Get info about the selected place.
                 mapFragment.goToSearchedPlace(place);
                 mMarker = null;
+
+                try {
+                    clear();
+                    loadAll();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                MapFragment.showMap();
+
                 Log.i(TAG, "Place: " + place.getName());
             }
 

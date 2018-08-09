@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FBUPOI.iml" filepath="$PROJECT_DIR$/FBUPOI.iml" />
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/POI.iml" filepath="$PROJECT_DIR$/POI.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/TakeAPic.iml" filepath="$PROJECT_DIR$/TakeAPic.iml" />
->>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
