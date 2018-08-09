@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static boolean mThisAddyOnly;
     public static boolean mSortByLikes;
     public static boolean mSortByScores;
+    public static boolean mSortByFollowers;
 
     public static int mRadius = 15;
     public static int mTimeframe = 5;
@@ -1101,13 +1102,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe) {
+    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, boolean sortByFollowers, int radius, int timeframe) {
         Log.d(TAG, "sendFilterInput: got the input");
         //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
         mThisAddyOnly = thisAddyOnly;
         mSortByLikes = sortByLikes;
         mSortByScores = sortByScores;
+        mSortByFollowers = sortByFollowers;
 
         mRadius = radius;
         mTimeframe = timeframe;
@@ -1269,7 +1271,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
                                 //Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                                arrayList.addAll(filteredPics);
+
+                                if (mSortByFollowers) {
+                                    for (Pics p : filteredPics) {
+                                        String pUsername = "";
+
+                                        try {
+                                            pUsername = p.getUser().fetchIfNeeded().getString("username");
+                                        } catch (ParseException excep) {
+                                            excep.printStackTrace();
+                                        }
+
+                                        if (ParseUser.getCurrentUser().getList("following").contains(pUsername)) {
+                                            arrayList.add(p);
+                                        }
+                                    }
+                                } else {
+                                    arrayList.addAll(filteredPics);
+                                }
                             }
                         } else {
                             arrayList.addAll(objects);
@@ -1312,7 +1331,13 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             query.findInBackground(new FindCallback<Pics>() {
                 public void done(List<Pics> itemList, ParseException e) {
                     Log.d(TAG, "Query done");
-                    Log.d(TAG, "ItemList array size : " + itemList.size());
+
+                    if (itemList == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d(TAG, "ItemList array size : " + itemList.size());
+                    }
+
                     // if no errors
                     if (e == null) {
                         Log.d(TAG, "No errors in querying");
@@ -1325,8 +1350,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                                arrayList.addAll(filteredPics);
+                                if (mSortByFollowers) {
+                                    for (Pics p : filteredPics) {
+                                        String pUsername = "";
+
+                                        try {
+                                            pUsername = p.getUser().fetchIfNeeded().getString("username");
+                                        } catch (ParseException excep) {
+                                            excep.printStackTrace();
+                                        }
+
+                                        if (ParseUser.getCurrentUser().getList("following").contains(pUsername)) {
+                                            arrayList.add(p);
+                                        }
+                                    }
+                                } else {
+                                    //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                    arrayList.addAll(filteredPics);
+                                }
                             }
                         } else {
                             arrayList.addAll(itemList);
