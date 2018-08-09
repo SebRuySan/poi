@@ -752,6 +752,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // get file using getoutput media file, and save it
                     File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 
+                    String path = file.getAbsolutePath();
                     /*
                     // get bitmap from file using bitmapfactory.decodefile
                     Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
@@ -1034,6 +1035,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
                         //intent.putExtra("filepath", mFilePath);
                         intent.putExtra("pic", newPic);
+                        intent.putExtra("path", path);
                         startActivity(intent);
 
                     }

@@ -55,6 +55,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private int i;
     int counter;
     Bitmap b1, b2, b3, b4;
+    String path;
 
 
     @Override
@@ -85,6 +86,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
         uploadBtn = findViewById(R.id.upload_post_btn);
         final Pics newPic = (Pics) intent.getExtras().get("pic");
+        path = intent.getStringExtra("path");
         /*
         //Bitmap bm = (Bitmap) intent.getExtras().get("bitmap"); // get bitmap passed in intent
         Bitmap bm = MainActivity.bitm;
@@ -256,14 +258,44 @@ public class DescriptionActivity extends AppCompatActivity {
         if (thumbnail != null) {
             thumbnail.getDataInBackground(new GetDataCallback() {
                 @Override
-                public void done(byte[] data, ParseException e) {
+                public void done(byte[] data, ParseException e){
                     if (e == null) {
                         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 
+                        ExifInterface ei = null;
+                        try {
+                            ei = new ExifInterface(path);
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_UNDEFINED);
+
+                        Bitmap rotatedBitmap = null;
+                        switch(orientation) {
+
+                            case ExifInterface.ORIENTATION_ROTATE_90:
+                                rotatedBitmap = rotateImage(bmp, 90);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_180:
+                                rotatedBitmap = rotateImage(bmp, 180);
+                                break;
+
+                            case ExifInterface.ORIENTATION_ROTATE_270:
+                                rotatedBitmap = rotateImage(bmp, 270);
+                                break;
+
+                            case ExifInterface.ORIENTATION_NORMAL:
+                            default:
+                                rotatedBitmap = bmp;
+                        }
+
                         images = new Bitmap[4];
-                        bm = bmp;
+                        //bm = bmp;
+                        bm = rotatedBitmap;
                         images[0] = bm;
-                        img.setImageBitmap(bmp);
+                        img.setImageBitmap(bm);
                         b2 = applyShadingFilter(bm, Color.GREEN); // green filter
                         images[1] = b2;
                         b3 = toGrayscale(bm);
@@ -288,6 +320,13 @@ public class DescriptionActivity extends AppCompatActivity {
             //img.setImageResource(R.drawable.menu);
         }
     }// load image
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
+    }
 
     /*
     public void filter(boolean left){
