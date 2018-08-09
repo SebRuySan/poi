@@ -6,12 +6,19 @@
     </shared>
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="a7b609f6-7e73-48f0-a286-9663646b549c" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/follow_icon_trans.png" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/following_icon_trans.png" />
+=======
     <list default="true" id="c1ae58f2-9bdd-42a2-b052-06cc36591194" name="Default" comment="">
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
@@ -69,6 +76,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/ArchiveActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/ArchiveActivity.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/DescriptionActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/DescriptionActivity.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/SignupActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/SignupActivity.java" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_map.xml" />
+      <change beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
+=======
       <change beforePath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml" />
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
@@ -89,6 +109,44 @@
     </projectState>
   </component>
   <component name="FileEditorManager">
+<<<<<<< HEAD
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="626">
+              <caret line="493" column="4" lean-forward="false" selection-start-line="493" selection-start-column="4" selection-end-line="502" selection-end-column="5" />
+              <folding>
+                <element signature="e#6964#6984#0" expanded="true" />
+                <element signature="e#6986#7007#0" expanded="true" />
+                <element signature="e#7126#7146#0" expanded="true" />
+                <element signature="e#7164#7185#0" expanded="true" />
+                <element signature="e#7640#8396#0" expanded="true" />
+                <element signature="e#8071#8298#0" expanded="true" />
+                <element signature="e#8297#8298#0" expanded="true" />
+                <element signature="e#8395#8396#0" expanded="true" />
+                <element signature="e#8498#9210#0" expanded="true" />
+                <element signature="e#8929#9156#0" expanded="true" />
+                <element signature="e#9155#9156#0" expanded="true" />
+                <element signature="e#9209#9210#0" expanded="true" />
+                <element signature="e#9309#9855#0" expanded="true" />
+                <element signature="e#9574#9801#0" expanded="true" />
+                <element signature="e#9800#9801#0" expanded="true" />
+                <element signature="e#9854#9855#0" expanded="true" />
+                <element signature="e#9977#10148#0" expanded="true" />
+                <element signature="e#10147#10148#0" expanded="true" />
+                <element signature="e#10862#10916#0" expanded="true" />
+                <element signature="e#11322#11724#0" expanded="true" />
+                <element signature="e#11723#11724#0" expanded="true" />
+                <element signature="e#11765#11921#0" expanded="true" />
+                <element signature="e#11920#11921#0" expanded="true" />
+                <element signature="e#12047#12408#0" expanded="true" />
+                <element signature="e#12407#12408#0" expanded="true" />
+                <element signature="e#12450#12684#0" expanded="true" />
+                <element signature="e#12683#12684#0" expanded="true" />
+                <element signature="e#53260#53450#0" expanded="true" />
+                <element signature="e#53449#53450#0" expanded="true" />
+=======
     <leaf>
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
@@ -194,6 +252,7 @@
       </file>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       <file leaf-file-name="PicAdapter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -209,6 +268,53 @@
                 <element signature="e#7874#7875#0" expanded="true" />
                 <element signature="e#8242#8243#0" expanded="true" />
                 <element signature="e#8281#8282#0" expanded="true" />
+=======
+      <file leaf-file-name="activity_main.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-376">
+              <caret line="249" column="37" lean-forward="false" selection-start-line="249" selection-start-column="37" selection-end-line="249" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GPSTracker.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GPSTracker.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="local.properties" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/local.properties">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DescriptionActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/DescriptionActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="157">
+              <caret line="232" column="36" lean-forward="false" selection-start-line="232" selection-start-column="36" selection-end-line="232" selection-end-column="36" />
+              <folding>
+                <element signature="e#5421#6112#0" expanded="true" />
+                <element signature="e#6111#6112#0" expanded="true" />
+                <element signature="e#6152#7185#0" expanded="true" />
+                <element signature="e#7184#7185#0" expanded="true" />
+                <element signature="e#7227#8312#0" expanded="true" />
+                <element signature="e#8311#8312#0" expanded="true" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
               </folding>
 =======
       <file leaf-file-name="GridAdapter.java" pinned="false" current-in-tab="false">
@@ -222,10 +328,38 @@
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="expanded_layout.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml">
 <<<<<<< HEAD
 =======
+=======
+      <file leaf-file-name="PicAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1500">
+              <caret line="126" column="0" lean-forward="false" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParseApp.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/ParseApp.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GridAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="600">
+              <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
 =======
       <file leaf-file-name="fragment_filter.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml">
@@ -237,6 +371,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="195">
               <caret line="13" column="34" lean-forward="false" selection-start-line="13" selection-start-column="34" selection-end-line="13" selection-end-column="34" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <folding />
             </state>
           </provider>
@@ -278,9 +413,41 @@
         </entry>
       </file>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       <file leaf-file-name="LoginActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/LoginActivity.java">
+=======
+      <file leaf-file-name="CircleBubbleTransformation.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/CircleBubbleTransformation.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Pics.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="795">
+              <caret line="82" column="64" lean-forward="false" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
+              <folding>
+                <element signature="e#5054#5055#0" expanded="true" />
+                <element signature="e#5108#5109#0" expanded="true" />
+                <element signature="e#6708#6709#0" expanded="true" />
+                <element signature="e#6745#6746#0" expanded="true" />
+                <element signature="e#6778#6779#0" expanded="true" />
+                <element signature="e#6822#6823#0" expanded="true" />
+                <element signature="e#6863#6864#0" expanded="true" />
+                <element signature="e#6896#6897#0" expanded="true" />
+                <element signature="e#6930#6931#0" expanded="true" />
+                <element signature="e#6975#6976#0" expanded="true" />
+                <element signature="e#7019#7020#0" expanded="true" />
+                <element signature="e#7054#7055#0" expanded="true" />
+              </folding>
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
 =======
       <file leaf-file-name="activity_main.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
@@ -292,6 +459,7 @@
             <state relative-caret-position="-347">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
             </state>
           </provider>
         </entry>
@@ -307,9 +475,14 @@
       <find>follow_icon</find>
       <find>setscore</find>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <find>time</find>
 =======
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+      <find>recy</find>
+      <find>padd</find>
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
     </findStrings>
   </component>
 =======
@@ -344,10 +517,14 @@
             <ExternalProjectPojo>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
               <option name="name" value="POI" />
 =======
               <option name="name" value="FBUPicOfInterest" />
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+              <option name="name" value="TakeAPic" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
 =======
               <option name="name" value="FBUPOI" />
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
@@ -359,10 +536,14 @@
               <ExternalProjectPojo>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <option name="name" value="POI" />
 =======
                 <option name="name" value="FBUPicOfInterest" />
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+                <option name="name" value="TakeAPic" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
 =======
                 <option name="name" value="FBUPOI" />
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
@@ -1143,7 +1324,11 @@
           <value>
             <list>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the sub-projects of root project 'TakeAPic'." />
+=======
                 <option name="description" value="Displays the sub-projects of root project 'FBUPOI'." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="projects" />
               </ExternalTaskPojo>
@@ -1193,7 +1378,11 @@
                 <option name="name" value="assembleDebugUnitTest" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the configuration model of root project 'TakeAPic'. [incubating]" />
+=======
                 <option name="description" value="Displays the configuration model of root project 'FBUPOI'. [incubating]" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="model" />
               </ExternalTaskPojo>
@@ -1215,7 +1404,11 @@
                 <option name="name" value="bundleAppClassesDebug" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the tasks runnable from root project 'TakeAPic' (some of the displayed tasks may belong to subprojects)." />
+=======
                 <option name="description" value="Displays the tasks runnable from root project 'FBUPOI' (some of the displayed tasks may belong to subprojects)." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="tasks" />
               </ExternalTaskPojo>
@@ -1238,7 +1431,11 @@
                 <option name="name" value="deviceCheck" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays all dependencies declared in root project 'TakeAPic'." />
+=======
                 <option name="description" value="Displays all dependencies declared in root project 'FBUPOI'." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependencies" />
               </ExternalTaskPojo>
@@ -1319,7 +1516,11 @@
                 <option name="name" value="compileDebugAndroidTestJavaWithJavac" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the components produced by root project 'TakeAPic'. [incubating]" />
+=======
                 <option name="description" value="Displays the components produced by root project 'FBUPOI'. [incubating]" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="components" />
               </ExternalTaskPojo>
@@ -1448,7 +1649,11 @@
                 <option name="name" value="uninstallDebugAndroidTest" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the insight into a specific dependency in root project 'TakeAPic'." />
+=======
                 <option name="description" value="Displays the insight into a specific dependency in root project 'FBUPOI'." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependencyInsight" />
               </ExternalTaskPojo>
@@ -1749,12 +1954,20 @@
                 <option name="name" value="transformDexArchiveWithDexMergerForDebugAndroidTest" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the dependent components of components in root project 'TakeAPic'. [incubating]" />
+=======
                 <option name="description" value="Displays the dependent components of components in root project 'FBUPOI'. [incubating]" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="dependentComponents" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays all buildscript dependencies declared in root project 'TakeAPic'." />
+=======
                 <option name="description" value="Displays all buildscript dependencies declared in root project 'FBUPOI'." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="buildEnvironment" />
               </ExternalTaskPojo>
@@ -1880,7 +2093,11 @@
                 <option name="name" value="generateReleaseResValues" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
+<<<<<<< HEAD
+                <option name="description" value="Displays the properties of root project 'TakeAPic'." />
+=======
                 <option name="description" value="Displays the properties of root project 'FBUPOI'." />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="properties" />
               </ExternalTaskPojo>
@@ -2945,7 +3162,11 @@
                   </entry>
                 </map>
               </option>
+<<<<<<< HEAD
+              <option name="name" value="TakeAPic" />
+=======
               <option name="name" value="FBUPOI" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <option name="projectBuildClasspath">
                 <list>
                   <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-4.4-all/9br9xq1tocpiv8o6njlyu5op1/gradle-4.4/src/ide" />
@@ -3103,11 +3324,6 @@
     <option name="externalProjectsViewState">
       <projects_view />
     </option>
-    <option name="projectSyncType">
-      <map>
-        <entry key="$PROJECT_DIR$" value="RE_IMPORT" />
-      </map>
-    </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -3124,11 +3340,21 @@
 =======
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
         <option value="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java" />
+<<<<<<< HEAD
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/DescriptionActivity.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="x" value="1440" />
+=======
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
     <option name="width" value="2560" />
     <option name="height" value="1600" />
   </component>
@@ -3150,51 +3376,84 @@
       <pane id="ProjectPane" />
       <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
             <path>
+<<<<<<< HEAD
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+=======
               <item name="FBUPOI" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
             </path>
             <path>
               <item name="FBUPOI" type="1abcf292:AndroidViewProjectNode" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
             </path>
             <path>
+<<<<<<< HEAD
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+=======
               <item name="FBUPOI" type="1abcf292:AndroidViewProjectNode" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="picofinterest" type="cbb59c9e:AndroidPsiDirectoryNode" />
             </path>
             <path>
+<<<<<<< HEAD
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+=======
               <item name="FBUPOI" type="1abcf292:AndroidViewProjectNode" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
             </path>
             <path>
+<<<<<<< HEAD
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+=======
               <item name="FBUPOI" type="1abcf292:AndroidViewProjectNode" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
               <item name="app" type="feadf853:AndroidModuleNode" />
               <item name="res" type="d4f16f75:AndroidResFolderNode" />
               <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
             <path>
+<<<<<<< HEAD
               <item name="POI" type="1abcf292:AndroidViewProjectNode" />
+=======
+              <item name="TakeAPic" type="1abcf292:AndroidViewProjectNode" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
+=======
       <pane id="Scratches" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="settings.editor.selected.configurable" value="android.sdk-updates" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+    <property name="device.picker.selection" value="4948573231573398" />
+=======
     <property name="device.picker.selection" value="HT85T1A00940" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -3369,7 +3628,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
+    <frame x="1440" y="0" width="2560" height="1600" extended-state="6" />
+=======
     <frame x="0" y="0" width="2560" height="1600" extended-state="0" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -3381,6 +3644,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+<<<<<<< HEAD
 <<<<<<< HEAD
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33261955" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -3399,6 +3663,16 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2494043" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32958537" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30713817" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2494244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32940406" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
 =======
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -3435,6 +3709,38 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32958537" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3302881" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2494244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -3448,6 +3754,185 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="126" column="0" lean-forward="true" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16770">
+          <caret line="1292" column="12" lean-forward="false" selection-start-line="1292" selection-start-column="12" selection-end-line="1292" selection-end-column="12" />
+          <folding>
+            <element signature="e#6964#6984#0" expanded="true" />
+            <element signature="e#6986#7007#0" expanded="true" />
+            <element signature="e#7126#7146#0" expanded="true" />
+            <element signature="e#7164#7185#0" expanded="true" />
+            <element signature="e#7640#8396#0" expanded="true" />
+            <element signature="e#8071#8298#0" expanded="true" />
+            <element signature="e#8297#8298#0" expanded="true" />
+            <element signature="e#8395#8396#0" expanded="true" />
+            <element signature="e#8498#9210#0" expanded="true" />
+            <element signature="e#8929#9156#0" expanded="true" />
+            <element signature="e#9155#9156#0" expanded="true" />
+            <element signature="e#9209#9210#0" expanded="true" />
+            <element signature="e#9309#9855#0" expanded="true" />
+            <element signature="e#9574#9801#0" expanded="true" />
+            <element signature="e#9800#9801#0" expanded="true" />
+            <element signature="e#9854#9855#0" expanded="true" />
+            <element signature="e#9977#10148#0" expanded="true" />
+            <element signature="e#10147#10148#0" expanded="true" />
+            <element signature="e#10862#10916#0" expanded="true" />
+            <element signature="e#11322#11724#0" expanded="true" />
+            <element signature="e#11723#11724#0" expanded="true" />
+            <element signature="e#11765#11921#0" expanded="true" />
+            <element signature="e#11920#11921#0" expanded="true" />
+            <element signature="e#12047#12408#0" expanded="true" />
+            <element signature="e#12407#12408#0" expanded="true" />
+            <element signature="e#12450#12684#0" expanded="true" />
+            <element signature="e#12683#12684#0" expanded="true" />
+            <element signature="e#53260#53450#0" expanded="true" />
+            <element signature="e#53449#53450#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="960">
+          <caret line="64" column="38" lean-forward="false" selection-start-line="64" selection-start-column="38" selection-end-line="64" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="82" column="64" lean-forward="false" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
+          <folding>
+            <element signature="e#5054#5055#0" expanded="true" />
+            <element signature="e#5108#5109#0" expanded="true" />
+            <element signature="e#6708#6709#0" expanded="true" />
+            <element signature="e#6745#6746#0" expanded="true" />
+            <element signature="e#6778#6779#0" expanded="true" />
+            <element signature="e#6822#6823#0" expanded="true" />
+            <element signature="e#6863#6864#0" expanded="true" />
+            <element signature="e#6896#6897#0" expanded="true" />
+            <element signature="e#6930#6931#0" expanded="true" />
+            <element signature="e#6975#6976#0" expanded="true" />
+            <element signature="e#7019#7020#0" expanded="true" />
+            <element signature="e#7054#7055#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/LoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="16995">
+          <caret line="1303" column="74" lean-forward="false" selection-start-line="1303" selection-start-column="74" selection-end-line="1303" selection-end-column="74" />
+          <folding>
+            <element signature="e#6964#6984#0" expanded="true" />
+            <element signature="e#6986#7007#0" expanded="true" />
+            <element signature="e#7126#7146#0" expanded="true" />
+            <element signature="e#7164#7185#0" expanded="true" />
+            <element signature="e#7640#8396#0" expanded="true" />
+            <element signature="e#8071#8298#0" expanded="true" />
+            <element signature="e#8297#8298#0" expanded="true" />
+            <element signature="e#8395#8396#0" expanded="true" />
+            <element signature="e#8498#9210#0" expanded="true" />
+            <element signature="e#8929#9156#0" expanded="true" />
+            <element signature="e#9155#9156#0" expanded="true" />
+            <element signature="e#9209#9210#0" expanded="true" />
+            <element signature="e#9309#9855#0" expanded="true" />
+            <element signature="e#9574#9801#0" expanded="true" />
+            <element signature="e#9800#9801#0" expanded="true" />
+            <element signature="e#9854#9855#0" expanded="true" />
+            <element signature="e#9977#10148#0" expanded="true" />
+            <element signature="e#10147#10148#0" expanded="true" />
+            <element signature="e#10862#10916#0" expanded="true" />
+            <element signature="e#11322#11724#0" expanded="true" />
+            <element signature="e#11723#11724#0" expanded="true" />
+            <element signature="e#11765#11921#0" expanded="true" />
+            <element signature="e#11920#11921#0" expanded="true" />
+            <element signature="e#12047#12408#0" expanded="true" />
+            <element signature="e#12407#12408#0" expanded="true" />
+            <element signature="e#12450#12684#0" expanded="true" />
+            <element signature="e#12683#12684#0" expanded="true" />
+            <element signature="e#53260#53450#0" expanded="true" />
+            <element signature="e#53449#53450#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="134" column="63" lean-forward="false" selection-start-line="134" selection-start-column="63" selection-end-line="134" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="960">
+          <caret line="64" column="38" lean-forward="false" selection-start-line="64" selection-start-column="38" selection-end-line="64" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1500">
+          <caret line="130" column="38" lean-forward="true" selection-start-line="130" selection-start-column="38" selection-end-line="130" selection-end-column="38" />
+          <folding>
+            <element signature="e#5054#5055#0" expanded="true" />
+            <element signature="e#5108#5109#0" expanded="true" />
+            <element signature="e#6708#6709#0" expanded="true" />
+            <element signature="e#6745#6746#0" expanded="true" />
+            <element signature="e#6778#6779#0" expanded="true" />
+            <element signature="e#6822#6823#0" expanded="true" />
+            <element signature="e#6863#6864#0" expanded="true" />
+            <element signature="e#6896#6897#0" expanded="true" />
+            <element signature="e#6930#6931#0" expanded="true" />
+            <element signature="e#6975#6976#0" expanded="true" />
+            <element signature="e#7019#7020#0" expanded="true" />
+            <element signature="e#7054#7055#0" expanded="true" />
+          </folding>
+=======
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider editor-type-id="android-designer2">
         <state />
@@ -3456,6 +3941,7 @@
         <state relative-caret-position="-347">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
         </state>
       </provider>
     </entry>
@@ -3530,6 +4016,37 @@
           <caret line="359" column="54" lean-forward="false" selection-start-line="359" selection-start-column="54" selection-end-line="359" selection-end-column="54" />
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
           <folding>
+<<<<<<< HEAD
+            <element signature="e#6964#6984#0" expanded="true" />
+            <element signature="e#6986#7007#0" expanded="true" />
+            <element signature="e#7126#7146#0" expanded="true" />
+            <element signature="e#7164#7185#0" expanded="true" />
+            <element signature="e#7640#8396#0" expanded="true" />
+            <element signature="e#8071#8298#0" expanded="true" />
+            <element signature="e#8297#8298#0" expanded="true" />
+            <element signature="e#8395#8396#0" expanded="true" />
+            <element signature="e#8498#9210#0" expanded="true" />
+            <element signature="e#8929#9156#0" expanded="true" />
+            <element signature="e#9155#9156#0" expanded="true" />
+            <element signature="e#9209#9210#0" expanded="true" />
+            <element signature="e#9309#9855#0" expanded="true" />
+            <element signature="e#9574#9801#0" expanded="true" />
+            <element signature="e#9800#9801#0" expanded="true" />
+            <element signature="e#9854#9855#0" expanded="true" />
+            <element signature="e#9977#10148#0" expanded="true" />
+            <element signature="e#10147#10148#0" expanded="true" />
+            <element signature="e#10862#10916#0" expanded="true" />
+            <element signature="e#11322#11724#0" expanded="true" />
+            <element signature="e#11723#11724#0" expanded="true" />
+            <element signature="e#11765#11921#0" expanded="true" />
+            <element signature="e#11920#11921#0" expanded="true" />
+            <element signature="e#12047#12408#0" expanded="true" />
+            <element signature="e#12407#12408#0" expanded="true" />
+            <element signature="e#12450#12684#0" expanded="true" />
+            <element signature="e#12683#12684#0" expanded="true" />
+            <element signature="e#53260#53450#0" expanded="true" />
+            <element signature="e#53449#53450#0" expanded="true" />
+=======
             <element signature="e#6699#6719#0" expanded="true" />
             <element signature="e#6721#6742#0" expanded="true" />
             <element signature="e#6861#6881#0" expanded="true" />
@@ -3579,10 +4096,12 @@
             <element signature="e#54562#54563#0" expanded="true" />
             <element signature="e#54932#55122#0" expanded="true" />
             <element signature="e#55121#55122#0" expanded="true" />
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
           </folding>
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -3603,6 +4122,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/archive_item.xml">
       <provider selected="true" editor-type-id="android-designer2">
         <state />
@@ -3626,8 +4147,11 @@
       </provider>
     </entry>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/card_layout.xml">
 =======
+=======
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/expanded_layout.xml">
       <provider editor-type-id="android-designer2">
         <state />
@@ -3640,13 +4164,31 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/card_layout.xml">
+<<<<<<< HEAD
+=======
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1112">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/LoginActivity.java">
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
 =======
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_filter.xml">
 >>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+<<<<<<< HEAD
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+>>>>>>> 6f40c091745c914e208032efdc8654513d0c5011
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
 <<<<<<< HEAD
@@ -3785,14 +4327,145 @@
       </provider>
     </entry>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GridAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="62" column="22" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
     <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/PicAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1500">
           <caret line="126" column="0" lean-forward="false" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+<<<<<<< HEAD
           <folding>
             <element signature="e#8246#8247#0" expanded="true" />
             <element signature="e#8285#8286#0" expanded="true" />
 >>>>>>> aae21266aca5ff674c48d2e4c2d4614fc4af574b
+=======
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/Models/Pics.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="795">
+          <caret line="82" column="64" lean-forward="false" selection-start-line="82" selection-start-column="64" selection-end-line="82" selection-end-column="64" />
+          <folding>
+            <element signature="e#5054#5055#0" expanded="true" />
+            <element signature="e#5108#5109#0" expanded="true" />
+            <element signature="e#6708#6709#0" expanded="true" />
+            <element signature="e#6745#6746#0" expanded="true" />
+            <element signature="e#6778#6779#0" expanded="true" />
+            <element signature="e#6822#6823#0" expanded="true" />
+            <element signature="e#6863#6864#0" expanded="true" />
+            <element signature="e#6896#6897#0" expanded="true" />
+            <element signature="e#6930#6931#0" expanded="true" />
+            <element signature="e#6975#6976#0" expanded="true" />
+            <element signature="e#7019#7020#0" expanded="true" />
+            <element signature="e#7054#7055#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/local.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/ParseApp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="9" column="13" lean-forward="false" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/GPSTracker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/CircleBubbleTransformation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="626">
+          <caret line="493" column="4" lean-forward="false" selection-start-line="493" selection-start-column="4" selection-end-line="502" selection-end-column="5" />
+          <folding>
+            <element signature="e#6964#6984#0" expanded="true" />
+            <element signature="e#6986#7007#0" expanded="true" />
+            <element signature="e#7126#7146#0" expanded="true" />
+            <element signature="e#7164#7185#0" expanded="true" />
+            <element signature="e#7640#8396#0" expanded="true" />
+            <element signature="e#8071#8298#0" expanded="true" />
+            <element signature="e#8297#8298#0" expanded="true" />
+            <element signature="e#8395#8396#0" expanded="true" />
+            <element signature="e#8498#9210#0" expanded="true" />
+            <element signature="e#8929#9156#0" expanded="true" />
+            <element signature="e#9155#9156#0" expanded="true" />
+            <element signature="e#9209#9210#0" expanded="true" />
+            <element signature="e#9309#9855#0" expanded="true" />
+            <element signature="e#9574#9801#0" expanded="true" />
+            <element signature="e#9800#9801#0" expanded="true" />
+            <element signature="e#9854#9855#0" expanded="true" />
+            <element signature="e#9977#10148#0" expanded="true" />
+            <element signature="e#10147#10148#0" expanded="true" />
+            <element signature="e#10862#10916#0" expanded="true" />
+            <element signature="e#11322#11724#0" expanded="true" />
+            <element signature="e#11723#11724#0" expanded="true" />
+            <element signature="e#11765#11921#0" expanded="true" />
+            <element signature="e#11920#11921#0" expanded="true" />
+            <element signature="e#12047#12408#0" expanded="true" />
+            <element signature="e#12407#12408#0" expanded="true" />
+            <element signature="e#12450#12684#0" expanded="true" />
+            <element signature="e#12683#12684#0" expanded="true" />
+            <element signature="e#53260#53450#0" expanded="true" />
+            <element signature="e#53449#53450#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-376">
+          <caret line="249" column="37" lean-forward="false" selection-start-line="249" selection-start-column="37" selection-end-line="249" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/me/sebastianrevel/picofinterest/DescriptionActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="232" column="36" lean-forward="false" selection-start-line="232" selection-start-column="36" selection-end-line="232" selection-end-column="36" />
+          <folding>
+            <element signature="e#5421#6112#0" expanded="true" />
+            <element signature="e#6111#6112#0" expanded="true" />
+            <element signature="e#6152#7185#0" expanded="true" />
+            <element signature="e#7184#7185#0" expanded="true" />
+            <element signature="e#7227#8312#0" expanded="true" />
+            <element signature="e#8311#8312#0" expanded="true" />
+>>>>>>> 1490f80721339f1d921dd0769a410c86f10a4a62
           </folding>
         </state>
       </provider>

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.ExifInterface;
@@ -60,6 +61,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -513,17 +515,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         final ParseFile imageFile = new ParseFile("image.png", bitmapdata);
         return imageFile;
 
-        /*
-        //byte[] imgByteArray = encodeToByteArray(imageBitmap);
-        int width = imageBitmap.getWidth();
-        int height = imageBitmap.getHeight();
-
-        int size = imageBitmap.getRowBytes() * imageBitmap.getHeight();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(size);
-        imageBitmap.copyPixelsToBuffer(byteBuffer);
-        byte[] byteArray = byteBuffer.array();
-        final ParseFile imageFile = new ParseFile("image.jpg", byteArray);
-        return imageFile; */
     }
 
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
@@ -604,10 +595,39 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                         final Pics pic = new Pics();
 
-                        //final ParseFile pFile = conversionBitmapParseFile(bm);
-                        final ParseFile pFile = bittobytetoparse(bm);
+//                        //final ParseFile pFile = conversionBitmapParseFile(bm);
+//                        final ParseFile pFile = bittobytetoparse(bm);
 
                         filepath = getRealPathFromUri(getApplicationContext(), imageUri);
+
+                        // rotate bitmap if necesssary
+                        BitmapFactory.Options bounds = new BitmapFactory.Options();
+                        bounds.inJustDecodeBounds = true;
+                        BitmapFactory.decodeFile(filepath, bounds);
+                        BitmapFactory.Options opts = new BitmapFactory.Options();
+                        Bitmap b = BitmapFactory.decodeFile(filepath, opts);
+                        // Read EXIF Data
+                        ExifInterface exif2 = null;
+                        try {
+                            exif2 = new ExifInterface(filepath);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        String orientString = exif2.getAttribute(ExifInterface.TAG_ORIENTATION);
+                        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+                        int rotationAngle = 0;
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+                        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+                        // Rotate Bitmap
+                        Matrix matrix = new Matrix();
+                        matrix.setRotate(rotationAngle, (float) b.getWidth() / 2, (float) b.getHeight() / 2);
+                        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+
+
+                        //final ParseFile pFile = conversionBitmapParseFile(bm);
+                        final ParseFile pFile = bittobytetoparse(rotatedBitmap);
+
                         boolean hasLoc = false;
 
                         try {
@@ -732,12 +752,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                     // get file using getoutput media file, and save it
                     File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+                    String path = file.getAbsolutePath();
+                    /*
                     // get bitmap from file using bitmapfactory.decodefile
                     Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                    // this will hopefully compress the bitmap
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    bm.compress(Bitmap.CompressFormat.PNG, 0, byteArrayOutputStream);
+                    Bitmap decoded = BitmapFactory.decodeStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+
                     // assign the global static variable to be this
-                    this.bitm = bm;
+                    this.bitm = decoded;
+                    final ParseFile parseFile = bittobytetoparse(decoded);
 
                     //final ParseFile parseFile = new ParseFile(getOutputMediaFile(MEDIA_TYPE_IMAGE));
+                    */
                     final ParseFile parseFile = new ParseFile(file);
                     parseFile.saveInBackground();
                     newPic.setPic(parseFile);
@@ -1005,6 +1036,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         Intent intent = new Intent(MainActivity.this, DescriptionActivity.class);
                         //intent.putExtra("filepath", mFilePath);
                         intent.putExtra("pic", newPic);
+                        intent.putExtra("path", path);
                         startActivity(intent);
 
                     }
@@ -1481,6 +1513,34 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             //deprecated in API 26
             v.vibrate(400);
         }
+    }
+
+    public Bitmap rotateBitmapOrientation(String photoFilePath) {
+        // Create and configure BitmapFactory
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoFilePath, bounds);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+        // Read EXIF Data
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(photoFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        // Rotate Bitmap
+        Matrix matrix = new Matrix();
+        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        // Return result
+        return rotatedBitmap;
     }
 
 }
