@@ -321,9 +321,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                googleMap.setPadding(0, 50, 10, 0); // this is so the my location button is positioned better
                 loadMap(googleMap);
                 map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
                 daymode = !daymode;
                 changeStyle();
 
