@@ -704,9 +704,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     if(!foundLoc) {
 
                                         pic.setLocation(address);
-
                                         pic.setLong(longitude);
-
                                         pic.setLat(latitude);
 
                                     }
@@ -714,12 +712,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     final ParseUser user = ParseUser.getCurrentUser();
 
                                     pic.setUser(user);
-
                                     pic.setPic(pFile);
-
                                     pic.setLike();
-
                                     pic.setNumLikeColumn();
+                                    pic.setCreatedAt();
+
 
                                     mapFragment.addMarker(pic, pFile, true);
 
@@ -1309,9 +1306,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                 }
 
-                query.addDescendingOrder("createdAt");
+                query.addDescendingOrder("createdAt2");
             } else {
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
             }
 
             query.findInBackground(new FindCallback<Pics>() {
@@ -1385,9 +1382,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // TODO: sort by scores
                 }
 
-                query.addDescendingOrder("createdAt");
+                query.addDescendingOrder("createdAt2");
             } else {
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
             }
 
             query.findInBackground(new FindCallback<Pics>() {
