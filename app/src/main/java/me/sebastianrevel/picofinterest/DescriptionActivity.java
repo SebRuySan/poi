@@ -46,7 +46,7 @@ public class DescriptionActivity extends AppCompatActivity {
     EditText descriptionEt;
     ImageView picIv;
     Button uploadBtn;
-    ImageView ivrarrow, ivlarrow;
+    ImageView ivrarrow, ivlarrow, ivone, ivtwo, ivthree, ivfour;
     Bitmap bm;
     Bitmap current;
     Bitmap[] images;
@@ -67,9 +67,12 @@ public class DescriptionActivity extends AppCompatActivity {
 
         picIv = findViewById(R.id.pic_preview);
 
-        ivlarrow = findViewById(R.id.ivlarrow);
-        ivrarrow = findViewById(R.id.ivrarrow);
-
+        //ivlarrow = findViewById(R.id.ivlarrow);
+        //ivrarrow = findViewById(R.id.ivrarrow);
+        ivone = findViewById(R.id.ivone);
+        ivtwo = findViewById(R.id.ivtwo);
+        ivthree = findViewById(R.id.ivthree);
+        ivfour = findViewById(R.id.ivfour);
 
         //String filePath = getIntent().getStringExtra("pictures");
 
@@ -161,6 +164,7 @@ public class DescriptionActivity extends AppCompatActivity {
        // b4 = changeBitmapColor(bm,  Color.CYAN, Color.BLACK); // aquamarine filter
 
         //final ImageProcessor imageProcessor = new ImageProcessor();
+        /*
         ivrarrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,7 +175,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 else{
                     counter ++;
                     picIv.setImageBitmap(images[counter]);
-                }
+                } */
                 /*
                 picIv.setImageBitmap(images[]);
                 //Bitmap bm1 = imageProcessor.doGreyScale(bm); // this applies the greyscale filter to the image, by taking in and returning a bitmap
@@ -180,7 +184,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 //current = toGrayscale(bm);
                 //picIv.setImageBitmap(current);
                 picIv.setImageBitmap(b3);*/
-            }
+        /*    }
         });
 
         ivlarrow.setOnClickListener(new View.OnClickListener() {
@@ -214,9 +218,36 @@ public class DescriptionActivity extends AppCompatActivity {
                 //current = doInvert(bm);
                 //picIv.setImageBitmap(current);
                 //picIv.setImageBitmap(b2);
+         /*   }
+        }); */
+        ivone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter = 0;
+                picIv.setImageBitmap(images[counter]);
             }
         });
-
+        ivtwo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter = 2;
+                picIv.setImageBitmap(images[counter]);
+            }
+        });
+        ivthree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter = 3;
+                picIv.setImageBitmap(images[counter]);
+            }
+        });
+        ivfour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                counter = 1;
+                picIv.setImageBitmap(images[counter]);
+            }
+        });
 
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -295,13 +326,19 @@ public class DescriptionActivity extends AppCompatActivity {
                         //bm = bmp;
                         bm = rotatedBitmap;
                         images[0] = bm;
+                        ivone.setImageBitmap(images[0]);
                         img.setImageBitmap(bm);
                         b2 = applyShadingFilter(bm, Color.GREEN); // green filter
                         images[1] = b2;
+//                        ivtwo.setImageBitmap(images[1]);
                         b3 = toGrayscale(bm);
                         images[2] = b3;
+//                        ivthree.setImageBitmap(images[1]);
                         b4 = changeBitmapColor(bm,  Color.CYAN, Color.BLACK); // aquamarine filter
                         images[3] = b4;
+                        ivfour.setImageBitmap(images[1]);
+                        ivthree.setImageBitmap(images[3]);
+                        ivtwo.setImageBitmap(images[2]);
                         // the code commented out below leads to a loading screen while the thread below is executing so isn't optimal
                         /*
                         new Thread(new Runnable() {
