@@ -74,6 +74,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+//import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -227,6 +228,21 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 } catch (GooglePlayServicesNotAvailableException e) {
                     // TODO: Handle the error.
                 }
+            }
+        });
+        refreshBtn.setOnClickListener(new View.OnClickListener() {  // refresh map and add markers
+            @Override
+            public void onClick(View view) {
+                clear();
+                try {
+                    loadAll();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                catch (ParseException f){
+
+                }
+                mapFragment.showMap();
             }
         });
 
