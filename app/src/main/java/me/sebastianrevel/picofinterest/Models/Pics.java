@@ -73,7 +73,13 @@ public class Pics extends ParseObject {
 //    }
 
     public Date getCreatedDate() {
-        return getDate(KEY_CREATEDAT2);
+        Date date = getDate(KEY_CREATEDAT2);
+
+        if (date == null) {
+            return getCreatedAt();
+        }
+
+        return date;
     }
 
     public List<String> getFollowers() {

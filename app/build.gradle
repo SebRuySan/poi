@@ -64,7 +64,8 @@ dependencies {
     implementation "com.android.support:support-v13:$supportLibVersion"
     // to remove lint error, found in .idea/libraries
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1' // for logging API calls to LogCat
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    // for logging API calls to LogCat
 
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
@@ -101,3 +102,4 @@ dependencies {
 
 // also for push notifications
 //apply plugin: 'com.google.gms.google-services'
+
