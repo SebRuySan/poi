@@ -11,26 +11,23 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="405dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:background="@android:color/black"
         android:padding="10dp"
         app:barrierAllowsGoneWidgets="false"
-        android:background="@android:color/black"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="1dp">
-
-
-
 
         <TextView
             android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
             android:text="Set Filters"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@android:color/white" />
 
         <Switch
             android:id="@+id/switchDistance"
@@ -38,10 +35,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/heading"
             android:layout_centerHorizontal="true"
-            android:textColor="@android:color/white"
             android:layout_marginTop="30dp"
             android:text="Show results for selected location only"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@+id/heading"
             tools:layout_editor_absoluteX="10dp" />
 
@@ -51,10 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/switchDistance"
-            android:textColor="@android:color/white"
             android:layout_marginTop="70dp"
             android:text="Within Walking Distance"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
             app:layout_constraintTop_toBottomOf="@+id/heading"
             tools:layout_editor_absoluteX="77dp" />
 
@@ -62,13 +59,13 @@
             android:id="@+id/tvRadius"
             android:layout_width="134dp"
             android:layout_height="0dp"
-            android:textColor="@android:color/white"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/switchDistance2"
             android:layout_marginStart="8dp"
             android:layout_marginTop="115dp"
             android:text="Radius: 15 mi"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
 
@@ -80,10 +77,10 @@
             android:layout_below="@+id/switchDistance2"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="115dp"
-            android:textColor="@android:color/white"
             android:max="50"
             android:min="2"
             android:progress="15"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
 
@@ -92,13 +89,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:textColor="@android:color/white"
             android:layout_alignStart="@+id/switchDistance2"
             android:layout_alignTop="@+id/spinnerTime"
             android:layout_marginStart="8dp"
             android:layout_marginTop="150dp"
             android:text="Timeframe:"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
 
@@ -121,12 +118,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:textColor="@android:color/white"
             android:layout_alignStart="@+id/switchDistance2"
             android:layout_marginStart="8dp"
             android:layout_marginTop="200dp"
             android:text="Sort Timeline By:"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
 
@@ -155,6 +152,20 @@
             android:text="User Scores"
             android:textColor="@android:color/white"
 
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.564"
+            app:layout_constraintStart_toEndOf="@+id/tvSortBy"
+            app:layout_constraintTop_toBottomOf="@+id/switchLikes" />
+
+        <Switch
+            android:id="@+id/switchFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="44dp"
+            android:text="Following Only"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.564"
             app:layout_constraintStart_toEndOf="@+id/tvSortBy"
@@ -189,7 +200,5 @@
             app:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
-
-
 
 </android.support.constraint.ConstraintLayout>

@@ -39,6 +39,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     public static boolean mThisAddyOnly;
     public static boolean mSortByLikes;
     public static boolean mSortByScores;
+    public static boolean mSortByFollowers;
 
     public static int mRadius = 15;
     public static int mTimeframe = 5;
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         profileTv.setText(ParseUser.getCurrentUser().getUsername());
         userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
-        createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
+        createdAtTv.setText("Joined: " + getRelativeTimeAgo(ParseUser.getCurrentUser().getCreatedAt().toString()));
 
         setSupportActionBar(toolbar);
 
@@ -398,44 +400,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
-
-//        // initialize autocomplete search bar fragment and set a listener
-//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
-//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//
-//                mapFragment.goToSearchedPlace(place);
-//                mMarker = null;
-//
-//                Log.d("Maps", "Place selected: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.d("Maps", "An error occurred: " + status);
-//            }
-//        });
-
-
-//        placeAutoComplete = (PlaceAutocompleteFragment)
-//                getFragmentManager().findFragmentById(R.id.place_autocomplete);
-//
-//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-//                mapFragment.goToSearchedPlace(place);
-//                mMarker = null;
-//                Log.i(TAG, "Place: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.i(TAG, "An error occurred: " + status);
-//            }
-//        });
 
         try {
         //    firstLoad();
@@ -776,9 +740,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     if(!foundLoc) {
 
                                         pic.setLocation(address);
-
                                         pic.setLong(longitude);
-
                                         pic.setLat(latitude);
 
                                     }
@@ -786,12 +748,11 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                     final ParseUser user = ParseUser.getCurrentUser();
 
                                     pic.setUser(user);
-
                                     pic.setPic(pFile);
-
                                     pic.setLike();
-
                                     pic.setNumLikeColumn();
+                                    pic.setCreatedAt();
+
 
                                     mapFragment.addMarker(pic, pFile, true);
 
@@ -1219,13 +1180,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     }
 
     @Override
-    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe) {
+    public void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, boolean sortByFollowers, int radius, int timeframe) {
         Log.d(TAG, "sendFilterInput: got the input");
         //Toast.makeText(this, "Radius: " + radius + " Timeframe: " + timeframe, Toast.LENGTH_SHORT).show();
 
         mThisAddyOnly = thisAddyOnly;
         mSortByLikes = sortByLikes;
         mSortByScores = sortByScores;
+        mSortByFollowers = sortByFollowers;
 
         mRadius = radius;
         mTimeframe = timeframe;
@@ -1250,6 +1212,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         + "\n\t and within walking distance.");
             }
         }
+    }
+
+    // for timestamp
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return relativeDate;
     }
 
     public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
@@ -1363,9 +1342,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
                 }
 
-                query.addDescendingOrder("createdAt");
+                query.addDescendingOrder("createdAt2");
             } else {
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
             }
 
             query.findInBackground(new FindCallback<Pics>() {
@@ -1387,7 +1366,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
                                 //Toast.makeText(context, "NUMBER pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                                arrayList.addAll(filteredPics);
+
+                                if (mSortByFollowers) {
+                                    for (Pics p : filteredPics) {
+                                        String pUsername = "";
+
+                                        try {
+                                            pUsername = p.getUser().fetchIfNeeded().getString("username");
+                                        } catch (ParseException excep) {
+                                            excep.printStackTrace();
+                                        }
+
+                                        if (ParseUser.getCurrentUser().getList("following").contains(pUsername)) {
+                                            arrayList.add(p);
+                                        }
+                                    }
+                                } else {
+                                    arrayList.addAll(filteredPics);
+                                }
                             }
                         } else {
                             arrayList.addAll(objects);
@@ -1422,15 +1418,21 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     // TODO: sort by scores
                 }
 
-                query.addDescendingOrder("createdAt");
+                query.addDescendingOrder("createdAt2");
             } else {
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
             }
 
             query.findInBackground(new FindCallback<Pics>() {
                 public void done(List<Pics> itemList, ParseException e) {
                     Log.d(TAG, "Query done");
-                    Log.d(TAG, "ItemList array size : " + itemList.size());
+
+                    if (itemList == null) {
+                        Log.d("CreateFragment", "Objects is null!");
+                    } else {
+                        Log.d(TAG, "ItemList array size : " + itemList.size());
+                    }
+
                     // if no errors
                     if (e == null) {
                         Log.d(TAG, "No errors in querying");
@@ -1443,8 +1445,24 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                             if (filteredPics.isEmpty()) {
                                 Toast.makeText(context, "No posts to show for this search. Adjust filters to view more.", Toast.LENGTH_LONG).show();
                             } else {
-                                //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
-                                arrayList.addAll(filteredPics);
+                                if (mSortByFollowers) {
+                                    for (Pics p : filteredPics) {
+                                        String pUsername = "";
+
+                                        try {
+                                            pUsername = p.getUser().fetchIfNeeded().getString("username");
+                                        } catch (ParseException excep) {
+                                            excep.printStackTrace();
+                                        }
+
+                                        if (ParseUser.getCurrentUser().getList("following").contains(pUsername)) {
+                                            arrayList.add(p);
+                                        }
+                                    }
+                                } else {
+                                    //Toast.makeText(context, "Number pins to show: " + filteredPics.size(), Toast.LENGTH_SHORT).show();
+                                    arrayList.addAll(filteredPics);
+                                }
                             }
                         } else {
                             arrayList.addAll(itemList);

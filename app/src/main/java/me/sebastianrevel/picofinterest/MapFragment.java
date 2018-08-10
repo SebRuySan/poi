@@ -351,7 +351,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // get all posts
                 final Set<String> locs = new HashSet<String>(); // this will contain a no-duplicate set of locations hwere pictures have been taken
                 final ArrayList<Pics> pictures = new ArrayList<>(); // this will contain a list of Pics (filtered so that it only contains the most recent picture taken at each location)
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
                 query.findInBackground(new FindCallback<Pics>(){
                     public void done(List<Pics> itemList, ParseException e){
                         Log.d("MapFragment", "Query done");
@@ -518,7 +518,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
                 if (distanceMiles <= mRadius) {
                     //int[] date = p.getDate();
-                    Date date = p.getDate();
+                    Date date = p.getCreatedDate();
 
                     Calendar today = Calendar.getInstance();
                     today.add(Calendar.DAY_OF_YEAR, -1); // subtract a day to only include today
@@ -682,7 +682,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 // get all posts
                 final Map<String, Integer> locs = new HashMap<String, Integer>(); // locs stores all locations where pictures have been taken in the last day (also stores the amount of pictures taken there in the last day)
                 final Map<String, Integer> locs2 = new HashMap<String, Integer>(); // locs2 stores all locations where pictures have been taken in the last week (also stores the amount of pictures taken there in the last week)
-                query.orderByDescending("createdAt"); // so query returns results in order of most recent pictures
+                query.orderByDescending("createdAt2"); // so query returns results in order of most recent pictures
                 query.findInBackground(new FindCallback<Pics>() {
                     public void done(List<Pics> itemList, ParseException e) {
                         String locationmax;
@@ -701,7 +701,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                                     continue; // in other words, if it's not within walking distance from current location (we define this as 1 mile) then don't add to any list, go to next Pic
 
                                 // now we want to check how recent the Pic object was created
-                                Date date = p.getDate();
+                                Date date = p.getCreatedDate();
                                 if (date.before(weekAgo.getTime())) {
                                     continue; // if Pic object was created over a week ago, then go to next Pic object
                                 }

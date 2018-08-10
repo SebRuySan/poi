@@ -36,15 +36,18 @@
         card_view:cardCornerRadius="4dp"
         card_view:layout_constraintBottom_toBottomOf="parent"
         card_view:layout_constraintEnd_toEndOf="parent"
-        card_view:layout_constraintHorizontal_bias="1.0"
+        card_view:layout_constraintHorizontal_bias="0.0"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toTopOf="parent">
+        card_view:layout_constraintTop_toTopOf="parent"
+        card_view:layout_constraintVertical_bias="1.0">
 
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent">
 
             <TextView

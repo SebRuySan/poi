@@ -61,7 +61,7 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.RecyclerViewHold
         try {
             recyclerViewHolder.tvUsername.setText( /*"@" + */ pic.getUser().fetchIfNeeded().getString("username"));
             recyclerViewHolder.tvLikeCount.setText(String.valueOf(pic.getLike().size()));
-            recyclerViewHolder.tvCreatedAt.setText(getRelativeTimeAgo(pic.getDate().toString()));
+            recyclerViewHolder.tvCreatedAt.setText(getRelativeTimeAgo(pic.getCreatedDate().toString()));
             recyclerViewHolder.tvDesc.setText(pic.getDesc());
         } catch (NullPointerException e) {
 

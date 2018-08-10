@@ -28,6 +28,7 @@ public class FilterFragment extends DialogFragment {
     private boolean mThisAddyOnly;
     private boolean mSortByLikes;
     private boolean mSortByScores;
+    private boolean mSortByFollowers;
 
     private int mRadius;
     private int mTimeframe;
@@ -40,6 +41,7 @@ public class FilterFragment extends DialogFragment {
     private Switch mSwitchDistance2; // show results within walking distance
     private Switch mSwitchLikes;
     private Switch mSwitchScores;
+    private Switch mSwitchFollowers;
 
     private SeekBar mRadiusBar;
     private Spinner mSpinnerTime;
@@ -77,6 +79,7 @@ public class FilterFragment extends DialogFragment {
         mSwitchDistance2 = view.findViewById(R.id.switchDistance2);
         mSwitchLikes = view.findViewById(R.id.switchLikes);
         mSwitchScores = view.findViewById(R.id.switchScores);
+        mSwitchFollowers = view.findViewById(R.id.switchFollowers);
 
         mRadiusBar = view.findViewById(R.id.sbRadius);
         mSpinnerTime = view.findViewById(R.id.spinnerTime);
@@ -85,6 +88,7 @@ public class FilterFragment extends DialogFragment {
         mThisAddyOnly = MainActivity.mThisAddyOnly;
         mSortByLikes = MainActivity.mSortByLikes;
         mSortByScores = MainActivity.mSortByScores;
+        mSortByFollowers = MainActivity.mSortByFollowers;
 
         mRadius = MainActivity.mRadius;
         mTimeframe = MainActivity.mTimeframe;
@@ -121,6 +125,12 @@ public class FilterFragment extends DialogFragment {
             mSwitchScores.setChecked(true);
         } else {
             mSwitchScores.setChecked(false);
+        }
+
+        if (mSortByFollowers) {
+            mSwitchFollowers.setChecked(true);
+        } else {
+            mSwitchFollowers.setChecked(false);
         }
 
         // add listeners to necessary items on screen
@@ -185,6 +195,17 @@ public class FilterFragment extends DialogFragment {
             }
         });
 
+        mSwitchFollowers.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (!mSwitchFollowers.isChecked()) {
+                    mSortByFollowers = false;
+                } else {
+                    mSortByFollowers = true;
+                }
+            }
+        });
+
         mRadiusBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -231,7 +252,7 @@ public class FilterFragment extends DialogFragment {
             public void onClick(View view) {
                 Log.d("FilterFragment", "onClick: capturing input");
 
-                mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mSortByLikes, mSortByScores, mRadius, mTimeframe);
+                mOnFilterInputListener.sendFilterInput(mThisAddyOnly, mSortByLikes, mSortByScores, mSortByFollowers, mRadius, mTimeframe);
 
                 try {
                     MainActivity.clear();
@@ -246,6 +267,9 @@ public class FilterFragment extends DialogFragment {
                 getDialog().dismiss();
             }
         });
+
+        // Make user unable to click outside of the dialog fragment to dismiss
+        getDialog().setCanceledOnTouchOutside(false);
 
         return view;
     }
@@ -262,7 +286,7 @@ public class FilterFragment extends DialogFragment {
     }
 
     public interface OnFilterInputListener {
-        void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, int radius, int timeframe);
+        void sendFilterInput(boolean thisAddyOnly, boolean sortByLikes, boolean sortByScores, boolean sortByFollowers, int radius, int timeframe);
     }
 
 }
