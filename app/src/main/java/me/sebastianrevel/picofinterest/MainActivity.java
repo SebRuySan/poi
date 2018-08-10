@@ -37,6 +37,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         profileTv.setText(ParseUser.getCurrentUser().getUsername());
         userScoreTv.setText("User Score: " + ParseUser.getCurrentUser().getInt("userScore"));
-        createdAtTv.setText("Joined: " + ParseUser.getCurrentUser().getCreatedAt().toString());
+        createdAtTv.setText("Joined: " + getRelativeTimeAgo(ParseUser.getCurrentUser().getCreatedAt().toString()));
 
         setSupportActionBar(toolbar);
 
@@ -1175,6 +1176,23 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                         + "\n\t and within walking distance.");
             }
         }
+    }
+
+    // for timestamp
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+        return relativeDate;
     }
 
     public static class ErrorDialogFragment extends android.support.v4.app.DialogFragment {
