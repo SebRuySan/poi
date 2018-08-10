@@ -76,7 +76,7 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.RecyclerViewHold
 
         if (liked) {
             Log.e("LIKED", "ALREADY LIKED");
-            recyclerViewHolder.btnLike.setBackgroundResource(R.drawable.ic_star_onv2);
+            recyclerViewHolder.btnLike.setBackgroundResource(R.drawable.ic_star_on);
         } else {
             Log.e("LIKED", "NOT");
             recyclerViewHolder.btnLike.setBackgroundResource(R.drawable.ic_star_offv2);

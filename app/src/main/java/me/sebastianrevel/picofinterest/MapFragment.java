@@ -2,6 +2,8 @@ package me.sebastianrevel.picofinterest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -9,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,6 +19,11 @@ import android.location.Location;
 import android.graphics.Matrix;
 
 import java.util.Calendar;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.maps.android.SphericalUtil;
 import com.parse.ParseException;
 import android.media.ExifInterface;
@@ -29,17 +37,24 @@ import android.service.autofill.SaveCallback;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -134,11 +149,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private Callback notifyCallback;
     static ProgressBar progressBar;
     static TextView uploadingtxt;
+    ImageButton switchBtn;
+    Boolean day = true;
+    ImageButton tab;
+    Dialog d;
+    ImageView closeTab;
 
 
 
     private static Context context;
     private static MapFragment thisMapFrag;
+    static int PLACE_AUTOCOMPLETE_REQUEST_CODE = 132;
 
     private final static String KEY_LOCATION = "location";
     private static final int MY_CAMERA_REQUEST_CODE = 100;
@@ -167,7 +188,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume();
-
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -178,11 +198,70 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         context = getContext();
         thisMapFrag = MapFragment.this;
+        tab = rootView.findViewById(R.id.options_tab);
         progressBar = rootView.findViewById(R.id.progress_bar);
         uploadingtxt = rootView.findViewById(R.id.uploading);
         progressBar.setVisibility(View.GONE);
         uploadingtxt.setVisibility(View.INVISIBLE);
         showMap();
+
+        tab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                d = new Dialog(context);
+                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                d.setContentView(R.layout.options_menu);
+                d.setCanceledOnTouchOutside(false);
+                switchBtn =  d.findViewById(R.id.style_btn);
+                switchBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (day) {
+                            switchBtn.setImageResource(R.drawable.ic_day);
+                            day = false;
+                        } else {
+                            switchBtn.setImageResource(R.drawable.ic_night);
+                            day = true;
+                        }
+
+                        changeStyle();
+                    }
+                });
+                ImageButton filterBtn = d.findViewById(R.id.filter_new_btn);
+                filterBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        d.dismiss();
+                        MainActivity.onFilterAction(view);
+                    }
+                });
+                ImageButton profileBtn = d.findViewById(R.id.profile_new_btn);
+                profileBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            MainActivity.setScore();
+                        } catch (ParseException exception) {
+                            exception.printStackTrace();
+                        }
+
+                        // Create the scene
+                        MainActivity.profileOpen();
+                        d.dismiss();
+                    }
+                });
+
+
+                closeTab = d.findViewById(R.id.close_tab);
+                closeTab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        d.dismiss();
+                    }
+                });
+                d.show();
+            }
+        });
 
 
 
@@ -193,6 +272,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         rlp.setMargins(0, 180, 300, 0);
+
         return rootView;
     }
 
@@ -526,12 +606,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     @Override
     public void onViewCreated(View view, Bundle SavedInstanceState) {
         // initialize the switch and set listener so that when it's "checked" (clicked), map style changes from night to day or vice versa
-        swStyle = (Switch) view.findViewById(R.id.swStyle);
-        swStyle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ImageButton timelineTab =  view.findViewById(R.id.timeline);
+        timelineTab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                changeStyle();
+            public void onClick(View view) {
+                MainActivity.dl.openDrawer(Gravity.LEFT);
             }
+
         });
 
         // TODO: work on this
@@ -1131,5 +1212,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             e.printStackTrace();
         }
         return relativeDate;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RESULTS", "Inside Map");
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
