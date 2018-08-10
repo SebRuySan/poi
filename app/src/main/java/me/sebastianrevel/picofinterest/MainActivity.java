@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     PlaceAutocompleteFragment placeAutoComplete;
     private Button uploadBtn, signoutBtn, profileBtn, archiveBtn;
     private ImageButton cameraBtn;
-    private ImageButton searchBtn;
+    private ImageButton searchBtn, refreshBtn;
     public static TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         setContentView(R.layout.activity_main);
 
         searchBtn = findViewById(R.id.search_btn);
+        refreshBtn = findViewById(R.id.refresh_btn);
 
         toolbar = findViewById(R.id.toolBar);
         archiveBtn = findViewById(R.id.archives_btn);
@@ -244,6 +245,20 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         cvMess.setVisibility(View.GONE);
+                        //searchBtn.setVisibility(View.VISIBLE);
+
+                    }
+                });
+                refreshBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        refreshBtn.setVisibility(View.VISIBLE);
+                    }
+                });
+                searchBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        searchBtn.setVisibility(View.VISIBLE);
                     }
                 });
                 v.cancel(); // stop vibrating in case it hasn't already
@@ -261,6 +276,19 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         cvMess.setVisibility(View.GONE);
+                        //searchBtn.setVisibility(View.VISIBLE);
+                    }
+                });
+                refreshBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        refreshBtn.setVisibility(View.VISIBLE);
+                    }
+                });
+                searchBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        searchBtn.setVisibility(View.VISIBLE);
                     }
                 });
                 v.cancel();
@@ -276,6 +304,18 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         cvMess.setVisibility(View.GONE);
+                    }
+                });
+                refreshBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        refreshBtn.setVisibility(View.VISIBLE);
+                    }
+                });
+                searchBtn.animate().setDuration(250).alpha(1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        searchBtn.setVisibility(View.VISIBLE);
                     }
                 });
                 v.cancel();
@@ -1558,14 +1598,27 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     public void showNotification(String message){
         tvmessage.setText(message);
-        cvMess.setVisibility(View.VISIBLE);
-
+        //cvMess.setVisibility(View.VISIBLE);
         // animate to fade in
         cvMess.setAlpha(0);
         cvMess.animate().setDuration(400).alpha(1).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 cvMess.setVisibility(View.VISIBLE);
+                //searchBtn.setVisibility(View.GONE);
+            }
+        });
+
+        refreshBtn.animate().setDuration(450).alpha(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                refreshBtn.setVisibility(View.GONE);
+            }
+        });
+        searchBtn.animate().setDuration(450).alpha(0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                searchBtn.setVisibility(View.GONE);
             }
         });
 
