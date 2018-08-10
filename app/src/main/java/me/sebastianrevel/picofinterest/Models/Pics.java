@@ -12,6 +12,7 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class Pics extends ParseObject {
     private static final String KEY_NUM_LIKES = "number_of_likes";
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_FOLLOWING = "following";
+    private static final String KEY_CREATEDAT2 = "createdAt2";
 
 //RuyG
     public String getLocation() {
@@ -70,8 +72,8 @@ public class Pics extends ParseObject {
 //        return date;
 //    }
 
-    public Date getDate() {
-        return getCreatedAt();
+    public Date getCreatedDate() {
+        return getDate(KEY_CREATEDAT2);
     }
 
     public List<String> getFollowers() {
@@ -229,6 +231,12 @@ public class Pics extends ParseObject {
     // initialize the number_of_like column for a new pic with 0
     public void setNumLikeColumn() {
         put(KEY_NUM_LIKES, 0);
+    }
+
+    public void setCreatedAt() {
+        Date currentTime = Calendar.getInstance().getTime();
+
+        put(KEY_CREATEDAT2, currentTime);
     }
 
     public ParseFile getPic() {
