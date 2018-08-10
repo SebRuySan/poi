@@ -3,6 +3,7 @@ package me.sebastianrevel.picofinterest;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.graphics.Matrix;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.ExifInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,13 +45,18 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     static Marker mMarker;
     static Geocoder mGeocoder;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 132;
 
     public static boolean mThisAddyOnly;
     public static boolean mSortByLikes;
@@ -108,10 +116,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
 
+    static android.app.FragmentManager fragMang;
+
     GPSTracker gps; // to get location of pics taken with camera
 
     PlaceAutocompleteFragment placeAutoComplete;
-    private Button cameraBtn, uploadBtn, signoutBtn, profileBtn, archiveBtn;
+    private Button uploadBtn, signoutBtn, profileBtn, archiveBtn;
+    private ImageButton cameraBtn;
+    private ImageButton searchBtn;
     public static TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
     private SwipeRefreshLayout swipeContainer;
 
@@ -157,13 +169,15 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        searchBtn = findViewById(R.id.search_btn);
+
         toolbar = findViewById(R.id.toolBar);
         archiveBtn = findViewById(R.id.archives_btn);
         profileBtn = findViewById(R.id.profile_btn);
         uploadBtn = findViewById(R.id.upload_btn);
         createdAtTv = findViewById(R.id.date_joined_tv);
         userScoreTv = findViewById(R.id.user_score_tv);
-        timeframeTv = findViewById(R.id.tvTimeframeOnMap);
+        //timeframeTv = findViewById(R.id.tvTimeframeOnMap);
         profileTv = findViewById(R.id.profile_name_tv);
         locationTv = findViewById(R.id.location_tv);
         dl = findViewById(R.id.drawerLayout);
@@ -198,6 +212,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 R.string.drawer_close);
 
         dl.addDrawerListener(drawerToggle);
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                                    .build(MainActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
+            }
+        });
 
         // initialize the cardview for messages but set as invisible
         cvMess = (CardView) findViewById(R.id.cvMess);
@@ -263,6 +293,22 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
+//        mapFragment.searchBtn = findViewById(R.id.search_btn);
+//        mapFragment.searchBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                try {
+//                    Intent intent =
+//                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+//                                    .build(MainActivity.this);
+//                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+//                } catch (GooglePlayServicesRepairableException e) {
+//                    // TODO: Handle the error.
+//                } catch (GooglePlayServicesNotAvailableException e) {
+//                    // TODO: Handle the error.
+//                }
+//            }
+//        });
         swipeContainer = findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -296,10 +342,41 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         cameraBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-                i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                startActivityForResult(i, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                final Dialog d = new Dialog(context);
+                d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                d.setContentView(R.layout.picture_menu);
+                d.setCanceledOnTouchOutside(false);
+
+                ImageButton cameraChooseBtn = d.findViewById(R.id.camera_decision_btn);
+                cameraChooseBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        Uri fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                        startActivityForResult(i, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                        d.dismiss();
+                    }
+                });
+                ImageButton galleryChooseBtn = d.findViewById(R.id.gallery_decision_btn);
+                galleryChooseBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onPickPhoto(view);
+                        d.dismiss();
+                    }
+                });
+                ImageView closePicTab = d.findViewById(R.id.close_tab_pic);
+                closePicTab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        d.dismiss();
+                    }
+                });
+
+                d.show();
+
+
             }
         });
 
@@ -314,19 +391,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         dl.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.RIGHT);
 
-        profileBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    setScore();
-                } catch (ParseException exception) {
-                    exception.printStackTrace();
-                }
-
-                // Create the scene
-                profileOpen();
-            }
-        });
 
         archiveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,56 +400,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
             }
         });
 
-
-//        // initialize autocomplete search bar fragment and set a listener
-//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
-//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//
-//                mapFragment.goToSearchedPlace(place);
-//                mMarker = null;
-//
-//                Log.d("Maps", "Place selected: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.d("Maps", "An error occurred: " + status);
-//            }
-//        });
-
-
-        placeAutoComplete = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete);
-
-        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                mapFragment.goToSearchedPlace(place);
-                mMarker = null;
-
-                try {
-                    clear();
-                    loadAll();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                MapFragment.showMap();
-
-                Log.i(TAG, "Place: " + place.getName());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i(TAG, "An error occurred: " + status);
-            }
-        });
 
         try {
         //    firstLoad();
@@ -401,6 +415,8 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContainer, mapFragment);
         fragmentTransaction.commit();
+
+        fragMang = getFragmentManager();
 
     }
 
@@ -533,6 +549,26 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     // this function is called when picture is taken, it adds marker at image location (using phone's gps in gpstracker class) and adds it to Parse
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RESULTS", "Inside Main");
+        Log.e("RESULTS", String.valueOf(requestCode));
+        Log.e("RESULTS", String.valueOf(resultCode));
+        if (requestCode == MapFragment.PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                mapFragment.goToSearchedPlace(place);
+                place = null;
+                mMarker = null;
+                //Log.e("RESULTS", "Going to" + place.getAddress());
+              //  Log.i(TAG, "Place: " + place.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                // TODO: Handle the error.
+                Log.i(TAG, status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
         // if the result is capturing Image
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE || requestCode == PICK_PHOTO_CODE) {
 
@@ -1138,9 +1174,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         filterDialog.show(getFragmentManager(), "FilterFragment");
     }
 
-    public void onFilterAction(View view) {
+    public static void onFilterAction(View view) {
         FilterFragment filterDialog = new FilterFragment();
-        filterDialog.show(getFragmentManager(), "FilterFragment");
+        filterDialog.show(fragMang, "FilterFragment");
     }
 
     @Override
@@ -1159,7 +1195,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         mapFragment.setRadius(radius);
         mapFragment.setTimeframe(timeframe);
 
-        timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
+       // timeframeTv.setText("Results for " + FilterFragment.timeframes[mTimeframe]);
 
         if (mThisAddyOnly) {
             locationTv.setText(address + "\nShowing results for "

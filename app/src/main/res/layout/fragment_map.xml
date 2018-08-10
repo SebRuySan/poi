@@ -25,24 +25,45 @@
         android:indeterminateTint="#000000"
         android:indeterminateTintMode="src_in"/>
 
-    <Switch
-        android:id="@+id/swStyle"
-        android:layout_width="143dp"
-        android:layout_height="wrap_content"
+    <!--<Switch-->
+        <!--android:id="@+id/swStyle"-->
+        <!--android:layout_width="143dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_marginBottom="27dp"-->
+        <!--android:layout_marginStart="12dp"-->
+        <!--android:checked="true"-->
+        <!--android:showText="true"-->
+        <!--android:splitTrack="true"-->
+        <!--android:text="Mode:"-->
+        <!--android:textColor="#000000"-->
+        <!--android:textOff="Night"-->
+        <!--android:textOn="Day"-->
+        <!--android:textSize="18sp"-->
+        <!--android:textStyle="bold"-->
+        <!--tools:checked="true" />-->
+
+    <ImageButton
+        android:id="@+id/timeline"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="27dp"
-        android:layout_marginStart="12dp"
-        android:checked="true"
-        android:showText="true"
-        android:splitTrack="true"
-        android:text="Mode:"
-        android:textColor="#000000"
-        android:textOff="Night"
-        android:textOn="Day"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:checked="true" />
+        android:layout_marginBottom="15dp"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/roundbuttonv2"
+        android:src="@drawable/ic_pull_tab" />
+
+    <ImageButton
+        android:id="@+id/options_tab"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/timeline"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/roundbuttonv2"
+        android:src="@drawable/ic_options_tab" />
 
     <TextView
         android:id="@+id/uploading"
@@ -56,6 +77,7 @@
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
+
 
     <!--<ProgressBar-->
         <!--android:id="@+id/progress_bar_load"-->
