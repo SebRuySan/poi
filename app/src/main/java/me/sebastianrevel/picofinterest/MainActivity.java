@@ -84,6 +84,9 @@ import java.util.concurrent.TimeUnit;
 
 import me.sebastianrevel.picofinterest.Models.Pics;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 //@RuntimePermissions
 public class MainActivity extends AppCompatActivity implements FilterFragment.OnFilterInputListener, MapFragment.Callback{
     Toolbar toolbar;
@@ -612,6 +615,16 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                 mapFragment.goToSearchedPlace(place);
                 place = null;
                 mMarker = null;
+
+                clear();
+                try {
+                    loadAll();
+                } catch (ParseException exception) {
+                    exception.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                MapFragment.showMap();
                 //Log.e("RESULTS", "Going to" + place.getAddress());
               //  Log.i(TAG, "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
