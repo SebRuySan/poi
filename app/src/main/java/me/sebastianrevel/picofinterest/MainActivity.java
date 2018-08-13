@@ -112,8 +112,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
     public static int likeScore, followScore, totalScore;
 
-    public static int followers = 0;
-
     static MapFragment mapFragment = new MapFragment();
     FragmentTransaction fragmentTransaction;
 
@@ -879,6 +877,9 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                     final ParseUser user = ParseUser.getCurrentUser();
                     newPic.setLike();
                     newPic.setUser(user);
+                    newPic.setCreatedAt();
+                    newPic.setNumLikeColumn();
+
                     // now using coordinates, use geocoder get from location to get address of where picture was taken
                     Geocoder geocoder = new Geocoder(getApplicationContext(),
                             Locale.getDefault());
@@ -1225,11 +1226,6 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         return true;
     }
 
-    public void onFilterAction(MenuItem menuItem) {
-        FilterFragment filterDialog = new FilterFragment();
-        filterDialog.show(getFragmentManager(), "FilterFragment");
-    }
-
     public static void onFilterAction(View view) {
         FilterFragment filterDialog = new FilterFragment();
         filterDialog.show(fragMang, "FilterFragment");
@@ -1541,29 +1537,34 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
         query.findInBackground(new FindCallback<Pics>() {
             @Override
             public void done(List<Pics> objects, ParseException e) {
+                int likes = 0;
+
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
-                        int likes = objects.get(i).getLike().size();
-                        likeScore += (likes * 50);
+                        likes += (int) (objects.get(i).get("number_of_likes"));
+
                         Log.e("USERSCORE", String.valueOf(likes));
                     }
+
+                    likeScore = likes * 50;
 
                 } else {
                     e.printStackTrace();
                 }
 
-                followers = 0;
                 final ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
                 userQuery.findInBackground(
                         new FindCallback<ParseUser>() {
                             @Override
                             public void done(List<ParseUser> objects, ParseException e) {
+                                int followers = 0;
+
                                 if (e == null) {
                                     for (int i = 0; i < objects.size(); i++) {
                                         List<String> followingList = objects.get(i).getList("following");
                                         boolean isFollower = false;
 
-                                        if (followingList != null) {
+                                        if (followingList != null) { //dont count people you follow!!!!!
                                             isFollower = followingList.contains(ParseUser.getCurrentUser().getUsername());
                                         }
 
@@ -1572,14 +1573,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
                                         }
                                     }
 
+                                    followScore = followers * 100;
+
                                 } else {
                                     e.printStackTrace();
                                 }
                             }
                         }
                 );
-
-                followScore = followers * 100;
 
                 totalScore = likeScore + followScore + amountOfPicsPostedScore;
 
