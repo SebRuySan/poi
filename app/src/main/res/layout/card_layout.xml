@@ -127,10 +127,13 @@
 
                 <TextView
                     android:id="@+id/card_desc"
-                    android:layout_width="174dp"
-                    android:layout_height="68dp"
+                    android:layout_width="145dp"
+                    android:layout_height="67dp"
+                    android:layout_marginEnd="25dp"
                     android:layout_marginStart="6dp"
                     android:text="Check out the picture I have just uploaded to Pic of Interest!!!!"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toBottomOf="@+id/tvUsername" />
             </android.support.constraint.ConstraintLayout>
