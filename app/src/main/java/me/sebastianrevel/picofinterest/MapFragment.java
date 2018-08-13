@@ -635,7 +635,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 final ParseUser user = ParseUser.getCurrentUser();
                 // Wait 6.5 seconds after app has been open to show notification
                 try {
-                    Thread.sleep(6500);
+                    Thread.sleep(15000);
                 } catch (InterruptedException ignored) {
                 }
                 final String username;
