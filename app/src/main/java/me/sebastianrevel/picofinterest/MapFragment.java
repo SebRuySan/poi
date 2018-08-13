@@ -153,7 +153,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     Boolean day = true;
     ImageButton tab;
     Dialog d;
-    ImageView closeTab;
 
 
 
@@ -235,6 +234,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         MainActivity.onFilterAction(view);
                     }
                 });
+
+                ImageView closeTab;
+
                 ImageButton profileBtn = d.findViewById(R.id.profile_new_btn);
                 profileBtn.setOnClickListener(new View.OnClickListener() {
                     @Override

@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
     GPSTracker gps; // to get location of pics taken with camera
 
     PlaceAutocompleteFragment placeAutoComplete;
-    private Button uploadBtn, signoutBtn, profileBtn, archiveBtn;
+    private Button uploadBtn, signoutBtn, profileBtn, archiveBtn, closeBtn;
     private ImageButton cameraBtn;
     private ImageButton searchBtn, refreshBtn;
     public static TextView profileTv, createdAtTv, userScoreTv, timeframeTv;
@@ -203,6 +203,14 @@ public class MainActivity extends AppCompatActivity implements FilterFragment.On
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+
+        closeBtn = findViewById(R.id.close_btn);
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dl.closeDrawer(Gravity.RIGHT);
+            }
+        });
 
         adapter = new PicAdapter(arrayList);
         rv.setAdapter(adapter);
