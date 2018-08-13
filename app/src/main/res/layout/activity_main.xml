@@ -278,9 +278,8 @@ c
 
                 <TextView
                     android:id="@+id/location_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="230dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:text="All Pics"
                     android:textAlignment="center"
                     android:textAllCaps="false"
