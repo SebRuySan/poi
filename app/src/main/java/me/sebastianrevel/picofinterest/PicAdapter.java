@@ -92,6 +92,13 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.RecyclerViewHold
 
                 ImageView imageView = d.findViewById(R.id.expanded_pic);
                 final Button ivFollow = d.findViewById(R.id.ivFollow);
+                final Button closeBtn = d.findViewById(R.id.close_btn);
+                closeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        d.dismiss();
+                    }
+                });
                 final TextView userView = d.findViewById(R.id.expanded_user);
                 TextView descView = d.findViewById(R.id.expanded_desc);
 

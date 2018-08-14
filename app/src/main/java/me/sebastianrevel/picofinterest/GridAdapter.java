@@ -61,6 +61,13 @@ public class GridAdapter extends RecyclerView.Adapter <GridAdapter.RecyclerViewH
                 TextView descView = d.findViewById(R.id.expanded_desc);
                 TextView userView = d.findViewById(R.id.expanded_user);
                 Button ivFollow = d.findViewById(R.id.ivFollow);
+                final Button closeBtn = d.findViewById(R.id.close_btn);
+                closeBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        d.dismiss();
+                    }
+                });
 
                 ivFollow.setVisibility(View.GONE);
 
