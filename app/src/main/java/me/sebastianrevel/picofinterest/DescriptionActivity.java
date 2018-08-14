@@ -255,6 +255,8 @@ public class DescriptionActivity extends AppCompatActivity {
                 MapFragment.setProgress(true);
                 picIv.setImageDrawable(null);
                 String userDesc = String.valueOf(descriptionEt.getText());
+                if(userDesc.equals("") || userDesc == null)
+                    userDesc = "Look at my Pic of Interest!";
 
                 final ParseFile pfile = bittobytetoparse(images[counter]);
                 pfile.saveInBackground();
