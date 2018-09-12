@@ -10,3 +10,5 @@ Required (core) user stories:
 
 Optional (nice to have) user stories:
 * Maybe send notifications when a user is near a "hot" or very popular place. 
+
+For a demo of the app, go to https://www.youtube.com/watch?v=2i9osYWRvns
